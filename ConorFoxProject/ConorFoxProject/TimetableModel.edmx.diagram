@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+ <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+      <Diagram DiagramId="8598c8250d9449f29cc8c7c4f42e3566" Name="Diagram1">
+        <EntityTypeShape EntityType="TimetableDatabaseModel.Building" Width="1.5" PointX="0.75" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="TimetableDatabaseModel.Course" Width="1.5" PointX="2.75" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="TimetableDatabaseModel.Event" Width="1.5" PointX="4.75" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="TimetableDatabaseModel.EventStatuss" Width="1.5" PointX="0.75" PointY="4.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="TimetableDatabaseModel.EventType" Width="1.5" PointX="2.75" PointY="5.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="TimetableDatabaseModel.Module" Width="1.5" PointX="4.75" PointY="5.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="TimetableDatabaseModel.RecycledId" Width="1.5" PointX="6.75" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="TimetableDatabaseModel.RepeatEvent" Width="1.5" PointX="6.75" PointY="3.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="TimetableDatabaseModel.Room" Width="1.5" PointX="6.75" PointY="6.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="TimetableDatabaseModel.RoomType" Width="1.5" PointX="8.75" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="TimetableDatabaseModel.Setting" Width="1.5" PointX="0.75" PointY="8.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="TimetableDatabaseModel.Staff" Width="1.5" PointX="8.75" PointY="3.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="TimetableDatabaseModel.Student" Width="1.5" PointX="8.75" PointY="7.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="TimetableDatabaseModel.Time" Width="1.5" PointX="2.75" PointY="9.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="TimetableDatabaseModel.User" Width="1.5" PointX="4.75" PointY="9.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="TimetableDatabaseModel.UserType" Width="1.5" PointX="10.75" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="TimetableDatabaseModel.RepeatType" Width="1.5" PointX="6.5126357369649384" PointY="18.779322245521154" />
+        <EntityTypeShape EntityType="TimetableDatabaseModel.CourseModule" Width="1.5" PointX="8.6166180784891431" PointY="9.482224826459877" />
+        <EntityTypeShape EntityType="TimetableDatabaseModel.StaffEvent" Width="1.5" PointX="1.5692884500926772" PointY="0.13453267520970325" />
+        <EntityTypeShape EntityType="TimetableDatabaseModel.StudentEvent" Width="1.5" PointX="1.2693429055015291" PointY="6.3567559599675034" />
+      </Diagram>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>

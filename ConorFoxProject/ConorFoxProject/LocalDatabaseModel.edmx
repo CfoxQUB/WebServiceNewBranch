@@ -1,0 +1,767 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+      <Schema Namespace="LocalDatabaseModel.Store" Alias="Self" Provider="System.Data.SqlClient" ProviderManifestToken="2008" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityContainer Name="LocalDatabaseModelStoreContainer">
+          <EntitySet Name="Building" EntityType="LocalDatabaseModel.Store.Building" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="Course" EntityType="LocalDatabaseModel.Store.Course" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="CourseModule" EntityType="LocalDatabaseModel.Store.CourseModule" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="Event" EntityType="LocalDatabaseModel.Store.Event" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="EventStatuss" EntityType="LocalDatabaseModel.Store.EventStatuss" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="EventType" EntityType="LocalDatabaseModel.Store.EventType" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="Module" EntityType="LocalDatabaseModel.Store.Module" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="RecycledIds" EntityType="LocalDatabaseModel.Store.RecycledIds" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="RepeatEvent" EntityType="LocalDatabaseModel.Store.RepeatEvent" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="RepeatTypes" EntityType="LocalDatabaseModel.Store.RepeatTypes" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="Room" EntityType="LocalDatabaseModel.Store.Room" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="RoomType" EntityType="LocalDatabaseModel.Store.RoomType" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="Setting" EntityType="LocalDatabaseModel.Store.Setting" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="Staff" EntityType="LocalDatabaseModel.Store.Staff" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="StaffEvents" EntityType="LocalDatabaseModel.Store.StaffEvents" store:Type="Tables" store:Schema="dbo" store:Name="StaffEvents">
+            <DefiningQuery>SELECT 
+      [StaffEvents].[EventId] AS [EventId], 
+      [StaffEvents].[StaffId] AS [StaffId]
+      FROM [dbo].[StaffEvents] AS [StaffEvents]</DefiningQuery>
+          </EntitySet>
+          <EntitySet Name="Student" EntityType="LocalDatabaseModel.Store.Student" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="StudentEvents" EntityType="LocalDatabaseModel.Store.StudentEvents" store:Type="Tables" store:Schema="dbo" store:Name="StudentEvents">
+            <DefiningQuery>SELECT 
+      [StudentEvents].[EventId] AS [EventId], 
+      [StudentEvents].[StudentId] AS [StudentId]
+      FROM [dbo].[StudentEvents] AS [StudentEvents]</DefiningQuery>
+          </EntitySet>
+          <EntitySet Name="Time" EntityType="LocalDatabaseModel.Store.Time" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="User" EntityType="LocalDatabaseModel.Store.User" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="UserType" EntityType="LocalDatabaseModel.Store.UserType" store:Type="Tables" Schema="dbo" />
+        </EntityContainer>
+        <EntityType Name="Building">
+          <Key>
+            <PropertyRef Name="BuildingId" />
+          </Key>
+          <Property Name="BuildingId" Type="int" Nullable="false" />
+          <Property Name="BuildingName" Type="nvarchar" MaxLength="50" />
+          <Property Name="BuildingNumber" Type="int" />
+          <Property Name="AddressLine1" Type="nvarchar" MaxLength="50" />
+          <Property Name="AddressLine2" Type="nvarchar" MaxLength="50" />
+          <Property Name="PostalCode" Type="nvarchar" MaxLength="10" />
+          <Property Name="City" Type="nvarchar" MaxLength="50" />
+        </EntityType>
+        <EntityType Name="Course">
+          <Key>
+            <PropertyRef Name="CourseId" />
+          </Key>
+          <Property Name="CourseId" Type="int" Nullable="false" />
+          <Property Name="CourseName" Type="nvarchar" MaxLength="50" />
+          <Property Name="CourseDescription" Type="nvarchar" MaxLength="150" />
+          <Property Name="Duration" Type="int" />
+          <Property Name="CreateDate" Type="datetime" />
+          <Property Name="Creator" Type="int" />
+        </EntityType>
+        <EntityType Name="CourseModule">
+          <Key>
+            <PropertyRef Name="CourseModuleId" />
+          </Key>
+          <Property Name="CourseModuleId" Type="int" Nullable="false" />
+          <Property Name="Course" Type="int" Nullable="false" />
+          <Property Name="Module" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Event">
+          <Key>
+            <PropertyRef Name="EventId" />
+          </Key>
+          <Property Name="EventId" Type="int" Nullable="false" />
+          <Property Name="EventTitle" Type="nvarchar" MaxLength="10" />
+          <Property Name="EventDescription" Type="nvarchar" MaxLength="150" />
+          <Property Name="EventType" Type="int" />
+          <Property Name="StartDate" Type="datetime" />
+          <Property Name="CreateDate" Type="datetime" />
+          <Property Name="Time" Type="int" />
+          <Property Name="Duration" Type="int" />
+          <Property Name="Repeats" Type="int" />
+          <Property Name="LastUserEdited" Type="int" />
+          <Property Name="LastDateEdited" Type="datetime" />
+          <Property Name="AdditionalNotes" Type="nvarchar" MaxLength="150" />
+          <Property Name="Status" Type="nvarchar" MaxLength="10" />
+          <Property Name="Room" Type="int" />
+          <Property Name="Attendants" Type="int" />
+          <Property Name="Course" Type="int" />
+          <Property Name="Module" Type="int" />
+        </EntityType>
+        <EntityType Name="EventStatuss">
+          <Key>
+            <PropertyRef Name="StatusId" />
+          </Key>
+          <Property Name="StatusId" Type="int" Nullable="false" />
+          <Property Name="StatusName" Type="nvarchar" MaxLength="50" />
+          <Property Name="StatusDescription" Type="nvarchar" MaxLength="150" />
+        </EntityType>
+        <EntityType Name="EventType">
+          <Key>
+            <PropertyRef Name="TypeId" />
+          </Key>
+          <Property Name="TypeId" Type="int" Nullable="false" />
+          <Property Name="TypeName" Type="nvarchar" Nullable="false" MaxLength="50" />
+          <Property Name="TypeDescription" Type="nvarchar" Nullable="false" MaxLength="150" />
+          <Property Name="CreateDate" Type="datetime" Nullable="false" />
+          <Property Name="Creator" Type="int" Nullable="false" />
+          <Property Name="LastEdited" Type="datetime" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Module">
+          <Key>
+            <PropertyRef Name="ModuleId" />
+          </Key>
+          <Property Name="ModuleId" Type="int" Nullable="false" />
+          <Property Name="ModuleName" Type="nvarchar" MaxLength="50" />
+          <Property Name="ModuleDescription" Type="nvarchar" MaxLength="150" />
+          <Property Name="CreateDate" Type="datetime" />
+          <Property Name="Creator" Type="int" />
+          <Property Name="LastEdited" Type="datetime" />
+        </EntityType>
+        <EntityType Name="RecycledIds">
+          <Key>
+            <PropertyRef Name="IdRecovered" />
+          </Key>
+          <Property Name="TableName" Type="nvarchar" MaxLength="50" />
+          <Property Name="IdRecovered" Type="int" Nullable="false" />
+          <Property Name="DateAdded" Type="datetime" />
+        </EntityType>
+        <EntityType Name="RepeatEvent">
+          <Key>
+            <PropertyRef Name="RepeatEventId" />
+          </Key>
+          <Property Name="RepeatEventId" Type="int" Nullable="false" />
+          <Property Name="EventId" Type="int" />
+          <Property Name="RepeatType" Type="int" />
+          <Property Name="WeekBeginning" Type="datetime" />
+          <Property Name="WeekEnding" Type="datetime" />
+        </EntityType>
+        <EntityType Name="RepeatTypes">
+          <Key>
+            <PropertyRef Name="RepeatTypeId" />
+          </Key>
+          <Property Name="RepeatTypeId" Type="int" Nullable="false" />
+          <Property Name="RepeatTypeName" Type="nvarchar" MaxLength="20" />
+          <Property Name="RepeatDescription" Type="nvarchar" MaxLength="50" />
+          <Property Name="CreateDate" Type="datetime" />
+        </EntityType>
+        <EntityType Name="Room">
+          <Key>
+            <PropertyRef Name="RoomId" />
+          </Key>
+          <Property Name="RoomId" Type="int" Nullable="false" />
+          <Property Name="RoomName" Type="nvarchar" MaxLength="50" />
+          <Property Name="RoomDescription" Type="nvarchar" MaxLength="150" />
+          <Property Name="Building" Type="int" />
+          <Property Name="RoomType" Type="int" />
+          <Property Name="Capacity" Type="int" />
+        </EntityType>
+        <EntityType Name="RoomType">
+          <Key>
+            <PropertyRef Name="RoomTypeId" />
+          </Key>
+          <Property Name="RoomTypeId" Type="int" Nullable="false" />
+          <Property Name="RoomeTypeDescription" Type="nvarchar" MaxLength="50" />
+          <Property Name="CreateDate" Type="datetime" />
+        </EntityType>
+        <EntityType Name="Setting">
+          <Key>
+            <PropertyRef Name="SettingsId" />
+          </Key>
+          <Property Name="SettingsId" Type="int" Nullable="false" />
+          <Property Name="SettingName" Type="nvarchar" Nullable="false" MaxLength="50" />
+          <Property Name="SettingDescription" Type="nvarchar" Nullable="false" MaxLength="50" />
+          <Property Name="CreateDate" Type="datetime" Nullable="false" />
+          <Property Name="Creator" Type="int" Nullable="false" />
+          <Property Name="Active" Type="nvarchar" Nullable="false" MaxLength="10" />
+        </EntityType>
+        <EntityType Name="Staff">
+          <Key>
+            <PropertyRef Name="StaffId" />
+          </Key>
+          <Property Name="StaffId" Type="int" Nullable="false" />
+          <Property Name="StaffTitle" Type="nvarchar" MaxLength="10" />
+          <Property Name="StaffForename" Type="nvarchar" MaxLength="50" />
+          <Property Name="StaffSurname" Type="nvarchar" MaxLength="50" />
+          <Property Name="StaffEmail" Type="nvarchar" MaxLength="50" />
+          <Property Name="Course" Type="int" />
+          <Property Name="CreateDate" Type="datetime" />
+          <Property Name="LastActivity" Type="datetime" />
+          <Property Name="Password" Type="nvarchar" MaxLength="10" />
+        </EntityType>
+        <!--Errors Found During Generation:
+      warning 6002: The table/view 'C:\USERS\CONOR FOX\DOCUMENTS\GITHUB\TIMETABLINGWEBSERVICE\CONORFOXPROJECT\CONORFOXPROJECT\TIMETABLEDATABASE.MDF.dbo.StaffEvents' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.
+      -->
+        <EntityType Name="StaffEvents">
+          <Key>
+            <PropertyRef Name="EventId" />
+            <PropertyRef Name="StaffId" />
+          </Key>
+          <Property Name="EventId" Type="int" Nullable="false" />
+          <Property Name="StaffId" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Student">
+          <Key>
+            <PropertyRef Name="StudentId" />
+          </Key>
+          <Property Name="StudentId" Type="int" Nullable="false" />
+          <Property Name="StudentTitle" Type="nvarchar" Nullable="false" MaxLength="10" />
+          <Property Name="StudentForename" Type="nvarchar" Nullable="false" MaxLength="50" />
+          <Property Name="StudentSurname" Type="nvarchar" Nullable="false" MaxLength="50" />
+          <Property Name="StudentEmail" Type="nvarchar" Nullable="false" MaxLength="50" />
+          <Property Name="Course" Type="int" Nullable="false" />
+          <Property Name="Year" Type="int" Nullable="false" />
+          <Property Name="CreateDate" Type="datetime" Nullable="false" />
+          <Property Name="LastActivity" Type="datetime" Nullable="false" />
+          <Property Name="Password" Type="nvarchar" Nullable="false" MaxLength="10" />
+        </EntityType>
+        <!--Errors Found During Generation:
+      warning 6002: The table/view 'C:\USERS\CONOR FOX\DOCUMENTS\GITHUB\TIMETABLINGWEBSERVICE\CONORFOXPROJECT\CONORFOXPROJECT\TIMETABLEDATABASE.MDF.dbo.StudentEvents' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.
+      -->
+        <EntityType Name="StudentEvents">
+          <Key>
+            <PropertyRef Name="EventId" />
+            <PropertyRef Name="StudentId" />
+          </Key>
+          <Property Name="EventId" Type="int" Nullable="false" />
+          <Property Name="StudentId" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Time">
+          <Key>
+            <PropertyRef Name="TimeId" />
+          </Key>
+          <Property Name="TimeId" Type="int" Nullable="false" />
+          <Property Name="TimeLiteral" Type="nvarchar" MaxLength="50" />
+          <Property Name="TimeDescription" Type="nvarchar" MaxLength="150" />
+        </EntityType>
+        <EntityType Name="User">
+          <Key>
+            <PropertyRef Name="UserId" />
+          </Key>
+          <Property Name="UserId" Type="int" Nullable="false" />
+          <Property Name="UserTitle" Type="nvarchar" MaxLength="10" />
+          <Property Name="UserForename" Type="nvarchar" MaxLength="50" />
+          <Property Name="UserSurname" Type="nvarchar" MaxLength="50" />
+          <Property Name="UserEmail" Type="nvarchar" MaxLength="50" />
+          <Property Name="UserType" Type="int" />
+          <Property Name="CreateDate" Type="datetime" />
+          <Property Name="LastLogin" Type="datetime" />
+          <Property Name="CurrentlyLoggedIn" Type="nvarchar" MaxLength="10" />
+          <Property Name="Password" Type="nvarchar" MaxLength="10" />
+        </EntityType>
+        <EntityType Name="UserType">
+          <Key>
+            <PropertyRef Name="UserTypeId" />
+          </Key>
+          <Property Name="UserTypeId" Type="int" Nullable="false" />
+          <Property Name="UserTypeDescription" Type="nvarchar" Nullable="false" MaxLength="50" />
+          <Property Name="CreateDate" Type="datetime" Nullable="false" />
+        </EntityType>
+      </Schema>
+    </edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="LocalDatabaseModel" Alias="Self" p1:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:p1="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityContainer Name="LocalDatabase" p1:LazyLoadingEnabled="true">
+          <EntitySet Name="Buildings" EntityType="LocalDatabaseModel.Building" />
+          <EntitySet Name="Courses" EntityType="LocalDatabaseModel.Course" />
+          <EntitySet Name="CourseModules" EntityType="LocalDatabaseModel.CourseModule" />
+          <EntitySet Name="Events" EntityType="LocalDatabaseModel.Event" />
+          <EntitySet Name="EventStatusses" EntityType="LocalDatabaseModel.EventStatuss" />
+          <EntitySet Name="EventTypes" EntityType="LocalDatabaseModel.EventType" />
+          <EntitySet Name="Modules" EntityType="LocalDatabaseModel.Module" />
+          <EntitySet Name="RecycledIds" EntityType="LocalDatabaseModel.RecycledId" />
+          <EntitySet Name="RepeatEvents" EntityType="LocalDatabaseModel.RepeatEvent" />
+          <EntitySet Name="RepeatTypes" EntityType="LocalDatabaseModel.RepeatType" />
+          <EntitySet Name="Rooms" EntityType="LocalDatabaseModel.Room" />
+          <EntitySet Name="RoomTypes" EntityType="LocalDatabaseModel.RoomType" />
+          <EntitySet Name="Settings" EntityType="LocalDatabaseModel.Setting" />
+          <EntitySet Name="Staffs" EntityType="LocalDatabaseModel.Staff" />
+          <EntitySet Name="StaffEvents" EntityType="LocalDatabaseModel.StaffEvent" />
+          <EntitySet Name="Students" EntityType="LocalDatabaseModel.Student" />
+          <EntitySet Name="StudentEvents" EntityType="LocalDatabaseModel.StudentEvent" />
+          <EntitySet Name="Times" EntityType="LocalDatabaseModel.Time" />
+          <EntitySet Name="Users" EntityType="LocalDatabaseModel.User" />
+          <EntitySet Name="UserTypes" EntityType="LocalDatabaseModel.UserType" />
+        </EntityContainer>
+        <EntityType Name="Building">
+          <Key>
+            <PropertyRef Name="BuildingId" />
+          </Key>
+          <Property Name="BuildingId" Type="Int32" Nullable="false" />
+          <Property Name="BuildingName" Type="String" MaxLength="50" Unicode="true" FixedLength="false" />
+          <Property Name="BuildingNumber" Type="Int32" />
+          <Property Name="AddressLine1" Type="String" MaxLength="50" Unicode="true" FixedLength="false" />
+          <Property Name="AddressLine2" Type="String" MaxLength="50" Unicode="true" FixedLength="false" />
+          <Property Name="PostalCode" Type="String" MaxLength="10" Unicode="true" FixedLength="false" />
+          <Property Name="City" Type="String" MaxLength="50" Unicode="true" FixedLength="false" />
+        </EntityType>
+        <EntityType Name="Course">
+          <Key>
+            <PropertyRef Name="CourseId" />
+          </Key>
+          <Property Name="CourseId" Type="Int32" Nullable="false" />
+          <Property Name="CourseName" Type="String" MaxLength="50" Unicode="true" FixedLength="false" />
+          <Property Name="CourseDescription" Type="String" MaxLength="150" Unicode="true" FixedLength="false" />
+          <Property Name="Duration" Type="Int32" />
+          <Property Name="CreateDate" Type="DateTime" Precision="3" />
+          <Property Name="Creator" Type="Int32" />
+        </EntityType>
+        <EntityType Name="CourseModule">
+          <Key>
+            <PropertyRef Name="CourseModuleId" />
+          </Key>
+          <Property Name="CourseModuleId" Type="Int32" Nullable="false" />
+          <Property Name="Course" Type="Int32" Nullable="false" />
+          <Property Name="Module" Type="Int32" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Event">
+          <Key>
+            <PropertyRef Name="EventId" />
+          </Key>
+          <Property Name="EventId" Type="Int32" Nullable="false" />
+          <Property Name="EventTitle" Type="String" MaxLength="10" Unicode="true" FixedLength="false" />
+          <Property Name="EventDescription" Type="String" MaxLength="150" Unicode="true" FixedLength="false" />
+          <Property Name="EventType" Type="Int32" />
+          <Property Name="StartDate" Type="DateTime" Precision="3" />
+          <Property Name="CreateDate" Type="DateTime" Precision="3" />
+          <Property Name="Time" Type="Int32" />
+          <Property Name="Duration" Type="Int32" />
+          <Property Name="Repeats" Type="Int32" />
+          <Property Name="LastUserEdited" Type="Int32" />
+          <Property Name="LastDateEdited" Type="DateTime" Precision="3" />
+          <Property Name="AdditionalNotes" Type="String" MaxLength="150" Unicode="true" FixedLength="false" />
+          <Property Name="Status" Type="String" MaxLength="10" Unicode="true" FixedLength="false" />
+          <Property Name="Room" Type="Int32" />
+          <Property Name="Attendants" Type="Int32" />
+          <Property Name="Course" Type="Int32" />
+          <Property Name="Module" Type="Int32" />
+        </EntityType>
+        <EntityType Name="EventStatuss">
+          <Key>
+            <PropertyRef Name="StatusId" />
+          </Key>
+          <Property Name="StatusId" Type="Int32" Nullable="false" />
+          <Property Name="StatusName" Type="String" MaxLength="50" Unicode="true" FixedLength="false" />
+          <Property Name="StatusDescription" Type="String" MaxLength="150" Unicode="true" FixedLength="false" />
+        </EntityType>
+        <EntityType Name="EventType">
+          <Key>
+            <PropertyRef Name="TypeId" />
+          </Key>
+          <Property Name="TypeId" Type="Int32" Nullable="false" />
+          <Property Name="TypeName" Type="String" Nullable="false" MaxLength="50" Unicode="true" FixedLength="false" />
+          <Property Name="TypeDescription" Type="String" Nullable="false" MaxLength="150" Unicode="true" FixedLength="false" />
+          <Property Name="CreateDate" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="Creator" Type="Int32" Nullable="false" />
+          <Property Name="LastEdited" Type="DateTime" Nullable="false" Precision="3" />
+        </EntityType>
+        <EntityType Name="Module">
+          <Key>
+            <PropertyRef Name="ModuleId" />
+          </Key>
+          <Property Name="ModuleId" Type="Int32" Nullable="false" />
+          <Property Name="ModuleName" Type="String" MaxLength="50" Unicode="true" FixedLength="false" />
+          <Property Name="ModuleDescription" Type="String" MaxLength="150" Unicode="true" FixedLength="false" />
+          <Property Name="CreateDate" Type="DateTime" Precision="3" />
+          <Property Name="Creator" Type="Int32" />
+          <Property Name="LastEdited" Type="DateTime" Precision="3" />
+        </EntityType>
+        <EntityType Name="RecycledId">
+          <Key>
+            <PropertyRef Name="IdRecovered" />
+          </Key>
+          <Property Name="TableName" Type="String" MaxLength="50" Unicode="true" FixedLength="false" />
+          <Property Name="IdRecovered" Type="Int32" Nullable="false" />
+          <Property Name="DateAdded" Type="DateTime" Precision="3" />
+        </EntityType>
+        <EntityType Name="RepeatEvent">
+          <Key>
+            <PropertyRef Name="RepeatEventId" />
+          </Key>
+          <Property Name="RepeatEventId" Type="Int32" Nullable="false" />
+          <Property Name="EventId" Type="Int32" />
+          <Property Name="RepeatType" Type="Int32" />
+          <Property Name="WeekBeginning" Type="DateTime" Precision="3" />
+          <Property Name="WeekEnding" Type="DateTime" Precision="3" />
+        </EntityType>
+        <EntityType Name="RepeatType">
+          <Key>
+            <PropertyRef Name="RepeatTypeId" />
+          </Key>
+          <Property Name="RepeatTypeId" Type="Int32" Nullable="false" />
+          <Property Name="RepeatTypeName" Type="String" MaxLength="20" Unicode="true" FixedLength="false" />
+          <Property Name="RepeatDescription" Type="String" MaxLength="50" Unicode="true" FixedLength="false" />
+          <Property Name="CreateDate" Type="DateTime" Precision="3" />
+        </EntityType>
+        <EntityType Name="Room">
+          <Key>
+            <PropertyRef Name="RoomId" />
+          </Key>
+          <Property Name="RoomId" Type="Int32" Nullable="false" />
+          <Property Name="RoomName" Type="String" MaxLength="50" Unicode="true" FixedLength="false" />
+          <Property Name="RoomDescription" Type="String" MaxLength="150" Unicode="true" FixedLength="false" />
+          <Property Name="Building" Type="Int32" />
+          <Property Name="RoomType" Type="Int32" />
+          <Property Name="Capacity" Type="Int32" />
+        </EntityType>
+        <EntityType Name="RoomType">
+          <Key>
+            <PropertyRef Name="RoomTypeId" />
+          </Key>
+          <Property Name="RoomTypeId" Type="Int32" Nullable="false" />
+          <Property Name="RoomeTypeDescription" Type="String" MaxLength="50" Unicode="true" FixedLength="false" />
+          <Property Name="CreateDate" Type="DateTime" Precision="3" />
+        </EntityType>
+        <EntityType Name="Setting">
+          <Key>
+            <PropertyRef Name="SettingsId" />
+          </Key>
+          <Property Name="SettingsId" Type="Int32" Nullable="false" />
+          <Property Name="SettingName" Type="String" Nullable="false" MaxLength="50" Unicode="true" FixedLength="false" />
+          <Property Name="SettingDescription" Type="String" Nullable="false" MaxLength="50" Unicode="true" FixedLength="false" />
+          <Property Name="CreateDate" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="Creator" Type="Int32" Nullable="false" />
+          <Property Name="Active" Type="String" Nullable="false" MaxLength="10" Unicode="true" FixedLength="false" />
+        </EntityType>
+        <EntityType Name="Staff">
+          <Key>
+            <PropertyRef Name="StaffId" />
+          </Key>
+          <Property Name="StaffId" Type="Int32" Nullable="false" />
+          <Property Name="StaffTitle" Type="String" MaxLength="10" Unicode="true" FixedLength="false" />
+          <Property Name="StaffForename" Type="String" MaxLength="50" Unicode="true" FixedLength="false" />
+          <Property Name="StaffSurname" Type="String" MaxLength="50" Unicode="true" FixedLength="false" />
+          <Property Name="StaffEmail" Type="String" MaxLength="50" Unicode="true" FixedLength="false" />
+          <Property Name="Course" Type="Int32" />
+          <Property Name="CreateDate" Type="DateTime" Precision="3" />
+          <Property Name="LastActivity" Type="DateTime" Precision="3" />
+          <Property Name="Password" Type="String" MaxLength="10" Unicode="true" FixedLength="false" />
+        </EntityType>
+        <EntityType Name="StaffEvent">
+          <Key>
+            <PropertyRef Name="EventId" />
+            <PropertyRef Name="StaffId" />
+          </Key>
+          <Property Name="EventId" Type="Int32" Nullable="false" />
+          <Property Name="StaffId" Type="Int32" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Student">
+          <Key>
+            <PropertyRef Name="StudentId" />
+          </Key>
+          <Property Name="StudentId" Type="Int32" Nullable="false" />
+          <Property Name="StudentTitle" Type="String" Nullable="false" MaxLength="10" Unicode="true" FixedLength="false" />
+          <Property Name="StudentForename" Type="String" Nullable="false" MaxLength="50" Unicode="true" FixedLength="false" />
+          <Property Name="StudentSurname" Type="String" Nullable="false" MaxLength="50" Unicode="true" FixedLength="false" />
+          <Property Name="StudentEmail" Type="String" Nullable="false" MaxLength="50" Unicode="true" FixedLength="false" />
+          <Property Name="Course" Type="Int32" Nullable="false" />
+          <Property Name="Year" Type="Int32" Nullable="false" />
+          <Property Name="CreateDate" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="LastActivity" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="Password" Type="String" Nullable="false" MaxLength="10" Unicode="true" FixedLength="false" />
+        </EntityType>
+        <EntityType Name="StudentEvent">
+          <Key>
+            <PropertyRef Name="EventId" />
+            <PropertyRef Name="StudentId" />
+          </Key>
+          <Property Name="EventId" Type="Int32" Nullable="false" />
+          <Property Name="StudentId" Type="Int32" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Time">
+          <Key>
+            <PropertyRef Name="TimeId" />
+          </Key>
+          <Property Name="TimeId" Type="Int32" Nullable="false" />
+          <Property Name="TimeLiteral" Type="String" MaxLength="50" Unicode="true" FixedLength="false" />
+          <Property Name="TimeDescription" Type="String" MaxLength="150" Unicode="true" FixedLength="false" />
+        </EntityType>
+        <EntityType Name="User">
+          <Key>
+            <PropertyRef Name="UserId" />
+          </Key>
+          <Property Name="UserId" Type="Int32" Nullable="false" />
+          <Property Name="UserTitle" Type="String" MaxLength="10" Unicode="true" FixedLength="false" />
+          <Property Name="UserForename" Type="String" MaxLength="50" Unicode="true" FixedLength="false" />
+          <Property Name="UserSurname" Type="String" MaxLength="50" Unicode="true" FixedLength="false" />
+          <Property Name="UserEmail" Type="String" MaxLength="50" Unicode="true" FixedLength="false" />
+          <Property Name="UserType" Type="Int32" />
+          <Property Name="CreateDate" Type="DateTime" Precision="3" />
+          <Property Name="LastLogin" Type="DateTime" Precision="3" />
+          <Property Name="CurrentlyLoggedIn" Type="String" MaxLength="10" Unicode="true" FixedLength="false" />
+          <Property Name="Password" Type="String" MaxLength="10" Unicode="true" FixedLength="false" />
+        </EntityType>
+        <EntityType Name="UserType">
+          <Key>
+            <PropertyRef Name="UserTypeId" />
+          </Key>
+          <Property Name="UserTypeId" Type="Int32" Nullable="false" />
+          <Property Name="UserTypeDescription" Type="String" Nullable="false" MaxLength="50" Unicode="true" FixedLength="false" />
+          <Property Name="CreateDate" Type="DateTime" Nullable="false" Precision="3" />
+        </EntityType>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="LocalDatabaseModelStoreContainer" CdmEntityContainer="LocalDatabase">
+          <EntitySetMapping Name="Buildings">
+            <EntityTypeMapping TypeName="LocalDatabaseModel.Building">
+              <MappingFragment StoreEntitySet="Building">
+                <ScalarProperty Name="BuildingId" ColumnName="BuildingId" />
+                <ScalarProperty Name="BuildingName" ColumnName="BuildingName" />
+                <ScalarProperty Name="BuildingNumber" ColumnName="BuildingNumber" />
+                <ScalarProperty Name="AddressLine1" ColumnName="AddressLine1" />
+                <ScalarProperty Name="AddressLine2" ColumnName="AddressLine2" />
+                <ScalarProperty Name="PostalCode" ColumnName="PostalCode" />
+                <ScalarProperty Name="City" ColumnName="City" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Courses">
+            <EntityTypeMapping TypeName="LocalDatabaseModel.Course">
+              <MappingFragment StoreEntitySet="Course">
+                <ScalarProperty Name="CourseId" ColumnName="CourseId" />
+                <ScalarProperty Name="CourseName" ColumnName="CourseName" />
+                <ScalarProperty Name="CourseDescription" ColumnName="CourseDescription" />
+                <ScalarProperty Name="Duration" ColumnName="Duration" />
+                <ScalarProperty Name="CreateDate" ColumnName="CreateDate" />
+                <ScalarProperty Name="Creator" ColumnName="Creator" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="CourseModules">
+            <EntityTypeMapping TypeName="LocalDatabaseModel.CourseModule">
+              <MappingFragment StoreEntitySet="CourseModule">
+                <ScalarProperty Name="CourseModuleId" ColumnName="CourseModuleId" />
+                <ScalarProperty Name="Course" ColumnName="Course" />
+                <ScalarProperty Name="Module" ColumnName="Module" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Events">
+            <EntityTypeMapping TypeName="LocalDatabaseModel.Event">
+              <MappingFragment StoreEntitySet="Event">
+                <ScalarProperty Name="EventId" ColumnName="EventId" />
+                <ScalarProperty Name="EventTitle" ColumnName="EventTitle" />
+                <ScalarProperty Name="EventDescription" ColumnName="EventDescription" />
+                <ScalarProperty Name="EventType" ColumnName="EventType" />
+                <ScalarProperty Name="StartDate" ColumnName="StartDate" />
+                <ScalarProperty Name="CreateDate" ColumnName="CreateDate" />
+                <ScalarProperty Name="Time" ColumnName="Time" />
+                <ScalarProperty Name="Duration" ColumnName="Duration" />
+                <ScalarProperty Name="Repeats" ColumnName="Repeats" />
+                <ScalarProperty Name="LastUserEdited" ColumnName="LastUserEdited" />
+                <ScalarProperty Name="LastDateEdited" ColumnName="LastDateEdited" />
+                <ScalarProperty Name="AdditionalNotes" ColumnName="AdditionalNotes" />
+                <ScalarProperty Name="Status" ColumnName="Status" />
+                <ScalarProperty Name="Room" ColumnName="Room" />
+                <ScalarProperty Name="Attendants" ColumnName="Attendants" />
+                <ScalarProperty Name="Course" ColumnName="Course" />
+                <ScalarProperty Name="Module" ColumnName="Module" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="EventStatusses">
+            <EntityTypeMapping TypeName="LocalDatabaseModel.EventStatuss">
+              <MappingFragment StoreEntitySet="EventStatuss">
+                <ScalarProperty Name="StatusId" ColumnName="StatusId" />
+                <ScalarProperty Name="StatusName" ColumnName="StatusName" />
+                <ScalarProperty Name="StatusDescription" ColumnName="StatusDescription" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="EventTypes">
+            <EntityTypeMapping TypeName="LocalDatabaseModel.EventType">
+              <MappingFragment StoreEntitySet="EventType">
+                <ScalarProperty Name="TypeId" ColumnName="TypeId" />
+                <ScalarProperty Name="TypeName" ColumnName="TypeName" />
+                <ScalarProperty Name="TypeDescription" ColumnName="TypeDescription" />
+                <ScalarProperty Name="CreateDate" ColumnName="CreateDate" />
+                <ScalarProperty Name="Creator" ColumnName="Creator" />
+                <ScalarProperty Name="LastEdited" ColumnName="LastEdited" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Modules">
+            <EntityTypeMapping TypeName="LocalDatabaseModel.Module">
+              <MappingFragment StoreEntitySet="Module">
+                <ScalarProperty Name="ModuleId" ColumnName="ModuleId" />
+                <ScalarProperty Name="ModuleName" ColumnName="ModuleName" />
+                <ScalarProperty Name="ModuleDescription" ColumnName="ModuleDescription" />
+                <ScalarProperty Name="CreateDate" ColumnName="CreateDate" />
+                <ScalarProperty Name="Creator" ColumnName="Creator" />
+                <ScalarProperty Name="LastEdited" ColumnName="LastEdited" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="RecycledIds">
+            <EntityTypeMapping TypeName="LocalDatabaseModel.RecycledId">
+              <MappingFragment StoreEntitySet="RecycledIds">
+                <ScalarProperty Name="TableName" ColumnName="TableName" />
+                <ScalarProperty Name="IdRecovered" ColumnName="IdRecovered" />
+                <ScalarProperty Name="DateAdded" ColumnName="DateAdded" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="RepeatEvents">
+            <EntityTypeMapping TypeName="LocalDatabaseModel.RepeatEvent">
+              <MappingFragment StoreEntitySet="RepeatEvent">
+                <ScalarProperty Name="RepeatEventId" ColumnName="RepeatEventId" />
+                <ScalarProperty Name="EventId" ColumnName="EventId" />
+                <ScalarProperty Name="RepeatType" ColumnName="RepeatType" />
+                <ScalarProperty Name="WeekBeginning" ColumnName="WeekBeginning" />
+                <ScalarProperty Name="WeekEnding" ColumnName="WeekEnding" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="RepeatTypes">
+            <EntityTypeMapping TypeName="LocalDatabaseModel.RepeatType">
+              <MappingFragment StoreEntitySet="RepeatTypes">
+                <ScalarProperty Name="RepeatTypeId" ColumnName="RepeatTypeId" />
+                <ScalarProperty Name="RepeatTypeName" ColumnName="RepeatTypeName" />
+                <ScalarProperty Name="RepeatDescription" ColumnName="RepeatDescription" />
+                <ScalarProperty Name="CreateDate" ColumnName="CreateDate" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Rooms">
+            <EntityTypeMapping TypeName="LocalDatabaseModel.Room">
+              <MappingFragment StoreEntitySet="Room">
+                <ScalarProperty Name="RoomId" ColumnName="RoomId" />
+                <ScalarProperty Name="RoomName" ColumnName="RoomName" />
+                <ScalarProperty Name="RoomDescription" ColumnName="RoomDescription" />
+                <ScalarProperty Name="Building" ColumnName="Building" />
+                <ScalarProperty Name="RoomType" ColumnName="RoomType" />
+                <ScalarProperty Name="Capacity" ColumnName="Capacity" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="RoomTypes">
+            <EntityTypeMapping TypeName="LocalDatabaseModel.RoomType">
+              <MappingFragment StoreEntitySet="RoomType">
+                <ScalarProperty Name="RoomTypeId" ColumnName="RoomTypeId" />
+                <ScalarProperty Name="RoomeTypeDescription" ColumnName="RoomeTypeDescription" />
+                <ScalarProperty Name="CreateDate" ColumnName="CreateDate" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Settings">
+            <EntityTypeMapping TypeName="LocalDatabaseModel.Setting">
+              <MappingFragment StoreEntitySet="Setting">
+                <ScalarProperty Name="SettingsId" ColumnName="SettingsId" />
+                <ScalarProperty Name="SettingName" ColumnName="SettingName" />
+                <ScalarProperty Name="SettingDescription" ColumnName="SettingDescription" />
+                <ScalarProperty Name="CreateDate" ColumnName="CreateDate" />
+                <ScalarProperty Name="Creator" ColumnName="Creator" />
+                <ScalarProperty Name="Active" ColumnName="Active" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Staffs">
+            <EntityTypeMapping TypeName="LocalDatabaseModel.Staff">
+              <MappingFragment StoreEntitySet="Staff">
+                <ScalarProperty Name="StaffId" ColumnName="StaffId" />
+                <ScalarProperty Name="StaffTitle" ColumnName="StaffTitle" />
+                <ScalarProperty Name="StaffForename" ColumnName="StaffForename" />
+                <ScalarProperty Name="StaffSurname" ColumnName="StaffSurname" />
+                <ScalarProperty Name="StaffEmail" ColumnName="StaffEmail" />
+                <ScalarProperty Name="Course" ColumnName="Course" />
+                <ScalarProperty Name="CreateDate" ColumnName="CreateDate" />
+                <ScalarProperty Name="LastActivity" ColumnName="LastActivity" />
+                <ScalarProperty Name="Password" ColumnName="Password" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="StaffEvents">
+            <EntityTypeMapping TypeName="LocalDatabaseModel.StaffEvent">
+              <MappingFragment StoreEntitySet="StaffEvents">
+                <ScalarProperty Name="EventId" ColumnName="EventId" />
+                <ScalarProperty Name="StaffId" ColumnName="StaffId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Students">
+            <EntityTypeMapping TypeName="LocalDatabaseModel.Student">
+              <MappingFragment StoreEntitySet="Student">
+                <ScalarProperty Name="StudentId" ColumnName="StudentId" />
+                <ScalarProperty Name="StudentTitle" ColumnName="StudentTitle" />
+                <ScalarProperty Name="StudentForename" ColumnName="StudentForename" />
+                <ScalarProperty Name="StudentSurname" ColumnName="StudentSurname" />
+                <ScalarProperty Name="StudentEmail" ColumnName="StudentEmail" />
+                <ScalarProperty Name="Course" ColumnName="Course" />
+                <ScalarProperty Name="Year" ColumnName="Year" />
+                <ScalarProperty Name="CreateDate" ColumnName="CreateDate" />
+                <ScalarProperty Name="LastActivity" ColumnName="LastActivity" />
+                <ScalarProperty Name="Password" ColumnName="Password" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="StudentEvents">
+            <EntityTypeMapping TypeName="LocalDatabaseModel.StudentEvent">
+              <MappingFragment StoreEntitySet="StudentEvents">
+                <ScalarProperty Name="EventId" ColumnName="EventId" />
+                <ScalarProperty Name="StudentId" ColumnName="StudentId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Times">
+            <EntityTypeMapping TypeName="LocalDatabaseModel.Time">
+              <MappingFragment StoreEntitySet="Time">
+                <ScalarProperty Name="TimeId" ColumnName="TimeId" />
+                <ScalarProperty Name="TimeLiteral" ColumnName="TimeLiteral" />
+                <ScalarProperty Name="TimeDescription" ColumnName="TimeDescription" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Users">
+            <EntityTypeMapping TypeName="LocalDatabaseModel.User">
+              <MappingFragment StoreEntitySet="User">
+                <ScalarProperty Name="UserId" ColumnName="UserId" />
+                <ScalarProperty Name="UserTitle" ColumnName="UserTitle" />
+                <ScalarProperty Name="UserForename" ColumnName="UserForename" />
+                <ScalarProperty Name="UserSurname" ColumnName="UserSurname" />
+                <ScalarProperty Name="UserEmail" ColumnName="UserEmail" />
+                <ScalarProperty Name="UserType" ColumnName="UserType" />
+                <ScalarProperty Name="CreateDate" ColumnName="CreateDate" />
+                <ScalarProperty Name="LastLogin" ColumnName="LastLogin" />
+                <ScalarProperty Name="CurrentlyLoggedIn" ColumnName="CurrentlyLoggedIn" />
+                <ScalarProperty Name="Password" ColumnName="Password" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="UserTypes">
+            <EntityTypeMapping TypeName="LocalDatabaseModel.UserType">
+              <MappingFragment StoreEntitySet="UserType">
+                <ScalarProperty Name="UserTypeId" ColumnName="UserTypeId" />
+                <ScalarProperty Name="UserTypeDescription" ColumnName="UserTypeDescription" />
+                <ScalarProperty Name="CreateDate" ColumnName="CreateDate" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="True" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="True" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>
