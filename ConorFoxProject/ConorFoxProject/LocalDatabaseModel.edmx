@@ -20,19 +20,9 @@
           <EntitySet Name="RoomType" EntityType="LocalDatabaseModel.Store.RoomType" store:Type="Tables" Schema="dbo" />
           <EntitySet Name="Setting" EntityType="LocalDatabaseModel.Store.Setting" store:Type="Tables" Schema="dbo" />
           <EntitySet Name="Staff" EntityType="LocalDatabaseModel.Store.Staff" store:Type="Tables" Schema="dbo" />
-          <EntitySet Name="StaffEvents" EntityType="LocalDatabaseModel.Store.StaffEvents" store:Type="Tables" store:Schema="dbo" store:Name="StaffEvents">
-            <DefiningQuery>SELECT 
-      [StaffEvents].[EventId] AS [EventId], 
-      [StaffEvents].[StaffId] AS [StaffId]
-      FROM [dbo].[StaffEvents] AS [StaffEvents]</DefiningQuery>
-          </EntitySet>
+          <EntitySet Name="StaffEvents" EntityType="LocalDatabaseModel.Store.StaffEvents" store:Type="Tables" Schema="dbo" />
           <EntitySet Name="Student" EntityType="LocalDatabaseModel.Store.Student" store:Type="Tables" Schema="dbo" />
-          <EntitySet Name="StudentEvents" EntityType="LocalDatabaseModel.Store.StudentEvents" store:Type="Tables" store:Schema="dbo" store:Name="StudentEvents">
-            <DefiningQuery>SELECT 
-      [StudentEvents].[EventId] AS [EventId], 
-      [StudentEvents].[StudentId] AS [StudentId]
-      FROM [dbo].[StudentEvents] AS [StudentEvents]</DefiningQuery>
-          </EntitySet>
+          <EntitySet Name="StudentEvents" EntityType="LocalDatabaseModel.Store.StudentEvents" store:Type="Tables" Schema="dbo" />
           <EntitySet Name="Time" EntityType="LocalDatabaseModel.Store.Time" store:Type="Tables" Schema="dbo" />
           <EntitySet Name="User" EntityType="LocalDatabaseModel.Store.User" store:Type="Tables" Schema="dbo" />
           <EntitySet Name="UserType" EntityType="LocalDatabaseModel.Store.UserType" store:Type="Tables" Schema="dbo" />
@@ -191,16 +181,12 @@
           <Property Name="LastActivity" Type="datetime" />
           <Property Name="Password" Type="nvarchar" MaxLength="10" />
         </EntityType>
-        <!--Errors Found During Generation:
-      warning 6002: The table/view 'C:\USERS\CONOR FOX\DOCUMENTS\GITHUB\TIMETABLINGWEBSERVICE\CONORFOXPROJECT\CONORFOXPROJECT\TIMETABLEDATABASE.MDF.dbo.StaffEvents' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.
-      -->
         <EntityType Name="StaffEvents">
           <Key>
-            <PropertyRef Name="EventId" />
             <PropertyRef Name="StaffId" />
           </Key>
-          <Property Name="EventId" Type="int" Nullable="false" />
-          <Property Name="StaffId" Type="int" Nullable="false" />
+          <Property Name="StaffId" Type="nvarchar" Nullable="false" MaxLength="50" />
+          <Property Name="EventId" Type="nvarchar" Nullable="false" MaxLength="50" />
         </EntityType>
         <EntityType Name="Student">
           <Key>
@@ -217,16 +203,12 @@
           <Property Name="LastActivity" Type="datetime" Nullable="false" />
           <Property Name="Password" Type="nvarchar" Nullable="false" MaxLength="10" />
         </EntityType>
-        <!--Errors Found During Generation:
-      warning 6002: The table/view 'C:\USERS\CONOR FOX\DOCUMENTS\GITHUB\TIMETABLINGWEBSERVICE\CONORFOXPROJECT\CONORFOXPROJECT\TIMETABLEDATABASE.MDF.dbo.StudentEvents' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.
-      -->
         <EntityType Name="StudentEvents">
           <Key>
-            <PropertyRef Name="EventId" />
             <PropertyRef Name="StudentId" />
           </Key>
-          <Property Name="EventId" Type="int" Nullable="false" />
-          <Property Name="StudentId" Type="int" Nullable="false" />
+          <Property Name="StudentId" Type="nvarchar" Nullable="false" MaxLength="50" />
+          <Property Name="EventId" Type="nvarchar" Nullable="false" MaxLength="50" />
         </EntityType>
         <EntityType Name="Time">
           <Key>
@@ -442,11 +424,10 @@
         </EntityType>
         <EntityType Name="StaffEvent">
           <Key>
-            <PropertyRef Name="EventId" />
             <PropertyRef Name="StaffId" />
           </Key>
-          <Property Name="EventId" Type="Int32" Nullable="false" />
-          <Property Name="StaffId" Type="Int32" Nullable="false" />
+          <Property Name="StaffId" Type="String" Nullable="false" MaxLength="50" Unicode="true" FixedLength="false" />
+          <Property Name="EventId" Type="String" Nullable="false" MaxLength="50" Unicode="true" FixedLength="false" />
         </EntityType>
         <EntityType Name="Student">
           <Key>
@@ -465,11 +446,10 @@
         </EntityType>
         <EntityType Name="StudentEvent">
           <Key>
-            <PropertyRef Name="EventId" />
             <PropertyRef Name="StudentId" />
           </Key>
-          <Property Name="EventId" Type="Int32" Nullable="false" />
-          <Property Name="StudentId" Type="Int32" Nullable="false" />
+          <Property Name="StudentId" Type="String" Nullable="false" MaxLength="50" Unicode="true" FixedLength="false" />
+          <Property Name="EventId" Type="String" Nullable="false" MaxLength="50" Unicode="true" FixedLength="false" />
         </EntityType>
         <EntityType Name="Time">
           <Key>
@@ -679,8 +659,8 @@
           <EntitySetMapping Name="StaffEvents">
             <EntityTypeMapping TypeName="LocalDatabaseModel.StaffEvent">
               <MappingFragment StoreEntitySet="StaffEvents">
-                <ScalarProperty Name="EventId" ColumnName="EventId" />
                 <ScalarProperty Name="StaffId" ColumnName="StaffId" />
+                <ScalarProperty Name="EventId" ColumnName="EventId" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
@@ -703,8 +683,8 @@
           <EntitySetMapping Name="StudentEvents">
             <EntityTypeMapping TypeName="LocalDatabaseModel.StudentEvent">
               <MappingFragment StoreEntitySet="StudentEvents">
-                <ScalarProperty Name="EventId" ColumnName="EventId" />
                 <ScalarProperty Name="StudentId" ColumnName="StudentId" />
+                <ScalarProperty Name="EventId" ColumnName="EventId" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

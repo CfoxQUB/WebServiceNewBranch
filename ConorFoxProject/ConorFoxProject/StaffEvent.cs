@@ -14,7 +14,7 @@ namespace ConorFoxProject
     
     public partial class StaffEvent
     {
-        public int EventId { get; set; }
-        public int StaffId { get; set; }
+        public string StaffId { get; set; }
+        public string EventId { get; set; }
     }
 }

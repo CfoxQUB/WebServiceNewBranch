@@ -14,7 +14,7 @@ namespace ConorFoxProject
     
     public partial class StudentEvent
     {
-        public int EventId { get; set; }
-        public int StudentId { get; set; }
+        public string StudentId { get; set; }
+        public string EventId { get; set; }
     }
 }

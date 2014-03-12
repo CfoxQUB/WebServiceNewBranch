@@ -4,7 +4,7 @@
   <edmx:Runtime>
     <!-- SSDL content -->
     <edmx:StorageModels>
-    <Schema Namespace="TimetableDatabaseModel.Store" Alias="Self" Provider="System.Data.SqlClient" ProviderManifestToken="2008" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+      <Schema Namespace="TimetableDatabaseModel.Store" Alias="Self" Provider="System.Data.SqlClient" ProviderManifestToken="2008" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
         <EntityContainer Name="TimetableDatabaseModelStoreContainer">
           <EntitySet Name="Building" EntityType="TimetableDatabaseModel.Store.Building" store:Type="Tables" Schema="dbo" />
           <EntitySet Name="Course" EntityType="TimetableDatabaseModel.Store.Course" store:Type="Tables" Schema="dbo" />
@@ -20,19 +20,9 @@
           <EntitySet Name="RoomType" EntityType="TimetableDatabaseModel.Store.RoomType" store:Type="Tables" Schema="dbo" />
           <EntitySet Name="Setting" EntityType="TimetableDatabaseModel.Store.Setting" store:Type="Tables" Schema="dbo" />
           <EntitySet Name="Staff" EntityType="TimetableDatabaseModel.Store.Staff" store:Type="Tables" Schema="dbo" />
-          <EntitySet Name="StaffEvents" EntityType="TimetableDatabaseModel.Store.StaffEvents" store:Type="Tables" store:Schema="dbo" store:Name="StaffEvents">
-            <DefiningQuery>SELECT 
-      [StaffEvents].[EventId] AS [EventId], 
-      [StaffEvents].[StaffId] AS [StaffId]
-      FROM [dbo].[StaffEvents] AS [StaffEvents]</DefiningQuery>
-          </EntitySet>
+          <EntitySet Name="StaffEvents" EntityType="TimetableDatabaseModel.Store.StaffEvents" store:Type="Tables" Schema="dbo" />
           <EntitySet Name="Student" EntityType="TimetableDatabaseModel.Store.Student" store:Type="Tables" Schema="dbo" />
-          <EntitySet Name="StudentEvents" EntityType="TimetableDatabaseModel.Store.StudentEvents" store:Type="Tables" store:Schema="dbo" store:Name="StudentEvents">
-            <DefiningQuery>SELECT 
-      [StudentEvents].[EventId] AS [EventId], 
-      [StudentEvents].[StudentId] AS [StudentId]
-      FROM [dbo].[StudentEvents] AS [StudentEvents]</DefiningQuery>
-          </EntitySet>
+          <EntitySet Name="StudentEvents" EntityType="TimetableDatabaseModel.Store.StudentEvents" store:Type="Tables" Schema="dbo" />
           <EntitySet Name="Time" EntityType="TimetableDatabaseModel.Store.Time" store:Type="Tables" Schema="dbo" />
           <EntitySet Name="User" EntityType="TimetableDatabaseModel.Store.User" store:Type="Tables" Schema="dbo" />
           <EntitySet Name="UserType" EntityType="TimetableDatabaseModel.Store.UserType" store:Type="Tables" Schema="dbo" />
@@ -191,16 +181,12 @@
           <Property Name="LastActivity" Type="datetime" />
           <Property Name="Password" Type="nvarchar" MaxLength="10" />
         </EntityType>
-        <!--Errors Found During Generation:
-      warning 6002: The table/view 'TimetableDatabase.dbo.StaffEvents' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.
-      -->
         <EntityType Name="StaffEvents">
           <Key>
-            <PropertyRef Name="EventId" />
             <PropertyRef Name="StaffId" />
           </Key>
-          <Property Name="EventId" Type="int" Nullable="false" />
-          <Property Name="StaffId" Type="int" Nullable="false" />
+          <Property Name="StaffId" Type="nvarchar" Nullable="false" MaxLength="50" />
+          <Property Name="EventId" Type="nvarchar" Nullable="false" MaxLength="50" />
         </EntityType>
         <EntityType Name="Student">
           <Key>
@@ -217,16 +203,12 @@
           <Property Name="LastActivity" Type="datetime" Nullable="false" />
           <Property Name="Password" Type="nvarchar" Nullable="false" MaxLength="10" />
         </EntityType>
-        <!--Errors Found During Generation:
-      warning 6002: The table/view 'TimetableDatabase.dbo.StudentEvents' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.
-      -->
         <EntityType Name="StudentEvents">
           <Key>
-            <PropertyRef Name="EventId" />
             <PropertyRef Name="StudentId" />
           </Key>
-          <Property Name="EventId" Type="int" Nullable="false" />
-          <Property Name="StudentId" Type="int" Nullable="false" />
+          <Property Name="StudentId" Type="nvarchar" Nullable="false" MaxLength="50" />
+          <Property Name="EventId" Type="nvarchar" Nullable="false" MaxLength="50" />
         </EntityType>
         <EntityType Name="Time">
           <Key>
@@ -259,31 +241,32 @@
           <Property Name="UserTypeDescription" Type="nvarchar" Nullable="false" MaxLength="50" />
           <Property Name="CreateDate" Type="datetime" Nullable="false" />
         </EntityType>
-      </Schema></edmx:StorageModels>
+      </Schema>
+    </edmx:StorageModels>
     <!-- CSDL content -->
     <edmx:ConceptualModels>
       <Schema Namespace="TimetableDatabaseModel" Alias="Self" p1:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:p1="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
         <EntityContainer Name="TimetableDatabase" p1:LazyLoadingEnabled="true">
           <EntitySet Name="Buildings" EntityType="TimetableDatabaseModel.Building" />
           <EntitySet Name="Courses" EntityType="TimetableDatabaseModel.Course" />
+          <EntitySet Name="CourseModules" EntityType="TimetableDatabaseModel.CourseModule" />
           <EntitySet Name="Events" EntityType="TimetableDatabaseModel.Event" />
           <EntitySet Name="EventStatusses" EntityType="TimetableDatabaseModel.EventStatuss" />
           <EntitySet Name="EventTypes" EntityType="TimetableDatabaseModel.EventType" />
           <EntitySet Name="Modules" EntityType="TimetableDatabaseModel.Module" />
           <EntitySet Name="RecycledIds" EntityType="TimetableDatabaseModel.RecycledId" />
           <EntitySet Name="RepeatEvents" EntityType="TimetableDatabaseModel.RepeatEvent" />
+          <EntitySet Name="RepeatTypes" EntityType="TimetableDatabaseModel.RepeatType" />
           <EntitySet Name="Rooms" EntityType="TimetableDatabaseModel.Room" />
           <EntitySet Name="RoomTypes" EntityType="TimetableDatabaseModel.RoomType" />
           <EntitySet Name="Settings" EntityType="TimetableDatabaseModel.Setting" />
           <EntitySet Name="Staffs" EntityType="TimetableDatabaseModel.Staff" />
+          <EntitySet Name="StaffEvents" EntityType="TimetableDatabaseModel.StaffEvent" />
           <EntitySet Name="Students" EntityType="TimetableDatabaseModel.Student" />
+          <EntitySet Name="StudentEvents" EntityType="TimetableDatabaseModel.StudentEvent" />
           <EntitySet Name="Times" EntityType="TimetableDatabaseModel.Time" />
           <EntitySet Name="Users" EntityType="TimetableDatabaseModel.User" />
           <EntitySet Name="UserTypes" EntityType="TimetableDatabaseModel.UserType" />
-          <EntitySet Name="RepeatTypes" EntityType="TimetableDatabaseModel.RepeatType" />
-          <EntitySet Name="CourseModules" EntityType="TimetableDatabaseModel.CourseModule" />
-          <EntitySet Name="StaffEvents" EntityType="TimetableDatabaseModel.StaffEvent" />
-          <EntitySet Name="StudentEvents" EntityType="TimetableDatabaseModel.StudentEvent" />
         </EntityContainer>
         <EntityType Name="Building">
           <Key>
@@ -308,6 +291,14 @@
           <Property Name="CreateDate" Type="DateTime" Precision="3" />
           <Property Name="Creator" Type="Int32" />
         </EntityType>
+        <EntityType Name="CourseModule">
+          <Key>
+            <PropertyRef Name="CourseModuleId" />
+          </Key>
+          <Property Name="CourseModuleId" Type="Int32" Nullable="false" />
+          <Property Name="Course" Type="Int32" Nullable="false" />
+          <Property Name="Module" Type="Int32" Nullable="false" />
+        </EntityType>
         <EntityType Name="Event">
           <Key>
             <PropertyRef Name="EventId" />
@@ -325,10 +316,10 @@
           <Property Name="LastDateEdited" Type="DateTime" Precision="3" />
           <Property Name="AdditionalNotes" Type="String" MaxLength="150" Unicode="true" FixedLength="false" />
           <Property Name="Status" Type="String" MaxLength="10" Unicode="true" FixedLength="false" />
-          <Property Type="Int32" Name="Room" />
-          <Property Type="Int32" Name="Attendants" />
-          <Property Type="Int32" Name="Course" />
-          <Property Type="Int32" Name="Module" />
+          <Property Name="Room" Type="Int32" />
+          <Property Name="Attendants" Type="Int32" />
+          <Property Name="Course" Type="Int32" />
+          <Property Name="Module" Type="Int32" />
         </EntityType>
         <EntityType Name="EventStatuss">
           <Key>
@@ -374,9 +365,18 @@
           </Key>
           <Property Name="RepeatEventId" Type="Int32" Nullable="false" />
           <Property Name="EventId" Type="Int32" />
+          <Property Name="RepeatType" Type="Int32" />
           <Property Name="WeekBeginning" Type="DateTime" Precision="3" />
-          <Property Type="Int32" Name="RepeatType" />
-          <Property Type="DateTime" Name="WeekEnding" Precision="3" />
+          <Property Name="WeekEnding" Type="DateTime" Precision="3" />
+        </EntityType>
+        <EntityType Name="RepeatType">
+          <Key>
+            <PropertyRef Name="RepeatTypeId" />
+          </Key>
+          <Property Name="RepeatTypeId" Type="Int32" Nullable="false" />
+          <Property Name="RepeatTypeName" Type="String" MaxLength="20" Unicode="true" FixedLength="false" />
+          <Property Name="RepeatDescription" Type="String" MaxLength="50" Unicode="true" FixedLength="false" />
+          <Property Name="CreateDate" Type="DateTime" Precision="3" />
         </EntityType>
         <EntityType Name="Room">
           <Key>
@@ -387,7 +387,7 @@
           <Property Name="RoomDescription" Type="String" MaxLength="150" Unicode="true" FixedLength="false" />
           <Property Name="Building" Type="Int32" />
           <Property Name="RoomType" Type="Int32" />
-          <Property Type="Int32" Name="Capacity" />
+          <Property Name="Capacity" Type="Int32" />
         </EntityType>
         <EntityType Name="RoomType">
           <Key>
@@ -422,6 +422,13 @@
           <Property Name="LastActivity" Type="DateTime" Precision="3" />
           <Property Name="Password" Type="String" MaxLength="10" Unicode="true" FixedLength="false" />
         </EntityType>
+        <EntityType Name="StaffEvent">
+          <Key>
+            <PropertyRef Name="StaffId" />
+          </Key>
+          <Property Name="StaffId" Type="String" Nullable="false" MaxLength="50" Unicode="true" FixedLength="false" />
+          <Property Name="EventId" Type="String" Nullable="false" MaxLength="50" Unicode="true" FixedLength="false" />
+        </EntityType>
         <EntityType Name="Student">
           <Key>
             <PropertyRef Name="StudentId" />
@@ -436,6 +443,13 @@
           <Property Name="CreateDate" Type="DateTime" Nullable="false" Precision="3" />
           <Property Name="LastActivity" Type="DateTime" Nullable="false" Precision="3" />
           <Property Name="Password" Type="String" Nullable="false" MaxLength="10" Unicode="true" FixedLength="false" />
+        </EntityType>
+        <EntityType Name="StudentEvent">
+          <Key>
+            <PropertyRef Name="StudentId" />
+          </Key>
+          <Property Name="StudentId" Type="String" Nullable="false" MaxLength="50" Unicode="true" FixedLength="false" />
+          <Property Name="EventId" Type="String" Nullable="false" MaxLength="50" Unicode="true" FixedLength="false" />
         </EntityType>
         <EntityType Name="Time">
           <Key>
@@ -468,39 +482,6 @@
           <Property Name="UserTypeDescription" Type="String" Nullable="false" MaxLength="50" Unicode="true" FixedLength="false" />
           <Property Name="CreateDate" Type="DateTime" Nullable="false" Precision="3" />
         </EntityType>
-        <EntityType Name="RepeatType">
-          <Key>
-            <PropertyRef Name="RepeatTypeId" />
-          </Key>
-          <Property Type="Int32" Name="RepeatTypeId" Nullable="false" />
-          <Property Type="String" Name="RepeatDescription" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Type="DateTime" Name="CreateDate" Precision="3" />
-          <Property Type="String" Name="RepeatTypeName" MaxLength="20" FixedLength="false" Unicode="true" />
-        </EntityType>
-        <EntityType Name="CourseModule">
-          <Key>
-            <PropertyRef Name="CourseModuleId" />
-          </Key>
-          <Property Type="Int32" Name="CourseModuleId" Nullable="false" />
-          <Property Type="Int32" Name="Course" Nullable="false" />
-          <Property Type="Int32" Name="Module" Nullable="false" />
-        </EntityType>
-        <EntityType Name="StaffEvent">
-          <Key>
-            <PropertyRef Name="EventId" />
-            <PropertyRef Name="StaffId" />
-          </Key>
-          <Property Type="Int32" Name="EventId" Nullable="false" />
-          <Property Type="Int32" Name="StaffId" Nullable="false" />
-        </EntityType>
-        <EntityType Name="StudentEvent">
-          <Key>
-            <PropertyRef Name="EventId" />
-            <PropertyRef Name="StudentId" />
-          </Key>
-          <Property Type="Int32" Name="EventId" Nullable="false" />
-          <Property Type="Int32" Name="StudentId" Nullable="false" />
-        </EntityType>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -532,13 +513,18 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
+          <EntitySetMapping Name="CourseModules">
+            <EntityTypeMapping TypeName="TimetableDatabaseModel.CourseModule">
+              <MappingFragment StoreEntitySet="CourseModule">
+                <ScalarProperty Name="CourseModuleId" ColumnName="CourseModuleId" />
+                <ScalarProperty Name="Course" ColumnName="Course" />
+                <ScalarProperty Name="Module" ColumnName="Module" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
           <EntitySetMapping Name="Events">
             <EntityTypeMapping TypeName="TimetableDatabaseModel.Event">
               <MappingFragment StoreEntitySet="Event">
-                <ScalarProperty Name="Module" ColumnName="Module" />
-                <ScalarProperty Name="Course" ColumnName="Course" />
-                <ScalarProperty Name="Attendants" ColumnName="Attendants" />
-                <ScalarProperty Name="Room" ColumnName="Room" />
                 <ScalarProperty Name="EventId" ColumnName="EventId" />
                 <ScalarProperty Name="EventTitle" ColumnName="EventTitle" />
                 <ScalarProperty Name="EventDescription" ColumnName="EventDescription" />
@@ -552,6 +538,10 @@
                 <ScalarProperty Name="LastDateEdited" ColumnName="LastDateEdited" />
                 <ScalarProperty Name="AdditionalNotes" ColumnName="AdditionalNotes" />
                 <ScalarProperty Name="Status" ColumnName="Status" />
+                <ScalarProperty Name="Room" ColumnName="Room" />
+                <ScalarProperty Name="Attendants" ColumnName="Attendants" />
+                <ScalarProperty Name="Course" ColumnName="Course" />
+                <ScalarProperty Name="Module" ColumnName="Module" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
@@ -600,23 +590,33 @@
           <EntitySetMapping Name="RepeatEvents">
             <EntityTypeMapping TypeName="TimetableDatabaseModel.RepeatEvent">
               <MappingFragment StoreEntitySet="RepeatEvent">
-                <ScalarProperty Name="WeekEnding" ColumnName="WeekEnding" />
-                <ScalarProperty Name="RepeatType" ColumnName="RepeatType" />
                 <ScalarProperty Name="RepeatEventId" ColumnName="RepeatEventId" />
                 <ScalarProperty Name="EventId" ColumnName="EventId" />
+                <ScalarProperty Name="RepeatType" ColumnName="RepeatType" />
                 <ScalarProperty Name="WeekBeginning" ColumnName="WeekBeginning" />
+                <ScalarProperty Name="WeekEnding" ColumnName="WeekEnding" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="RepeatTypes">
+            <EntityTypeMapping TypeName="TimetableDatabaseModel.RepeatType">
+              <MappingFragment StoreEntitySet="RepeatTypes">
+                <ScalarProperty Name="RepeatTypeId" ColumnName="RepeatTypeId" />
+                <ScalarProperty Name="RepeatTypeName" ColumnName="RepeatTypeName" />
+                <ScalarProperty Name="RepeatDescription" ColumnName="RepeatDescription" />
+                <ScalarProperty Name="CreateDate" ColumnName="CreateDate" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="Rooms">
             <EntityTypeMapping TypeName="TimetableDatabaseModel.Room">
               <MappingFragment StoreEntitySet="Room">
-                <ScalarProperty Name="Capacity" ColumnName="Capacity" />
                 <ScalarProperty Name="RoomId" ColumnName="RoomId" />
                 <ScalarProperty Name="RoomName" ColumnName="RoomName" />
                 <ScalarProperty Name="RoomDescription" ColumnName="RoomDescription" />
                 <ScalarProperty Name="Building" ColumnName="Building" />
                 <ScalarProperty Name="RoomType" ColumnName="RoomType" />
+                <ScalarProperty Name="Capacity" ColumnName="Capacity" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
@@ -656,6 +656,14 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
+          <EntitySetMapping Name="StaffEvents">
+            <EntityTypeMapping TypeName="TimetableDatabaseModel.StaffEvent">
+              <MappingFragment StoreEntitySet="StaffEvents">
+                <ScalarProperty Name="StaffId" ColumnName="StaffId" />
+                <ScalarProperty Name="EventId" ColumnName="EventId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
           <EntitySetMapping Name="Students">
             <EntityTypeMapping TypeName="TimetableDatabaseModel.Student">
               <MappingFragment StoreEntitySet="Student">
@@ -669,6 +677,14 @@
                 <ScalarProperty Name="CreateDate" ColumnName="CreateDate" />
                 <ScalarProperty Name="LastActivity" ColumnName="LastActivity" />
                 <ScalarProperty Name="Password" ColumnName="Password" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="StudentEvents">
+            <EntityTypeMapping TypeName="TimetableDatabaseModel.StudentEvent">
+              <MappingFragment StoreEntitySet="StudentEvents">
+                <ScalarProperty Name="StudentId" ColumnName="StudentId" />
+                <ScalarProperty Name="EventId" ColumnName="EventId" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
@@ -703,41 +719,6 @@
                 <ScalarProperty Name="UserTypeId" ColumnName="UserTypeId" />
                 <ScalarProperty Name="UserTypeDescription" ColumnName="UserTypeDescription" />
                 <ScalarProperty Name="CreateDate" ColumnName="CreateDate" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="RepeatTypes">
-            <EntityTypeMapping TypeName="TimetableDatabaseModel.RepeatType">
-              <MappingFragment StoreEntitySet="RepeatTypes">
-                <ScalarProperty Name="RepeatTypeName" ColumnName="RepeatTypeName" />
-                <ScalarProperty Name="CreateDate" ColumnName="CreateDate" />
-                <ScalarProperty Name="RepeatDescription" ColumnName="RepeatDescription" />
-                <ScalarProperty Name="RepeatTypeId" ColumnName="RepeatTypeId" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="CourseModules">
-            <EntityTypeMapping TypeName="TimetableDatabaseModel.CourseModule">
-              <MappingFragment StoreEntitySet="CourseModule">
-                <ScalarProperty Name="Module" ColumnName="Module" />
-                <ScalarProperty Name="Course" ColumnName="Course" />
-                <ScalarProperty Name="CourseModuleId" ColumnName="CourseModuleId" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="StaffEvents">
-            <EntityTypeMapping TypeName="TimetableDatabaseModel.StaffEvent">
-              <MappingFragment StoreEntitySet="StaffEvents">
-                <ScalarProperty Name="StaffId" ColumnName="StaffId" />
-                <ScalarProperty Name="EventId" ColumnName="EventId" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="StudentEvents">
-            <EntityTypeMapping TypeName="TimetableDatabaseModel.StudentEvent">
-              <MappingFragment StoreEntitySet="StudentEvents">
-                <ScalarProperty Name="StudentId" ColumnName="StudentId" />
-                <ScalarProperty Name="EventId" ColumnName="EventId" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
