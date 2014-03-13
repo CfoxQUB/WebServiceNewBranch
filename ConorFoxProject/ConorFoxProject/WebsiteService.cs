@@ -123,16 +123,16 @@ namespace ConorFoxProject
         {
             if (userId > 0 && userType > 0)
             {
-                var userEventsIds = _db.StudentEvents.Where(x => x.StudentId == userId).ToList();
+                //var userEventsIds = _db.StudentEvents.Where(x => x.StudentId == userId).ToList();
 
-                List<Event> userEvents = new List<Event>();
+                //List<Event> userEvents = new List<Event>();
 
-                foreach (var id in userEventsIds)
-                {
-                    var temp = _db.Events.SingleOrDefault(x => x.EventId == id.EventId);
-                    userEvents.Add(temp);
-                }
-                return userEvents;
+                //foreach (var id in userEventsIds)
+                //{
+                //    var temp = _db.Events.SingleOrDefault(x => x.EventId == id.EventId);
+                //    userEvents.Add(temp);
+                //}
+                //return userEvents;
             }
             return null;
         }
@@ -145,19 +145,19 @@ namespace ConorFoxProject
         /// <returns></returns>
         public List<Event> StaffEvents(int userId, int userType)
         {
-            if (userId > 0 && userType > 0)
-            {
-                var userEventsIds = _db.StaffEvents.Where(x => x.StaffId == userId).ToList();
+            //if (userId > 0 && userType > 0)
+            //{
+            //    var userEventsIds = _db.StaffEvents.Where(x => x.StaffId == userId).ToList();
 
-                List<Event> userEvents = new List<Event>();
+            //    List<Event> userEvents = new List<Event>();
 
-                foreach (var id in userEventsIds)
-                {
-                    var temp = _db.Events.SingleOrDefault(x => x.EventId == id.EventId);
-                    userEvents.Add(temp);
-                }
-                return userEvents;
-            }
+            //    foreach (var id in userEventsIds)
+            //    {
+            //        var temp = _db.Events.SingleOrDefault(x => x.EventId == id.EventId);
+            //        userEvents.Add(temp);
+            //    }
+            //    return userEvents;
+            //}
             return null;
         }
         #endregion

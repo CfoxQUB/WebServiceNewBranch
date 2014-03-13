@@ -120,21 +120,22 @@
     <Compile Include="Time.cs">
       <DependentUpon>LocalDatabaseModel.tt</DependentUpon>
     </Compile>
-    <Compile Include="TimetableModel.Context.cs">
+    <Compile Include="TimetableDatabaseModel.Context.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
-      <DependentUpon>TimetableModel.Context.tt</DependentUpon>
+      <DependentUpon>TimetableDatabaseModel.Context.tt</DependentUpon>
     </Compile>
-    <Compile Include="TimetableModel.cs">
+    <Compile Include="TimetableDatabaseModel.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
-      <DependentUpon>TimetableModel.tt</DependentUpon>
+      <DependentUpon>TimetableDatabaseModel.tt</DependentUpon>
     </Compile>
-    <Compile Include="TimetableModel.Designer.cs">
+    <Compile Include="TimetableDatabaseModel.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
-      <DependentUpon>TimetableModel.edmx</DependentUpon>
+      <DependentUpon>TimetableDatabaseModel.edmx</DependentUpon>
     </Compile>
+    <Compile Include="TimetableObject.cs" />
     <Compile Include="TimetablingService.cs" />
     <Compile Include="User.cs">
       <DependentUpon>LocalDatabaseModel.tt</DependentUpon>
@@ -166,22 +167,22 @@
       <LastGenOutput>LocalDatabaseModel.cs</LastGenOutput>
     </None>
     <None Include="packages.config" />
-    <EntityDeploy Include="TimetableModel.edmx">
+    <EntityDeploy Include="TimetableDatabaseModel.edmx">
       <Generator>EntityModelCodeGenerator</Generator>
-      <LastGenOutput>TimetableModel.Designer.cs</LastGenOutput>
+      <LastGenOutput>TimetableDatabaseModel.Designer.cs</LastGenOutput>
     </EntityDeploy>
-    <None Include="TimetableModel.Context.tt">
+    <None Include="TimetableDatabaseModel.Context.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
-      <DependentUpon>TimetableModel.edmx</DependentUpon>
-      <LastGenOutput>TimetableModel.Context.cs</LastGenOutput>
+      <DependentUpon>TimetableDatabaseModel.edmx</DependentUpon>
+      <LastGenOutput>TimetableDatabaseModel.Context.cs</LastGenOutput>
     </None>
-    <None Include="TimetableModel.edmx.diagram">
-      <DependentUpon>TimetableModel.edmx</DependentUpon>
+    <None Include="TimetableDatabaseModel.edmx.diagram">
+      <DependentUpon>TimetableDatabaseModel.edmx</DependentUpon>
     </None>
-    <None Include="TimetableModel.tt">
+    <None Include="TimetableDatabaseModel.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
-      <DependentUpon>TimetableModel.edmx</DependentUpon>
-      <LastGenOutput>TimetableModel.cs</LastGenOutput>
+      <DependentUpon>TimetableDatabaseModel.edmx</DependentUpon>
+      <LastGenOutput>TimetableDatabaseModel.cs</LastGenOutput>
     </None>
   </ItemGroup>
   <ItemGroup>

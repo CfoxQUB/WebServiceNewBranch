@@ -9,7 +9,8 @@ using System.Threading.Tasks;
 
 namespace ConorFoxProject
 {
-        [ServiceContract]
+   
+    [ServiceContract]
         public interface ITimetablingService
         {
             #region Client Users Functions
@@ -63,12 +64,13 @@ namespace ConorFoxProject
             [OperationContract]
             int ReturnRoomBuilding(int roomId);
             [OperationContract]
-            List<Event> ReturnRoomEvents(int RoomName);
+            List<Event> ReturnRoomEvents(int roomName);
             [OperationContract]
             List<Time> ReturnTimes();
             [OperationContract]
             List<RepeatType> ReturnRepeatTypes();
-
+            [OperationContract]
+            List<TimetableObject> ReturnTimetableDisplay();
 
             #endregion
 
@@ -96,7 +98,7 @@ namespace ConorFoxProject
         [ServiceBehavior(InstanceContextMode = InstanceContextMode.Single)]
         public class TimetablingService : ITimetablingService
         {
-            TimetableDatabase db = new TimetableDatabase();
+            LocalDatabase db = new LocalDatabase();
             CultureInfo currentculture = CultureInfo.CurrentCulture;
 
             #region Client User Registration
@@ -664,48 +666,6 @@ namespace ConorFoxProject
 
             #endregion
 
-            #region Time Table Methods
-            public List<Event> ReturnWeeksEvents(DateTime dateRequested, int roomId)
-            {
-                if (dateRequested != null)
-                {
-                    var dayRequested = dateRequested.DayOfWeek.ToString();
-                    var date = dateRequested.Day;
-                    var monthrequested = currentculture.Calendar.GetMonth(dateRequested);
-                    var yearRequested = currentculture.Calendar.GetYear(dateRequested);
-
-                    var newDate = new DateTime(yearRequested, monthrequested, date);
-                    
-                    DateTime startDate = new DateTime();
-                    
-                    switch(dayRequested)
-                    {
-                        case "Sunday": startDate = newDate.AddDays(0);
-                            break;
-                        case "Monday": startDate = newDate.AddDays(-1);
-                            break;
-                        case "Tuesday": startDate = newDate.AddDays(-2);
-                            break;
-                        case "Wednesday": startDate = newDate.AddDays(-3);
-                            break;
-                        case "Thursday": startDate = newDate.AddDays(-4);
-                            break;
-                        case "Friday": startDate = newDate.AddDays(-5);
-                            break;
-                        case "Saturday": startDate = newDate.AddDays(-6);
-                            break;
-                    }
-
-                    DateTime weekEnd = startDate.AddDays(7);
-                    
-                    var eventsList = db.Events.Where(x => x.StartDate >= startDate && x.StartDate < weekEnd && x.Room == roomId).ToList();
-
-                    return eventsList;
-                }
-                return null;
-                      
-            }
-            #endregion
             #region Listed Types
 
             /// <summary>
@@ -794,7 +754,7 @@ namespace ConorFoxProject
             /// <returns></returns>
             public int ReturnBuildingIdFromBuildingName(string buildingName)
             {
-                if (buildingName != "" && buildingName !=  null)
+                if (!String.IsNullOrEmpty(buildingName))
                 {
                     return db.Buildings.SingleOrDefault(x => x.BuildingName == buildingName).BuildingId;
                 }
@@ -810,7 +770,7 @@ namespace ConorFoxProject
             /// <returns></returns>
             public int ReturnRoomId(int buildingId, string roomName)
             {
-                if ( buildingId != 0)
+                if (buildingId != 0)
                 {
                    return db.Rooms.Where(x => x.Building == buildingId).SingleOrDefault(x=>x.RoomName == roomName).RoomId;
                 }
@@ -827,7 +787,7 @@ namespace ConorFoxProject
             /// <returns></returns>
             public int ReturnCourseIdFromCourseName(string courseName)
             {
-                if (courseName != "" && courseName != null)
+                if (!String.IsNullOrEmpty(courseName))
                 {
                     return db.Courses.SingleOrDefault(x => x.CourseName == courseName).CourseId;
                 }
@@ -866,11 +826,11 @@ namespace ConorFoxProject
             /// </summary>
             /// <param name="RoomName"></param>
             /// <returns></returns>
-            public List<Event> ReturnRoomEvents(int RoomName)
+            public List<Event> ReturnRoomEvents(int roomName)
             {
-                if (RoomName != 0)
+                if (roomName != 0)
                 {
-                   return db.Events.Where(x => x.Room == RoomName).ToList();
+                   return db.Events.Where(x => x.Room == roomName).ToList();
                 }
                 return null;
             }
@@ -894,9 +854,17 @@ namespace ConorFoxProject
             /// <returns></returns>
             public int ReturnRoomBuilding(int roomId)
             {
-                if (db.Rooms.Where(x => x.RoomId == roomId).Count() != 0)
+                if (db.Rooms.Count() != 0)
                 {
-                    return (int)db.Rooms.SingleOrDefault(x => x.RoomId == roomId).Building;
+                    try
+                    {
+                        return (int)db.Rooms.SingleOrDefault(x => x.RoomId == roomId).Building;
+                    }
+                    catch (NullReferenceException)
+                    {
+                        return 0;
+                    }
+                    
                 }
                 return 0;
             }
@@ -920,12 +888,15 @@ namespace ConorFoxProject
             /// <returns></returns>
             public List<RepeatType> ReturnRepeatTypes()
             {
-                if (db.RepeatTypes.Count() != 0)
+                if(db.RepeatTypes.Count() != 0)
                 {
                     return db.RepeatTypes.ToList();
                 }
                 return null;
             }
+
+           
+
             #endregion
 
             #region Resource Creation and Maintanence 
@@ -1119,6 +1090,75 @@ namespace ConorFoxProject
                 return null;
             }
             #endregion
+
+            #region Time Table Methods
+            public List<Event> ReturnWeeksEvents(DateTime dateRequested, int roomId)
+            {
+                if (dateRequested != null)
+                {
+                    var dayRequested = dateRequested.DayOfWeek.ToString();
+                    var date = dateRequested.Day;
+                    var monthrequested = currentculture.Calendar.GetMonth(dateRequested);
+                    var yearRequested = currentculture.Calendar.GetYear(dateRequested);
+
+                    var newDate = new DateTime(yearRequested, monthrequested, date);
+
+                    DateTime startDate = new DateTime();
+
+                    switch (dayRequested)
+                    {
+                        case "Sunday": startDate = newDate.AddDays(0);
+                            break;
+                        case "Monday": startDate = newDate.AddDays(-1);
+                            break;
+                        case "Tuesday": startDate = newDate.AddDays(-2);
+                            break;
+                        case "Wednesday": startDate = newDate.AddDays(-3);
+                            break;
+                        case "Thursday": startDate = newDate.AddDays(-4);
+                            break;
+                        case "Friday": startDate = newDate.AddDays(-5);
+                            break;
+                        case "Saturday": startDate = newDate.AddDays(-6);
+                            break;
+                    }
+
+                    DateTime weekEnd = startDate.AddDays(7);
+
+                    var eventsList = db.Events.Where(x => x.StartDate >= startDate && x.StartDate < weekEnd && x.Room == roomId).ToList();
+
+                    return eventsList;
+                }
+                return null;
+
+            }
+
+            /// <summary>
+            /// Written:13/03/2014
+            /// </summary>
+            /// <returns></returns>
+            public List<TimetableObject> ReturnTimetableDisplay()
+            {
+                var timetableResult = new List<TimetableObject>();
+                var eventsAvailable = db.Events.ToList().OrderBy(x => x.Time);
+                var timeslot = db.Times.ToList().OrderBy(x => x.TimeId);
+
+                foreach (Time e in timeslot)
+                {
+                    var newTimtableObject = new TimetableObject()
+                    {
+                        Timeslot = e.TimeId,
+                        Enumerations = eventsAvailable.Count(x => x.Time == e.TimeId)
+                    };
+
+                    timetableResult.Add(newTimtableObject);
+                }
+
+                return timetableResult;
+
+            }
+            #endregion
+
         }
 
 
