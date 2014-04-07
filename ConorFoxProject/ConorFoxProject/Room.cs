@@ -17,8 +17,8 @@ namespace ConorFoxProject
         public int RoomId { get; set; }
         public string RoomName { get; set; }
         public string RoomDescription { get; set; }
-        public Nullable<int> Building { get; set; }
-        public Nullable<int> RoomType { get; set; }
-        public Nullable<int> Capacity { get; set; }
+        public int Building { get; set; }
+        public int RoomType { get; set; }
+        public int Capacity { get; set; }
     }
 }

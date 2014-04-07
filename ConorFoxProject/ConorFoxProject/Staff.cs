@@ -19,9 +19,9 @@ namespace ConorFoxProject
         public string StaffForename { get; set; }
         public string StaffSurname { get; set; }
         public string StaffEmail { get; set; }
-        public Nullable<int> Course { get; set; }
-        public Nullable<System.DateTime> CreateDate { get; set; }
-        public Nullable<System.DateTime> LastActivity { get; set; }
+        public int Course { get; set; }
+        public System.DateTime CreateDate { get; set; }
+        public System.DateTime LastActivity { get; set; }
         public string Password { get; set; }
     }
 }

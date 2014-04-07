@@ -17,19 +17,18 @@ namespace ConorFoxProject
         public int EventId { get; set; }
         public string EventTitle { get; set; }
         public string EventDescription { get; set; }
-        public Nullable<int> EventType { get; set; }
-        public Nullable<System.DateTime> StartDate { get; set; }
-        public Nullable<System.DateTime> CreateDate { get; set; }
-        public Nullable<int> Time { get; set; }
-        public Nullable<int> Duration { get; set; }
-        public Nullable<int> Repeats { get; set; }
-        public Nullable<int> LastUserEdited { get; set; }
-        public Nullable<System.DateTime> LastDateEdited { get; set; }
+        public int EventType { get; set; }
+        public System.DateTime StartDate { get; set; }
+        public System.DateTime CreateDate { get; set; }
+        public int Time { get; set; }
+        public int Duration { get; set; }
+        public int Repeats { get; set; }
+        public int LastUserEdited { get; set; }
+        public System.DateTime LastDateEdited { get; set; }
         public string AdditionalNotes { get; set; }
         public string Status { get; set; }
-        public Nullable<int> Room { get; set; }
-        public Nullable<int> Attendants { get; set; }
-        public Nullable<int> Course { get; set; }
-        public Nullable<int> Module { get; set; }
+        public int Room { get; set; }
+        public int Course { get; set; }
+        public int Module { get; set; }
     }
 }

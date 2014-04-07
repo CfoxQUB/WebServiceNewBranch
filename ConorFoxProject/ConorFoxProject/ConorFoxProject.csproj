@@ -62,9 +62,6 @@
     <Compile Include="Event.cs">
       <DependentUpon>LocalDatabaseModel.tt</DependentUpon>
     </Compile>
-    <Compile Include="EventStatuss.cs">
-      <DependentUpon>LocalDatabaseModel.tt</DependentUpon>
-    </Compile>
     <Compile Include="EventType.cs">
       <DependentUpon>LocalDatabaseModel.tt</DependentUpon>
     </Compile>
@@ -88,9 +85,6 @@
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RecycledId.cs">
-      <DependentUpon>LocalDatabaseModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="RepeatEvent.cs">
       <DependentUpon>LocalDatabaseModel.tt</DependentUpon>
     </Compile>
     <Compile Include="RepeatType.cs">
@@ -120,27 +114,9 @@
     <Compile Include="Time.cs">
       <DependentUpon>LocalDatabaseModel.tt</DependentUpon>
     </Compile>
-    <Compile Include="TimetableDatabaseModel.Context.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>TimetableDatabaseModel.Context.tt</DependentUpon>
-    </Compile>
-    <Compile Include="TimetableDatabaseModel.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>TimetableDatabaseModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="TimetableDatabaseModel.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>TimetableDatabaseModel.edmx</DependentUpon>
-    </Compile>
     <Compile Include="TimetableObject.cs" />
     <Compile Include="TimetablingService.cs" />
     <Compile Include="User.cs">
-      <DependentUpon>LocalDatabaseModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="UserType.cs">
       <DependentUpon>LocalDatabaseModel.tt</DependentUpon>
     </Compile>
     <Compile Include="WebsiteService.cs" />
@@ -167,23 +143,6 @@
       <LastGenOutput>LocalDatabaseModel.cs</LastGenOutput>
     </None>
     <None Include="packages.config" />
-    <EntityDeploy Include="TimetableDatabaseModel.edmx">
-      <Generator>EntityModelCodeGenerator</Generator>
-      <LastGenOutput>TimetableDatabaseModel.Designer.cs</LastGenOutput>
-    </EntityDeploy>
-    <None Include="TimetableDatabaseModel.Context.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <DependentUpon>TimetableDatabaseModel.edmx</DependentUpon>
-      <LastGenOutput>TimetableDatabaseModel.Context.cs</LastGenOutput>
-    </None>
-    <None Include="TimetableDatabaseModel.edmx.diagram">
-      <DependentUpon>TimetableDatabaseModel.edmx</DependentUpon>
-    </None>
-    <None Include="TimetableDatabaseModel.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <DependentUpon>TimetableDatabaseModel.edmx</DependentUpon>
-      <LastGenOutput>TimetableDatabaseModel.cs</LastGenOutput>
-    </None>
   </ItemGroup>
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
@@ -191,6 +150,10 @@
   <ItemGroup>
     <Content Include="TimetableDatabase.mdf">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="TimetableDatabase_log.ldf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <DependentUpon>TimetableDatabase.mdf</DependentUpon>
     </Content>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

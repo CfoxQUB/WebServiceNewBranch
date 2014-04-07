@@ -16,6 +16,6 @@ namespace ConorFoxProject
     {
         public string TableName { get; set; }
         public int IdRecovered { get; set; }
-        public Nullable<System.DateTime> DateAdded { get; set; }
+        public System.DateTime DateAdded { get; set; }
     }
 }

@@ -16,7 +16,7 @@ namespace ConorFoxProject
     {
         public int BuildingId { get; set; }
         public string BuildingName { get; set; }
-        public Nullable<int> BuildingNumber { get; set; }
+        public int BuildingNumber { get; set; }
         public string AddressLine1 { get; set; }
         public string AddressLine2 { get; set; }
         public string PostalCode { get; set; }

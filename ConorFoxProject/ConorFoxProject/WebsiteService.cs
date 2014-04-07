@@ -41,7 +41,7 @@ namespace ConorFoxProject
     public class WebsiteService : IWebsiteService
     {
         //private TimetableDatabase _db = new TimetableDatabase();
-        private LocalDatabase _db = new LocalDatabase();
+        private TimetableDatabase _db = new TimetableDatabase();
         #region Account Functions
         /// <summary>
         /// Written:

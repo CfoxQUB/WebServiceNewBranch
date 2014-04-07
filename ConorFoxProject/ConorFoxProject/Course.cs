@@ -17,8 +17,8 @@ namespace ConorFoxProject
         public int CourseId { get; set; }
         public string CourseName { get; set; }
         public string CourseDescription { get; set; }
-        public Nullable<int> Duration { get; set; }
-        public Nullable<System.DateTime> CreateDate { get; set; }
-        public Nullable<int> Creator { get; set; }
+        public int Duration { get; set; }
+        public System.DateTime CreateDate { get; set; }
+        public int Creator { get; set; }
     }
 }

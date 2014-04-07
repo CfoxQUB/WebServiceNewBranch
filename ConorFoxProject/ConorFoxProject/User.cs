@@ -19,10 +19,9 @@ namespace ConorFoxProject
         public string UserForename { get; set; }
         public string UserSurname { get; set; }
         public string UserEmail { get; set; }
-        public Nullable<int> UserType { get; set; }
-        public Nullable<System.DateTime> CreateDate { get; set; }
-        public Nullable<System.DateTime> LastLogin { get; set; }
-        public string CurrentlyLoggedIn { get; set; }
+        public int UserType { get; set; }
+        public System.DateTime CreateDate { get; set; }
+        public System.DateTime LastLogin { get; set; }
         public string Password { get; set; }
     }
 }

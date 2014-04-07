@@ -17,8 +17,8 @@ namespace ConorFoxProject
         public int ModuleId { get; set; }
         public string ModuleName { get; set; }
         public string ModuleDescription { get; set; }
-        public Nullable<System.DateTime> CreateDate { get; set; }
-        public Nullable<int> Creator { get; set; }
-        public Nullable<System.DateTime> LastEdited { get; set; }
+        public System.DateTime CreateDate { get; set; }
+        public int Creator { get; set; }
+        public System.DateTime LastEdited { get; set; }
     }
 }

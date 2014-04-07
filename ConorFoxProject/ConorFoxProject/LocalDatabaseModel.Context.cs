@@ -13,10 +13,10 @@ namespace ConorFoxProject
     using System.Data.Entity;
     using System.Data.Entity.Infrastructure;
     
-    public partial class LocalDatabase : DbContext
+    public partial class TimetableDatabase : DbContext
     {
-        public LocalDatabase()
-            : base("name=LocalDatabase")
+        public TimetableDatabase()
+            : base("name=TimetableDatabase")
         {
         }
     
@@ -29,11 +29,9 @@ namespace ConorFoxProject
         public DbSet<Course> Courses { get; set; }
         public DbSet<CourseModule> CourseModules { get; set; }
         public DbSet<Event> Events { get; set; }
-        public DbSet<EventStatuss> EventStatusses { get; set; }
         public DbSet<EventType> EventTypes { get; set; }
         public DbSet<Module> Modules { get; set; }
         public DbSet<RecycledId> RecycledIds { get; set; }
-        public DbSet<RepeatEvent> RepeatEvents { get; set; }
         public DbSet<RepeatType> RepeatTypes { get; set; }
         public DbSet<Room> Rooms { get; set; }
         public DbSet<RoomType> RoomTypes { get; set; }
@@ -44,6 +42,5 @@ namespace ConorFoxProject
         public DbSet<StudentEvent> StudentEvents { get; set; }
         public DbSet<Time> Times { get; set; }
         public DbSet<User> Users { get; set; }
-        public DbSet<UserType> UserTypes { get; set; }
     }
 }
