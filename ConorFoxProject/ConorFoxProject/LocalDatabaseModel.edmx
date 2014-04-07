@@ -60,8 +60,8 @@
             <PropertyRef Name="EventId" />
           </Key>
           <Property Name="EventId" Type="int" Nullable="false" />
-          <Property Name="EventTitle" Type="nvarchar" Nullable="false" MaxLength="25" />
-          <Property Name="EventDescription" Type="nvarchar" Nullable="false" MaxLength="150" />
+          <Property Name="EventTitle" Type="nvarchar" Nullable="false" MaxLength="50" />
+          <Property Name="EventDescription" Type="nvarchar" Nullable="false" MaxLength="250" />
           <Property Name="EventType" Type="int" Nullable="false" />
           <Property Name="StartDate" Type="datetime" Nullable="false" />
           <Property Name="CreateDate" Type="datetime" Nullable="false" />
@@ -71,7 +71,7 @@
           <Property Name="LastUserEdited" Type="int" Nullable="false" />
           <Property Name="LastDateEdited" Type="datetime" Nullable="false" />
           <Property Name="AdditionalNotes" Type="nvarchar" Nullable="false" MaxLength="150" />
-          <Property Name="Status" Type="nvarchar" Nullable="false" MaxLength="20" />
+          <Property Name="Status" Type="nvarchar" Nullable="false" MaxLength="50" />
           <Property Name="Room" Type="int" Nullable="false" />
           <Property Name="Course" Type="int" Nullable="false" />
           <Property Name="Module" Type="int" Nullable="false" />
@@ -204,11 +204,11 @@
           <Property Name="UserTitle" Type="nvarchar" Nullable="false" MaxLength="10" />
           <Property Name="UserForename" Type="nvarchar" Nullable="false" MaxLength="50" />
           <Property Name="UserSurname" Type="nvarchar" Nullable="false" MaxLength="50" />
-          <Property Name="UserEmail" Type="nvarchar" Nullable="false" MaxLength="50" />
+          <Property Name="UserEmail" Type="nvarchar" Nullable="false" MaxLength="100" />
           <Property Name="UserType" Type="int" Nullable="false" />
           <Property Name="CreateDate" Type="datetime" Nullable="false" />
           <Property Name="LastLogin" Type="datetime" Nullable="false" />
-          <Property Name="Password" Type="nvarchar" Nullable="false" MaxLength="20" />
+          <Property Name="Password" Type="nvarchar" Nullable="false" MaxLength="100" />
         </EntityType>
       </Schema>
     </edmx:StorageModels>
@@ -270,8 +270,8 @@
             <PropertyRef Name="EventId" />
           </Key>
           <Property Name="EventId" Type="Int32" Nullable="false" />
-          <Property Name="EventTitle" Type="String" Nullable="false" MaxLength="25" Unicode="true" FixedLength="false" />
-          <Property Name="EventDescription" Type="String" Nullable="false" MaxLength="150" Unicode="true" FixedLength="false" />
+          <Property Name="EventTitle" Type="String" Nullable="false" MaxLength="50" Unicode="true" FixedLength="false" />
+          <Property Name="EventDescription" Type="String" Nullable="false" MaxLength="250" Unicode="true" FixedLength="false" />
           <Property Name="EventType" Type="Int32" Nullable="false" />
           <Property Name="StartDate" Type="DateTime" Nullable="false" Precision="3" />
           <Property Name="CreateDate" Type="DateTime" Nullable="false" Precision="3" />
@@ -281,7 +281,7 @@
           <Property Name="LastUserEdited" Type="Int32" Nullable="false" />
           <Property Name="LastDateEdited" Type="DateTime" Nullable="false" Precision="3" />
           <Property Name="AdditionalNotes" Type="String" Nullable="false" MaxLength="150" Unicode="true" FixedLength="false" />
-          <Property Name="Status" Type="String" Nullable="false" MaxLength="20" Unicode="true" FixedLength="false" />
+          <Property Name="Status" Type="String" Nullable="false" MaxLength="50" Unicode="true" FixedLength="false" />
           <Property Name="Room" Type="Int32" Nullable="false" />
           <Property Name="Course" Type="Int32" Nullable="false" />
           <Property Name="Module" Type="Int32" Nullable="false" />
@@ -414,11 +414,11 @@
           <Property Name="UserTitle" Type="String" Nullable="false" MaxLength="10" Unicode="true" FixedLength="false" />
           <Property Name="UserForename" Type="String" Nullable="false" MaxLength="50" Unicode="true" FixedLength="false" />
           <Property Name="UserSurname" Type="String" Nullable="false" MaxLength="50" Unicode="true" FixedLength="false" />
-          <Property Name="UserEmail" Type="String" Nullable="false" MaxLength="50" Unicode="true" FixedLength="false" />
+          <Property Name="UserEmail" Type="String" Nullable="false" MaxLength="100" Unicode="true" FixedLength="false" />
           <Property Name="UserType" Type="Int32" Nullable="false" />
           <Property Name="CreateDate" Type="DateTime" Nullable="false" Precision="3" />
           <Property Name="LastLogin" Type="DateTime" Nullable="false" Precision="3" />
-          <Property Name="Password" Type="String" Nullable="false" MaxLength="20" Unicode="true" FixedLength="false" />
+          <Property Name="Password" Type="String" Nullable="false" MaxLength="100" Unicode="true" FixedLength="false" />
         </EntityType>
       </Schema>
     </edmx:ConceptualModels>

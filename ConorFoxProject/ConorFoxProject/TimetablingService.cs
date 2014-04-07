@@ -3,14 +3,14 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.ServiceModel;
+using System.Security.Cryptography;
 using System.Text;
 using System.Data.Entity.Validation;
 using System.Threading.Tasks;
 
 namespace ConorFoxProject
 {
-   
-    [ServiceContract]
+        [ServiceContract]
         public interface ITimetablingService
         {
             #region Client Users Functions
@@ -20,6 +20,9 @@ namespace ConorFoxProject
             bool Register_User(User newUser);
             [OperationContract]
             int Login(string userName, string userPassword);
+
+            [OperationContract]
+            string Encrypt(string unencryptedString);
             #endregion
 
             #region Event Actions
@@ -71,8 +74,8 @@ namespace ConorFoxProject
             [OperationContract]
             List<RepeatType> ReturnRepeatTypes();
 
-        [OperationContract]
-        List<Event> ReturnWeeksEventsiWithFilters(DateTime dateRequested, int roomId, int moduleId);
+            [OperationContract]
+            TimetableEventsListObject ReturnWeeksEventsWithFilters(DateTime dateRequested, int roomId, int moduleId);
             
             #endregion
 
@@ -139,6 +142,28 @@ namespace ConorFoxProject
             return false;
         }
 
+        /// <summary>
+        /// Encrypts login details before submission
+        /// created using example in http://msdn.microsoft.com/en-us/library/system.security.cryptography.md5(v=vs.110).aspx
+        /// </summary>
+        /// <param name="unencryptedString"></param>
+        /// <returns></returns>
+        public string Encrypt(String unencryptedString)
+        {
+            using (MD5 md5Hash = MD5.Create())
+            {
+                byte[] data = md5Hash.ComputeHash(Encoding.ASCII.GetBytes(unencryptedString));
+
+                var sBuilder = new StringBuilder();
+
+                foreach (var b in data)
+                {
+                 sBuilder.Append(b.ToString("x2"));
+                }
+
+               return sBuilder.ToString();
+            }
+         }
         #endregion
 
         #region Client Login
@@ -153,10 +178,14 @@ namespace ConorFoxProject
         /// <returns></returns>
         public int Login(string userEmail, string userPassword)
         {
-            var temp = _dBase.Users.SingleOrDefault(x => x.UserEmail == userEmail);
-            if (temp != null && temp.Password == userPassword)
+            if (!String.IsNullOrEmpty(userEmail) && !String.IsNullOrEmpty(userPassword))
             {
-                return temp.UserId;
+                var temp = _dBase.Users.SingleOrDefault(x => x.UserEmail == userEmail);
+
+                if (temp != null && temp.Password == userPassword)
+                {
+                    return temp.UserId;
+                }
             }
             return 0;
         }
@@ -1269,7 +1298,7 @@ namespace ConorFoxProject
         }
 
 
-        public List<Event> ReturnWeeksEventsiWithFilters(DateTime dateRequested, int roomId, int moduleId)
+        public TimetableEventsListObject ReturnWeeksEventsWithFilters(DateTime dateRequested, int roomId, int moduleId)
         {
             if (dateRequested != null)
             {
@@ -1369,7 +1398,7 @@ namespace ConorFoxProject
                         }
                     
                 }
-                return eventsList;
+                return timetableResult;
             }
             return null;
 

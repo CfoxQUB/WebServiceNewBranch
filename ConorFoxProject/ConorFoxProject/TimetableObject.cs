@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ConorFoxProject
+namespace ConorFoxProject 
 {
     public class TimetableObject
     {
@@ -26,7 +26,7 @@ namespace ConorFoxProject
 
     public class TimetableEventObject
     {
-        public Event Event { get; set;}
+        public Event Event { get; set; }
         public Time Time { get; set; }
     }
 

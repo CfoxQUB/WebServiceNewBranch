@@ -40,8 +40,7 @@ namespace ConorFoxProject
     [ServiceBehavior(InstanceContextMode = InstanceContextMode.Single)]
     public class WebsiteService : IWebsiteService
     {
-        //private TimetableDatabase _db = new TimetableDatabase();
-        private TimetableDatabase _db = new TimetableDatabase();
+       private TimetableDatabase _db = new TimetableDatabase();
         #region Account Functions
         /// <summary>
         /// Written:
