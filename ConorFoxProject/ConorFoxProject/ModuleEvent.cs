@@ -12,14 +12,11 @@ namespace ConorFoxProject
     using System;
     using System.Collections.Generic;
     
-    public partial class Module
+    public partial class ModuleEvent
     {
+        public int EventModule { get; set; }
+        public int EventId { get; set; }
         public int ModuleId { get; set; }
-        public string ModuleName { get; set; }
-        public string ModuleDescription { get; set; }
-        public System.DateTime CreateDate { get; set; }
-        public int Staff { get; set; }
-        public int Creator { get; set; }
-        public System.DateTime LastEdited { get; set; }
+        public int CourseId { get; set; }
     }
 }

@@ -14,83 +14,141 @@ namespace ConorFoxProject
         public interface ITimetablingService
         {
             #region Client Users Functions
-            [OperationContract]
-            bool Check_Email_Not_Exist(string email);
-            [OperationContract]
-            bool Register_User(User newUser);
-            [OperationContract]
-            int Login(string userName, string userPassword);
 
             [OperationContract]
             string Encrypt(string unencryptedString);
+            
+            [OperationContract]
+            bool Register_User(User newUser);
+
+            [OperationContract]
+            bool Check_Email_Not_Exist(string email);
+            
+            [OperationContract]
+            int Login(string userName, string userPassword);
+            
             #endregion
 
             #region Event Actions
-
+            
             [OperationContract]
             int CreateEvent(string eventTitle, int userId, string eventDescription, string eventType, string repeatType, int eventDuration, DateTime startDate, string eventTime, string roomName, string courseName, string moduleName);
+            
             [OperationContract]
             bool EditEvent(int editedEventId, int userId, string eventTitle, string eventDescription, string eventType, string repeatType, int eventDuration, DateTime startDate, string eventTime, string roomName, string courseName, string moduleName);
+            
             [OperationContract]
             bool DeleteEvent(int eventId);
 
             #endregion
 
             #region Timetabling Actions
+
             [OperationContract]
             List<Event> ReturnWeeksEvents(DateTime weekBeginning, int roomId);
-            [OperationContract]
-            TimetableDisplayListObject ReturnTimetableDisplayListObject();
-            
-            #endregion 
-
-            #region Listed Types
-            [OperationContract]
-            List<Event> ReturnEvents();
-            [OperationContract]
-            List<EventType> ReturnEventTypes();
-            [OperationContract]
-            List<RoomType> ReturnRoomTypes();
-            [OperationContract]
-            List<Building> ReturnBuildings();
-            [OperationContract]
-            List<Course> ReturnCourses();
-            [OperationContract]
-            List<Module> ReturnCourseModules(int courseId);
-            [OperationContract]
-            int ReturnBuildingIdFromBuildingName(string buildingName);
-            [OperationContract]
-            int ReturnCourseIdFromCourseName(string courseName);
-            [OperationContract]
-            int ReturnRoomId(int buildingId, string roomName);
-            [OperationContract]
-            List<Room> ReturnBuildingRooms(int buildingId);
-            [OperationContract]
-            int ReturnRoomBuilding(int roomId);
-            [OperationContract]
-            List<Event> ReturnRoomEvents(int roomName);
-            [OperationContract]
-            List<Time> ReturnTimes();
-            [OperationContract]
-            List<RepeatType> ReturnRepeatTypes();
 
             [OperationContract]
             TimetableEventsListObject ReturnWeeksEventsWithFilters(DateTime dateRequested, int roomId, int moduleId);
             
-            #endregion
+            [OperationContract]
+            TimetableDisplayListObject ReturnTimetableToolListObject();
+            
+            #endregion 
+
+            #region Listed Types
+
+            [OperationContract]
+            List<Event> ReturnEvents();
+            
+            [OperationContract]
+            List<EventType> ReturnEventTypes();
+            
+            [OperationContract]
+            List<RoomType> ReturnRoomTypes();
+            
+            [OperationContract]
+            List<Building> ReturnBuildings();
+            
+            [OperationContract]
+            List<Course> ReturnCourses();
+            
+            [OperationContract]
+            List<Module> ReturnCourseModules(int courseId);
+            
+            [OperationContract]
+            int ReturnBuildingIdFromBuildingName(string buildingName);
+            
+            [OperationContract]
+            int ReturnCourseIdFromCourseName(string courseName);
+            
+            [OperationContract]
+            int ReturnRoomId(int buildingId, string roomName);
+            
+            [OperationContract]
+            List<Room> ReturnBuildingRooms(int buildingId);
+            
+            [OperationContract]
+            int ReturnRoomBuilding(int roomId);
+            
+            [OperationContract]
+            List<Event> ReturnRoomEvents(int roomName);
+            
+            [OperationContract]
+            List<Time> ReturnTimes();
+            
+            [OperationContract]
+            List<RepeatType> ReturnRepeatTypes();
+
+           #endregion
 
             #region Resource Creation
 
             [OperationContract]
             int CreateNewBuilding(string buildingName, int buildingNumber, string addressLine1, string addressLine2, string postCode, string buildingCity);
+            
             [OperationContract]
             int CreateNewRoom(int buildingId, string roomName, string roomDescription, int roomTypeId);
+            
+            [OperationContract]
+            int CreateCourse(string courseName, string courseDescription, int creatorId, int duration);
+
+            [OperationContract]
+            int CreateModule(string moduleName, string moduleDescription, int creatorId, int staffId);
+            
+            [OperationContract]
+            int CreateStaff(string staffTitle, string staffForename, string staffSurname, string staffEmail, string staffPassword, int courseId);
+            
+            [OperationContract]
+            int CreateStudent(string studenttitle, string studentForeame, string studentSurname, string studentEmail,string studentPassword,int courseId, int yearStarted);
+            
             [OperationContract]
             int CreateNewRoomType(string roomTypeDescription);
+
             [OperationContract]
             int CreateNewRepeat(string repeatTypeName, string repeatTypeDescription);
+
             [OperationContract]
             int CreateSetting(string settingName, string settingDescription);
+
+            #endregion
+
+            #region Resource Management
+
+            //[OperationContract]
+            //int AddModulesToCourse(int moduleId, int courseId);
+
+            //[OperationContract]
+            //int AddStaffToEvent(int eventId, int staffId);
+
+            //[OperationContract]
+            //int AddStudentsToEvent(int eventId, int studentId);
+
+            //[OperationContract]
+            //int AddStudentsToEventByModule(int eventId, int moduleId);
+
+            //[OperationContract]
+            //int AddStudentsToEventByCourse(int eventId, int courseId);
+
             #endregion
 
             #region Search Function
@@ -106,8 +164,38 @@ namespace ConorFoxProject
         private TimetableDatabase _dBase = new TimetableDatabase();
         private readonly CultureInfo _currentculture = CultureInfo.CurrentCulture;
 
-        #region Client User Registration
+        #region Encryption
+        /// <summary>
+        /// Encrypts login details before submission
+        /// created using example in http://msdn.microsoft.com/en-us/library/system.security.cryptography.md5(v=vs.110).aspx
+        /// </summary>
+        /// <param name="unencryptedString"></param>
+        /// <returns></returns>
+        public string Encrypt(String unencryptedString)
+        {
+            using (MD5 md5Hash = MD5.Create())
+            {
+                byte[] data = md5Hash.ComputeHash(Encoding.ASCII.GetBytes(unencryptedString));
 
+                var sBuilder = new StringBuilder();
+
+                foreach (var b in data)
+                {
+                    sBuilder.Append(b.ToString("x2"));
+                }
+
+                return sBuilder.ToString();
+            }
+        }
+        #endregion
+
+        #region Registration
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="email"></param>
+        /// <returns></returns>
         public bool Check_Email_Not_Exist(string email)
         {
             var emailList = _dBase.Users.Select(x => x.UserEmail).ToList();
@@ -130,43 +218,29 @@ namespace ConorFoxProject
             var genId = UserIdGeneration();
             if (newUser != null && genId != 0)
             {
-                newUser.UserId = genId;
-                newUser.CreateDate = DateTime.Now;
-                newUser.UserType = 1;
-                newUser.UserEmail = newUser.UserEmail;
+                var generateUser = new User()
+                {
+                    UserId = genId,
+                    CreateDate = DateTime.Now,
+                    LastLogin = DateTime.Now,
+                    Password = newUser.Password,
+                    UserEmail = newUser.UserEmail,
+                    UserForename = newUser.UserForename,
+                    UserSurname = newUser.UserSurname,
+                    UserTitle = newUser.UserTitle,
+                    UserType = 1
+                };
 
-                _dBase.Users.Add(newUser);
+                _dBase.Users.Add(generateUser);
                 _dBase.SaveChanges();
                 return true;
             }
             return false;
         }
 
-        /// <summary>
-        /// Encrypts login details before submission
-        /// created using example in http://msdn.microsoft.com/en-us/library/system.security.cryptography.md5(v=vs.110).aspx
-        /// </summary>
-        /// <param name="unencryptedString"></param>
-        /// <returns></returns>
-        public string Encrypt(String unencryptedString)
-        {
-            using (MD5 md5Hash = MD5.Create())
-            {
-                byte[] data = md5Hash.ComputeHash(Encoding.ASCII.GetBytes(unencryptedString));
-
-                var sBuilder = new StringBuilder();
-
-                foreach (var b in data)
-                {
-                 sBuilder.Append(b.ToString("x2"));
-                }
-
-               return sBuilder.ToString();
-            }
-         }
         #endregion
 
-        #region Client Login
+        #region Login
 
         /// <summary>
         /// Written: 05/11/2013
@@ -192,7 +266,7 @@ namespace ConorFoxProject
 
         #endregion
 
-        #region Id Maintainance
+        #region Id Generation
 
         /// <summary>
         /// Written: 18/11/2013
@@ -409,6 +483,57 @@ namespace ConorFoxProject
             }
             return 0;
         }
+        
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        private int CourseModuleIdGeneration()
+        {
+            var recycledIdCount = _dBase.RecycledIds.Count(x => x.TableName == "Course Module");
+            var maxIdString = _dBase.Settings.SingleOrDefault(x => x.SettingName == "Max Ids Value");
+            
+            int maxIdValue;
+
+            if (maxIdString != null)
+            {
+                maxIdValue = Convert.ToInt32(maxIdString.SettingDescription);
+            }
+            else
+            {
+                maxIdValue = 10000;
+            }
+
+            var courseModuleCheck = _dBase.CourseModules.Count();
+
+            if (recycledIdCount == 0 && courseModuleCheck == 0)
+            {
+                return 1;
+            }
+
+            if (recycledIdCount == 0 && courseModuleCheck != 0)
+            {
+                var largestId = _dBase.CourseModules.OrderByDescending(x => x.CourseModuleId).First().CourseModuleId;
+
+                if (largestId != maxIdValue)
+                {
+                    return largestId + 1;
+                }
+
+                return 0;
+            }
+            
+            if (recycledIdCount != 0)
+            {
+                var recoveredId =
+                _dBase.RecycledIds.OrderByDescending(x => x.IdRecovered).First(x => x.TableName == "Course Module");
+                _dBase.RecycledIds.Remove(recoveredId);
+                _dBase.SaveChanges();
+
+                return recoveredId.IdRecovered;
+            }
+            return 0;
+        }
 
         /// <summary>
         /// Written: 18/11/2013
@@ -515,6 +640,58 @@ namespace ConorFoxProject
             }
             return 0;
         }
+        
+        /// <summary>
+        /// Written: 18/11/2013
+        /// Generates a new Id from the Ids that are stored in the Recycled 
+        /// Ids in the Room type table or the current highest valued Id in 
+        /// the Room types table.
+        /// </summary>
+        /// <returns></returns>
+        private int RoomTypeIdGeneration()
+        {
+            var recycledIdCount = _dBase.RecycledIds.Count(x => x.TableName == "Room Type");
+            var maxIdString = _dBase.Settings.SingleOrDefault(x => x.SettingName == "Max Ids Value").SettingDescription;
+            int maxIdValue;
+
+            if (!String.IsNullOrEmpty(maxIdString))
+            {
+                maxIdValue = Convert.ToInt32(maxIdString);
+            }
+            else
+            {
+                maxIdValue = 10000;
+            }
+
+            var roomCheck = _dBase.RoomTypes.Count();
+
+            if (recycledIdCount == 0 && roomCheck == 0)
+            {
+                return 1;
+            }
+            
+            if (recycledIdCount == 0 && roomCheck != 0)
+            {
+                var largestId = _dBase.RoomTypes.OrderByDescending(x => x.RoomTypeId).First().RoomTypeId;
+
+                if (largestId != maxIdValue)
+                {
+                    return largestId + 1;
+                }
+
+                return 0;
+            }
+            
+            if (recycledIdCount != 0)
+            {
+                var recoveredId = _dBase.RecycledIds.OrderByDescending(x => x.IdRecovered).First(x => x.TableName == "Room Type");
+                _dBase.RecycledIds.Remove(recoveredId);
+                _dBase.SaveChanges();
+
+                return recoveredId.IdRecovered;
+            }
+            return 0;
+        }
 
         /// <summary>
         /// Written: 18/11/2013
@@ -524,6 +701,109 @@ namespace ConorFoxProject
         /// </summary>
         /// <returns></returns>
         private int StaffIdGeneration()
+        {
+            var recycledIdCount = _dBase.RecycledIds.Count(x => x.TableName == "Staff");
+            var maxIdString = _dBase.Settings.SingleOrDefault(x => x.SettingName == "Max Ids Value").SettingDescription;
+            int maxIdValue;
+
+            if (!String.IsNullOrEmpty(maxIdString))
+            {
+                maxIdValue = Convert.ToInt32(maxIdString);
+            }
+            else
+            {
+                maxIdValue = 10000;
+            }
+
+            var staffCheck = _dBase.Staffs.Count();
+
+            if (recycledIdCount == 0 && staffCheck == 0)
+            {
+                return 1;
+            }
+            
+            if (recycledIdCount == 0 && staffCheck != 0)
+            {
+                var largestId = _dBase.Staffs.OrderByDescending(x => x.StaffId).First().StaffId;
+
+                if (largestId != maxIdValue)
+                {
+                    return largestId + 1;
+                }
+
+                return 0;
+            }
+            
+            if (recycledIdCount != 0)
+            {
+                var recoveredId = _dBase.RecycledIds.OrderByDescending(x => x.IdRecovered)
+                    .First(x => x.TableName == "Staff");
+                _dBase.RecycledIds.Remove(recoveredId);
+                _dBase.SaveChanges();
+
+                return recoveredId.IdRecovered;
+            }
+            return 0;
+        }
+
+        /// <summary>
+        /// Written: 18/11/2013
+        /// Generates a new Id from the Ids that are stored in the Recycled 
+        /// Ids in the Student table or the current highest valued Id in 
+        /// the Student table. 
+        /// </summary>
+        /// <returns></returns>
+        private int StudentInvitesIdGeneration()
+        {
+            var recycledIdCount = _dBase.RecycledIds.Count(x => x.TableName == "Student");
+            var maxIdString = _dBase.Settings.SingleOrDefault(x => x.SettingName == "Max Ids Value").SettingDescription;
+            int maxIdValue;
+
+            if (!String.IsNullOrEmpty(maxIdString))
+            {
+                maxIdValue = Convert.ToInt32(maxIdString);
+            }
+            else
+            {
+                maxIdValue = 10000;
+            }
+
+            var studentCheck = _dBase.Students.Count();
+
+            if (recycledIdCount == 0 && studentCheck == 0)
+            {
+                return 1;
+            }
+            
+            if (recycledIdCount == 0 && studentCheck != 0)
+            {
+                var largestId = _dBase.Students.OrderByDescending(x => x.StudentId).First().StudentId;
+
+                if (largestId != maxIdValue)
+                {
+                    return largestId + 1;
+                }
+
+                return 0;
+            }
+            
+            if (recycledIdCount != 0)
+            {
+                var recoveredId =
+                    _dBase.RecycledIds.OrderByDescending(x => x.IdRecovered).First(x => x.TableName == "Student");
+                _dBase.RecycledIds.Remove(recoveredId);
+                _dBase.SaveChanges();
+
+                return recoveredId.IdRecovered;
+            }
+            return 0;
+        }
+        
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        private int StaffInvitesIdGeneration()
         {
             var recycledIdCount = _dBase.RecycledIds.Count(x => x.TableName == "Staff");
             var maxIdString = _dBase.Settings.SingleOrDefault(x => x.SettingName == "Max Ids Value").SettingDescription;
@@ -809,7 +1089,8 @@ namespace ConorFoxProject
             var newSavedId = new RecycledId()
             {
                 TableName = "Event",
-                IdRecovered = eventId
+                IdRecovered = eventId,
+                DateAdded = DateTime.Now
             };
 
             _dBase.RecycledIds.Add(newSavedId);
@@ -850,8 +1131,7 @@ namespace ConorFoxProject
             }
             return null;
         }
-
-        
+      
         /// <summary>
         /// Written: 21/11/2013
         /// </summary>
@@ -930,7 +1210,6 @@ namespace ConorFoxProject
 
             return 0;
         }
-
 
         /// <summary>
         /// Written: 09/12/13
@@ -1046,13 +1325,12 @@ namespace ConorFoxProject
             }
             return null;
         }
-
-
-
+        
         #endregion
 
         #region Resource Creation and Maintanence 
 
+        #region Create
         /// <summary>
         /// Written: 02/12/2013
         /// </summary>
@@ -1063,8 +1341,7 @@ namespace ConorFoxProject
         /// <param name="postCode"></param>
         /// <param name="buildingCity"></param>
         /// <returns></returns>
-        public int CreateNewBuilding(string buildingName, int buildingNumber, string addressLine1, string addressLine2,
-            string postCode, string buildingCity)
+        public int CreateNewBuilding(string buildingName, int buildingNumber, string addressLine1, string addressLine2, string postCode, string buildingCity)
         {
             var buildingId = BuildingIdGeneration();
 
@@ -1130,7 +1407,7 @@ namespace ConorFoxProject
         /// <returns></returns>
         public int CreateNewRoomType(string roomTypeDescription)
         {
-            var roomTypeId = RepeatTypesIdGeneration();
+            var roomTypeId = RoomTypeIdGeneration();
 
             if (roomTypeId == 0)
             {
@@ -1150,6 +1427,148 @@ namespace ConorFoxProject
             return roomTypeId;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="courseName"></param>
+        /// <param name="courseDescription"></param>
+        /// <param name="creatorId"></param>
+        /// <param name="duration"></param>
+        /// <returns></returns>
+        public int CreateCourse(string courseName, string courseDescription, int creatorId, int duration)
+        {
+             var courseId = CourseIdGeneration();
+
+            if (courseId == 0)
+            {
+                return 0;
+            }
+
+            var createdCourse = new Course()
+            {
+                CourseId = courseId,
+                CourseName = courseName,
+                CourseDescription = courseDescription,
+                CreateDate = DateTime.Now,
+                Creator = creatorId,
+                Duration = duration
+            };
+            _dBase.Courses.Add(createdCourse);
+            _dBase.SaveChanges();
+
+            return courseId;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="moduleName"></param>
+        /// <param name="moduleDescription"></param>
+        /// <param name="creatorId"></param>
+        /// <param name="staffId"></param>
+        /// <returns></returns>
+        public int CreateModule(string moduleName, string moduleDescription, int creatorId, int staffId)
+        {
+            var moduleId = ModuleIdGeneration();
+
+            if (moduleId == 0)
+            {
+                return 0;
+            }
+            var newModule = new Module()
+            {
+                CreateDate = DateTime.Now,
+                Creator = creatorId,
+                LastEdited = DateTime.Now,
+                ModuleDescription = moduleDescription,
+                ModuleName = moduleName,
+                ModuleId = moduleId,
+                Staff = staffId
+            };
+            _dBase.Modules.Add(newModule);
+            _dBase.SaveChanges();
+
+            return moduleId;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="staffTitle"></param>
+        /// <param name="staffForename"></param>
+        /// <param name="staffSurname"></param>
+        /// <param name="staffEmail"></param>
+        /// <param name="staffPassword"></param>
+        /// <param name="courseId"></param>
+        /// <returns></returns>
+        public int CreateStaff(string staffTitle, string staffForename, string staffSurname, string staffEmail, string staffPassword, int courseId)
+        {
+            var staffId = StaffIdGeneration();
+
+            if (staffId == 0)
+            {
+                return 0;
+            }
+
+            var newStaff = new Staff()
+            {
+                StaffId = staffId,
+                Course = courseId,
+                CreateDate = DateTime.Now,
+                LastActivity = DateTime.Now,
+                Password = staffPassword,
+                StaffEmail = staffEmail,
+                StaffForename = staffForename,
+                StaffSurname =  staffSurname,
+                StaffTitle = staffTitle
+            };
+
+            _dBase.Staffs.Add(newStaff);
+            _dBase.SaveChanges();
+
+            return staffId;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="studentTitle"></param>
+        /// <param name="studentForename"></param>
+        /// <param name="studentSurname"></param>
+        /// <param name="studentEmail"></param>
+        /// <param name="studentPassword"></param>
+        /// <param name="courseId"></param>
+        /// <param name="yearStarted"></param>
+        /// <returns></returns>
+        public int CreateStudent(string studentTitle, string studentForename, string studentSurname, string studentEmail, string studentPassword,int courseId, int yearStarted)
+        {
+            var studentId = StudentIdGeneration();
+
+            if (studentId == 0)
+            {
+                return 0;
+            }
+
+            var newStudent = new Student()
+            {
+                StudentId = studentId,
+                Course = courseId,
+                CreateDate = DateTime.Now,
+                LastActivity = DateTime.Now,
+                Password = studentPassword,
+                StudentEmail = studentEmail,
+                StudentForename = studentForename,
+                StudentSurname = studentSurname,
+                StudentTitle = studentTitle,
+                Year = yearStarted
+            };
+
+            _dBase.Students.Add(newStudent);
+            _dBase.SaveChanges();
+
+            return studentId;
+        }
+            
         /// <summary>
         /// Written: 02/12/2013
         /// </summary>
@@ -1203,6 +1622,26 @@ namespace ConorFoxProject
 
             return 2;
         }
+        #endregion
+
+        #region Edit
+        
+        
+        #endregion
+
+        #region Delete
+
+        //public bool DeleteStaff(int staffId)
+        //{
+
+        //}
+
+        //public bool DeleteStudent(int studentId)
+        //{
+
+        //}
+
+        #endregion
 
         #endregion
 
@@ -1246,7 +1685,7 @@ namespace ConorFoxProject
 
         #endregion
 
-        #region Time Table Methods
+        #region Timetable Methods
 
         public List<Event> ReturnWeeksEvents(DateTime dateRequested, int roomId)
         {
@@ -1296,7 +1735,6 @@ namespace ConorFoxProject
             return null;
 
         }
-
 
         public TimetableEventsListObject ReturnWeeksEventsWithFilters(DateTime dateRequested, int roomId, int moduleId)
         {
@@ -1403,11 +1841,8 @@ namespace ConorFoxProject
             return null;
 
         }
-        /// <summary>
-        /// Written:13/03/2014
-        /// </summary>
-        /// <returns></returns>
-        public TimetableDisplayListObject ReturnTimetableDisplayListObject()
+      
+        public TimetableDisplayListObject ReturnTimetableToolListObject()
         {
             var startDate = _dBase.Settings.SingleOrDefault(x => x.SettingName == "StartDate").SettingDescription;
             var endDate = _dBase.Settings.SingleOrDefault(x => x.SettingName == "EndDate").SettingDescription;

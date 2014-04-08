@@ -31,6 +31,7 @@ namespace ConorFoxProject
         public DbSet<Event> Events { get; set; }
         public DbSet<EventType> EventTypes { get; set; }
         public DbSet<Module> Modules { get; set; }
+        public DbSet<ModuleEvent> ModuleEvents { get; set; }
         public DbSet<RecycledId> RecycledIds { get; set; }
         public DbSet<RepeatType> RepeatTypes { get; set; }
         public DbSet<Room> Rooms { get; set; }
