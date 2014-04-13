@@ -22,6 +22,7 @@
           <EntitySet Name="StaffEvents" EntityType="TimetableDatabaseModel.Store.StaffEvents" store:Type="Tables" Schema="dbo" />
           <EntitySet Name="Student" EntityType="TimetableDatabaseModel.Store.Student" store:Type="Tables" Schema="dbo" />
           <EntitySet Name="StudentEvents" EntityType="TimetableDatabaseModel.Store.StudentEvents" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="StudentModule" EntityType="TimetableDatabaseModel.Store.StudentModule" store:Type="Tables" Schema="dbo" />
           <EntitySet Name="Time" EntityType="TimetableDatabaseModel.Store.Time" store:Type="Tables" Schema="dbo" />
           <EntitySet Name="User" EntityType="TimetableDatabaseModel.Store.User" store:Type="Tables" Schema="dbo" />
         </EntityContainer>
@@ -36,6 +37,8 @@
           <Property Name="AddressLine2" Type="nvarchar" Nullable="false" MaxLength="50" />
           <Property Name="PostalCode" Type="nvarchar" Nullable="false" MaxLength="10" />
           <Property Name="City" Type="nvarchar" Nullable="false" MaxLength="50" />
+          <Property Name="CreateDate" Type="datetime" Nullable="false" />
+          <Property Name="Creator" Type="int" Nullable="false" />
         </EntityType>
         <EntityType Name="Course">
           <Key>
@@ -95,10 +98,9 @@
           <Property Name="ModuleId" Type="int" Nullable="false" />
           <Property Name="ModuleName" Type="nvarchar" Nullable="false" MaxLength="50" />
           <Property Name="ModuleDescription" Type="nvarchar" Nullable="false" MaxLength="150" />
-          <Property Name="CreateDate" Type="datetime" Nullable="false" />
           <Property Name="Staff" Type="int" Nullable="false" />
+          <Property Name="CreateDate" Type="datetime" Nullable="false" />
           <Property Name="Creator" Type="int" Nullable="false" />
-          <Property Name="LastEdited" Type="datetime" Nullable="false" />
         </EntityType>
         <EntityType Name="ModuleEvents">
           <Key>
@@ -125,6 +127,7 @@
           <Property Name="RepeatTypeName" Type="nvarchar" Nullable="false" MaxLength="20" />
           <Property Name="RepeatDescription" Type="nvarchar" Nullable="false" MaxLength="50" />
           <Property Name="CreateDate" Type="datetime" Nullable="false" />
+          <Property Name="Creator" Type="int" Nullable="false" />
         </EntityType>
         <EntityType Name="Room">
           <Key>
@@ -136,6 +139,8 @@
           <Property Name="Building" Type="int" Nullable="false" />
           <Property Name="RoomType" Type="int" Nullable="false" />
           <Property Name="Capacity" Type="int" Nullable="false" />
+          <Property Name="CreateDate" Type="datetime" Nullable="false" />
+          <Property Name="Creator" Type="int" Nullable="false" />
         </EntityType>
         <EntityType Name="RoomType">
           <Key>
@@ -144,6 +149,7 @@
           <Property Name="RoomTypeId" Type="int" Nullable="false" />
           <Property Name="RoomeTypeDescription" Type="nvarchar" Nullable="false" MaxLength="50" />
           <Property Name="CreateDate" Type="datetime" Nullable="false" />
+          <Property Name="Creator" Type="int" Nullable="false" />
         </EntityType>
         <EntityType Name="Setting">
           <Key>
@@ -167,15 +173,17 @@
           <Property Name="StaffEmail" Type="nvarchar" Nullable="false" MaxLength="50" />
           <Property Name="Course" Type="int" Nullable="false" />
           <Property Name="CreateDate" Type="datetime" Nullable="false" />
+          <Property Name="Creator" Type="int" Nullable="false" />
           <Property Name="LastActivity" Type="datetime" Nullable="false" />
           <Property Name="Password" Type="nvarchar" Nullable="false" MaxLength="20" />
         </EntityType>
         <EntityType Name="StaffEvents">
           <Key>
-            <PropertyRef Name="StaffId" />
+            <PropertyRef Name="StaffEventId" />
           </Key>
-          <Property Name="StaffId" Type="nvarchar" Nullable="false" MaxLength="50" />
-          <Property Name="EventId" Type="nvarchar" Nullable="false" MaxLength="50" />
+          <Property Name="StaffEventId" Type="int" Nullable="false" />
+          <Property Name="StaffId" Type="int" Nullable="false" />
+          <Property Name="EventId" Type="int" Nullable="false" />
         </EntityType>
         <EntityType Name="Student">
           <Key>
@@ -189,15 +197,25 @@
           <Property Name="Course" Type="int" Nullable="false" />
           <Property Name="Year" Type="int" Nullable="false" />
           <Property Name="CreateDate" Type="datetime" Nullable="false" />
+          <Property Name="Creator" Type="int" Nullable="false" />
           <Property Name="LastActivity" Type="datetime" Nullable="false" />
-          <Property Name="Password" Type="nvarchar" Nullable="false" MaxLength="10" />
+          <Property Name="Password" Type="nvarchar" Nullable="false" MaxLength="50" />
         </EntityType>
         <EntityType Name="StudentEvents">
           <Key>
-            <PropertyRef Name="StudentId" />
+            <PropertyRef Name="StudentEventId" />
           </Key>
-          <Property Name="StudentId" Type="nvarchar" Nullable="false" MaxLength="50" />
-          <Property Name="EventId" Type="nvarchar" Nullable="false" MaxLength="50" />
+          <Property Name="StudentEventId" Type="int" Nullable="false" />
+          <Property Name="StudentId" Type="int" Nullable="false" />
+          <Property Name="EventId" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="StudentModule">
+          <Key>
+            <PropertyRef Name="StudentModuleId" />
+          </Key>
+          <Property Name="StudentModuleId" Type="int" Nullable="false" />
+          <Property Name="StudentId" Type="int" Nullable="false" />
+          <Property Name="ModuleId" Type="int" Nullable="false" />
         </EntityType>
         <EntityType Name="Time">
           <Key>
@@ -243,6 +261,7 @@
           <EntitySet Name="StaffEvents" EntityType="TimetableDatabaseModel.StaffEvent" />
           <EntitySet Name="Students" EntityType="TimetableDatabaseModel.Student" />
           <EntitySet Name="StudentEvents" EntityType="TimetableDatabaseModel.StudentEvent" />
+          <EntitySet Name="StudentModules" EntityType="TimetableDatabaseModel.StudentModule" />
           <EntitySet Name="Times" EntityType="TimetableDatabaseModel.Time" />
           <EntitySet Name="Users" EntityType="TimetableDatabaseModel.User" />
         </EntityContainer>
@@ -257,6 +276,8 @@
           <Property Name="AddressLine2" Type="String" Nullable="false" MaxLength="50" Unicode="true" FixedLength="false" />
           <Property Name="PostalCode" Type="String" Nullable="false" MaxLength="10" Unicode="true" FixedLength="false" />
           <Property Name="City" Type="String" Nullable="false" MaxLength="50" Unicode="true" FixedLength="false" />
+          <Property Name="CreateDate" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="Creator" Type="Int32" Nullable="false" />
         </EntityType>
         <EntityType Name="Course">
           <Key>
@@ -316,10 +337,9 @@
           <Property Name="ModuleId" Type="Int32" Nullable="false" />
           <Property Name="ModuleName" Type="String" Nullable="false" MaxLength="50" Unicode="true" FixedLength="false" />
           <Property Name="ModuleDescription" Type="String" Nullable="false" MaxLength="150" Unicode="true" FixedLength="false" />
-          <Property Name="CreateDate" Type="DateTime" Nullable="false" Precision="3" />
           <Property Name="Staff" Type="Int32" Nullable="false" />
+          <Property Name="CreateDate" Type="DateTime" Nullable="false" Precision="3" />
           <Property Name="Creator" Type="Int32" Nullable="false" />
-          <Property Name="LastEdited" Type="DateTime" Nullable="false" Precision="3" />
         </EntityType>
         <EntityType Name="ModuleEvent">
           <Key>
@@ -346,6 +366,7 @@
           <Property Name="RepeatTypeName" Type="String" Nullable="false" MaxLength="20" Unicode="true" FixedLength="false" />
           <Property Name="RepeatDescription" Type="String" Nullable="false" MaxLength="50" Unicode="true" FixedLength="false" />
           <Property Name="CreateDate" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="Creator" Type="Int32" Nullable="false" />
         </EntityType>
         <EntityType Name="Room">
           <Key>
@@ -357,6 +378,8 @@
           <Property Name="Building" Type="Int32" Nullable="false" />
           <Property Name="RoomType" Type="Int32" Nullable="false" />
           <Property Name="Capacity" Type="Int32" Nullable="false" />
+          <Property Name="CreateDate" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="Creator" Type="Int32" Nullable="false" />
         </EntityType>
         <EntityType Name="RoomType">
           <Key>
@@ -365,6 +388,7 @@
           <Property Name="RoomTypeId" Type="Int32" Nullable="false" />
           <Property Name="RoomeTypeDescription" Type="String" Nullable="false" MaxLength="50" Unicode="true" FixedLength="false" />
           <Property Name="CreateDate" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="Creator" Type="Int32" Nullable="false" />
         </EntityType>
         <EntityType Name="Setting">
           <Key>
@@ -388,15 +412,17 @@
           <Property Name="StaffEmail" Type="String" Nullable="false" MaxLength="50" Unicode="true" FixedLength="false" />
           <Property Name="Course" Type="Int32" Nullable="false" />
           <Property Name="CreateDate" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="Creator" Type="Int32" Nullable="false" />
           <Property Name="LastActivity" Type="DateTime" Nullable="false" Precision="3" />
           <Property Name="Password" Type="String" Nullable="false" MaxLength="20" Unicode="true" FixedLength="false" />
         </EntityType>
         <EntityType Name="StaffEvent">
           <Key>
-            <PropertyRef Name="StaffId" />
+            <PropertyRef Name="StaffEventId" />
           </Key>
-          <Property Name="StaffId" Type="String" Nullable="false" MaxLength="50" Unicode="true" FixedLength="false" />
-          <Property Name="EventId" Type="String" Nullable="false" MaxLength="50" Unicode="true" FixedLength="false" />
+          <Property Name="StaffEventId" Type="Int32" Nullable="false" />
+          <Property Name="StaffId" Type="Int32" Nullable="false" />
+          <Property Name="EventId" Type="Int32" Nullable="false" />
         </EntityType>
         <EntityType Name="Student">
           <Key>
@@ -410,15 +436,25 @@
           <Property Name="Course" Type="Int32" Nullable="false" />
           <Property Name="Year" Type="Int32" Nullable="false" />
           <Property Name="CreateDate" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="Creator" Type="Int32" Nullable="false" />
           <Property Name="LastActivity" Type="DateTime" Nullable="false" Precision="3" />
-          <Property Name="Password" Type="String" Nullable="false" MaxLength="10" Unicode="true" FixedLength="false" />
+          <Property Name="Password" Type="String" Nullable="false" MaxLength="50" Unicode="true" FixedLength="false" />
         </EntityType>
         <EntityType Name="StudentEvent">
           <Key>
-            <PropertyRef Name="StudentId" />
+            <PropertyRef Name="StudentEventId" />
           </Key>
-          <Property Name="StudentId" Type="String" Nullable="false" MaxLength="50" Unicode="true" FixedLength="false" />
-          <Property Name="EventId" Type="String" Nullable="false" MaxLength="50" Unicode="true" FixedLength="false" />
+          <Property Name="StudentEventId" Type="Int32" Nullable="false" />
+          <Property Name="StudentId" Type="Int32" Nullable="false" />
+          <Property Name="EventId" Type="Int32" Nullable="false" />
+        </EntityType>
+        <EntityType Name="StudentModule">
+          <Key>
+            <PropertyRef Name="StudentModuleId" />
+          </Key>
+          <Property Name="StudentModuleId" Type="Int32" Nullable="false" />
+          <Property Name="StudentId" Type="Int32" Nullable="false" />
+          <Property Name="ModuleId" Type="Int32" Nullable="false" />
         </EntityType>
         <EntityType Name="Time">
           <Key>
@@ -458,6 +494,8 @@
                 <ScalarProperty Name="AddressLine2" ColumnName="AddressLine2" />
                 <ScalarProperty Name="PostalCode" ColumnName="PostalCode" />
                 <ScalarProperty Name="City" ColumnName="City" />
+                <ScalarProperty Name="CreateDate" ColumnName="CreateDate" />
+                <ScalarProperty Name="Creator" ColumnName="Creator" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
@@ -522,10 +560,9 @@
                 <ScalarProperty Name="ModuleId" ColumnName="ModuleId" />
                 <ScalarProperty Name="ModuleName" ColumnName="ModuleName" />
                 <ScalarProperty Name="ModuleDescription" ColumnName="ModuleDescription" />
-                <ScalarProperty Name="CreateDate" ColumnName="CreateDate" />
                 <ScalarProperty Name="Staff" ColumnName="Staff" />
+                <ScalarProperty Name="CreateDate" ColumnName="CreateDate" />
                 <ScalarProperty Name="Creator" ColumnName="Creator" />
-                <ScalarProperty Name="LastEdited" ColumnName="LastEdited" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
@@ -555,6 +592,7 @@
                 <ScalarProperty Name="RepeatTypeName" ColumnName="RepeatTypeName" />
                 <ScalarProperty Name="RepeatDescription" ColumnName="RepeatDescription" />
                 <ScalarProperty Name="CreateDate" ColumnName="CreateDate" />
+                <ScalarProperty Name="Creator" ColumnName="Creator" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
@@ -567,6 +605,8 @@
                 <ScalarProperty Name="Building" ColumnName="Building" />
                 <ScalarProperty Name="RoomType" ColumnName="RoomType" />
                 <ScalarProperty Name="Capacity" ColumnName="Capacity" />
+                <ScalarProperty Name="CreateDate" ColumnName="CreateDate" />
+                <ScalarProperty Name="Creator" ColumnName="Creator" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
@@ -576,6 +616,7 @@
                 <ScalarProperty Name="RoomTypeId" ColumnName="RoomTypeId" />
                 <ScalarProperty Name="RoomeTypeDescription" ColumnName="RoomeTypeDescription" />
                 <ScalarProperty Name="CreateDate" ColumnName="CreateDate" />
+                <ScalarProperty Name="Creator" ColumnName="Creator" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
@@ -601,6 +642,7 @@
                 <ScalarProperty Name="StaffEmail" ColumnName="StaffEmail" />
                 <ScalarProperty Name="Course" ColumnName="Course" />
                 <ScalarProperty Name="CreateDate" ColumnName="CreateDate" />
+                <ScalarProperty Name="Creator" ColumnName="Creator" />
                 <ScalarProperty Name="LastActivity" ColumnName="LastActivity" />
                 <ScalarProperty Name="Password" ColumnName="Password" />
               </MappingFragment>
@@ -609,6 +651,7 @@
           <EntitySetMapping Name="StaffEvents">
             <EntityTypeMapping TypeName="TimetableDatabaseModel.StaffEvent">
               <MappingFragment StoreEntitySet="StaffEvents">
+                <ScalarProperty Name="StaffEventId" ColumnName="StaffEventId" />
                 <ScalarProperty Name="StaffId" ColumnName="StaffId" />
                 <ScalarProperty Name="EventId" ColumnName="EventId" />
               </MappingFragment>
@@ -625,6 +668,7 @@
                 <ScalarProperty Name="Course" ColumnName="Course" />
                 <ScalarProperty Name="Year" ColumnName="Year" />
                 <ScalarProperty Name="CreateDate" ColumnName="CreateDate" />
+                <ScalarProperty Name="Creator" ColumnName="Creator" />
                 <ScalarProperty Name="LastActivity" ColumnName="LastActivity" />
                 <ScalarProperty Name="Password" ColumnName="Password" />
               </MappingFragment>
@@ -633,8 +677,18 @@
           <EntitySetMapping Name="StudentEvents">
             <EntityTypeMapping TypeName="TimetableDatabaseModel.StudentEvent">
               <MappingFragment StoreEntitySet="StudentEvents">
+                <ScalarProperty Name="StudentEventId" ColumnName="StudentEventId" />
                 <ScalarProperty Name="StudentId" ColumnName="StudentId" />
                 <ScalarProperty Name="EventId" ColumnName="EventId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="StudentModules">
+            <EntityTypeMapping TypeName="TimetableDatabaseModel.StudentModule">
+              <MappingFragment StoreEntitySet="StudentModule">
+                <ScalarProperty Name="StudentModuleId" ColumnName="StudentModuleId" />
+                <ScalarProperty Name="StudentId" ColumnName="StudentId" />
+                <ScalarProperty Name="ModuleId" ColumnName="ModuleId" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

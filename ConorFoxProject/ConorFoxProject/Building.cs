@@ -21,5 +21,7 @@ namespace ConorFoxProject
         public string AddressLine2 { get; set; }
         public string PostalCode { get; set; }
         public string City { get; set; }
+        public System.DateTime CreateDate { get; set; }
+        public int Creator { get; set; }
     }
 }

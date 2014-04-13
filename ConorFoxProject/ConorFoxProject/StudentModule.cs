@@ -12,18 +12,10 @@ namespace ConorFoxProject
     using System;
     using System.Collections.Generic;
     
-    public partial class Student
+    public partial class StudentModule
     {
+        public int StudentModuleId { get; set; }
         public int StudentId { get; set; }
-        public string StudentTitle { get; set; }
-        public string StudentForename { get; set; }
-        public string StudentSurname { get; set; }
-        public string StudentEmail { get; set; }
-        public int Course { get; set; }
-        public int Year { get; set; }
-        public System.DateTime CreateDate { get; set; }
-        public int Creator { get; set; }
-        public System.DateTime LastActivity { get; set; }
-        public string Password { get; set; }
+        public int ModuleId { get; set; }
     }
 }

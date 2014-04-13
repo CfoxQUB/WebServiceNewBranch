@@ -40,6 +40,23 @@ namespace ConorFoxProject
             [OperationContract]
             bool DeleteEvent(int eventId);
 
+            [OperationContract]
+            bool InviteStudent(int eventId, int studentId);
+
+            [OperationContract]
+            bool InviteStaff(int eventId, int staffId);
+
+            [OperationContract]
+            bool InviteModule(int eventId, int moduleId, int courseId);
+            
+            [OperationContract]
+            bool DeleteInviteStudent(int inviteId);
+
+            [OperationContract]
+            bool DeleteInviteStaff(int inviteId);
+
+            [OperationContract]
+            bool DeleteInviteModule(int inviteId);
             #endregion
 
             #region Timetabling Actions
@@ -79,6 +96,9 @@ namespace ConorFoxProject
             int ReturnBuildingIdFromBuildingName(string buildingName);
             
             [OperationContract]
+            int ReturnRoomTypeIdFromTypeName(string typeName);
+            
+            [OperationContract]
             int ReturnCourseIdFromCourseName(string courseName);
             
             [OperationContract]
@@ -104,11 +124,17 @@ namespace ConorFoxProject
             #region Resource Creation
 
             [OperationContract]
-            int CreateNewBuilding(string buildingName, int buildingNumber, string addressLine1, string addressLine2, string postCode, string buildingCity);
-            
+            int CreateNewBuilding(string buildingName, int buildingNumber, string addressLine1, string addressLine2, string postCode, string buildingCity, int creatorId);
+
             [OperationContract]
-            int CreateNewRoom(int buildingId, string roomName, string roomDescription, int roomTypeId);
-            
+            bool CheckRoomExists(string roomName);
+
+            [OperationContract]
+            int CreateNewRoom(int buildingId, string roomName, string roomDescription, int roomCapacity, int roomTypeId, int creatorId);
+
+            [OperationContract]
+            Room ReturnRoomDetail(int roomId);
+
             [OperationContract]
             int CreateCourse(string courseName, string courseDescription, int creatorId, int duration);
 
@@ -116,13 +142,13 @@ namespace ConorFoxProject
             int CreateModule(string moduleName, string moduleDescription, int creatorId, int staffId);
             
             [OperationContract]
-            int CreateStaff(string staffTitle, string staffForename, string staffSurname, string staffEmail, string staffPassword, int courseId);
+            int CreateStaff(string staffTitle, string staffForename, string staffSurname, string staffEmail, string staffPassword, int courseId, int creatorId);
             
             [OperationContract]
-            int CreateStudent(string studenttitle, string studentForeame, string studentSurname, string studentEmail,string studentPassword,int courseId, int yearStarted);
+            int CreateStudent(string studenttitle, string studentForeame, string studentSurname, string studentEmail,string studentPassword,int courseId, int yearStarted, int creatorId);
             
             [OperationContract]
-            int CreateNewRoomType(string roomTypeDescription);
+            int CreateNewRoomType(string roomTypeDescription, int creatorId);
 
             [OperationContract]
             int CreateNewRepeat(string repeatTypeName, string repeatTypeDescription);
@@ -134,8 +160,8 @@ namespace ConorFoxProject
 
             #region Resource Management
 
-            //[OperationContract]
-            //int AddModulesToCourse(int moduleId, int courseId);
+            [OperationContract]
+            bool EditRoom(int roomId, int buildingId, string roomName, string roomDescription, int roomCapacity, int roomTypeId, int creatorId);
 
             //[OperationContract]
             //int AddStaffToEvent(int eventId, int staffId);
@@ -149,11 +175,21 @@ namespace ConorFoxProject
             //[OperationContract]
             //int AddStudentsToEventByCourse(int eventId, int courseId);
 
+            #region Delete Resources
+
+            [OperationContract]
+            bool DeleteRoom(int roomId);
+
+            #endregion
+
             #endregion
 
             #region Search Function
             [OperationContract]
             List<Event> SearchFunction(string appliedFilter, string searchItem);
+            
+            [OperationContract]
+            List<Room> SearchRoomFunction(int buildingId, string searchItem);
             #endregion
 
         }
@@ -755,29 +791,19 @@ namespace ConorFoxProject
         /// <returns></returns>
         private int StudentInvitesIdGeneration()
         {
-            var recycledIdCount = _dBase.RecycledIds.Count(x => x.TableName == "Student");
-            var maxIdString = _dBase.Settings.SingleOrDefault(x => x.SettingName == "Max Ids Value").SettingDescription;
-            int maxIdValue;
+            var recycledIdCount = _dBase.RecycledIds.Count(x => x.TableName == "Student Invite");
+            var maxIdValue = 2000000;
 
-            if (!String.IsNullOrEmpty(maxIdString))
-            {
-                maxIdValue = Convert.ToInt32(maxIdString);
-            }
-            else
-            {
-                maxIdValue = 10000;
-            }
+            var invitesCheck = _dBase.StudentEvents.Count();
 
-            var studentCheck = _dBase.Students.Count();
-
-            if (recycledIdCount == 0 && studentCheck == 0)
+            if (recycledIdCount == 0 && invitesCheck == 0)
             {
                 return 1;
             }
-            
-            if (recycledIdCount == 0 && studentCheck != 0)
+
+            if (recycledIdCount == 0 && invitesCheck != 0)
             {
-                var largestId = _dBase.Students.OrderByDescending(x => x.StudentId).First().StudentId;
+                var largestId = _dBase.StudentEvents.OrderByDescending(x => x.StudentEventId).First().StudentEventId;
 
                 if (largestId != maxIdValue)
                 {
@@ -790,9 +816,9 @@ namespace ConorFoxProject
             if (recycledIdCount != 0)
             {
                 var recoveredId =
-                    _dBase.RecycledIds.OrderByDescending(x => x.IdRecovered).First(x => x.TableName == "Student");
-                _dBase.RecycledIds.Remove(recoveredId);
-                _dBase.SaveChanges();
+                    _dBase.RecycledIds.OrderByDescending(x => x.IdRecovered).First(x => x.TableName == "Student Invite");
+                    _dBase.RecycledIds.Remove(recoveredId);
+                    _dBase.SaveChanges();
 
                 return recoveredId.IdRecovered;
             }
@@ -803,31 +829,22 @@ namespace ConorFoxProject
         /// 
         /// </summary>
         /// <returns></returns>
-        private int StaffInvitesIdGeneration()
+        private int ModuleInvitesIdGeneration()
         {
-            var recycledIdCount = _dBase.RecycledIds.Count(x => x.TableName == "Staff");
-            var maxIdString = _dBase.Settings.SingleOrDefault(x => x.SettingName == "Max Ids Value").SettingDescription;
-            int maxIdValue;
+            var recycledIdCount = _dBase.RecycledIds.Count(x => x.TableName == "Module Invite");
 
-            if (!String.IsNullOrEmpty(maxIdString))
-            {
-                maxIdValue = Convert.ToInt32(maxIdString);
-            }
-            else
-            {
-                maxIdValue = 10000;
-            }
+            int maxIdValue = 2000000;
 
-            var staffCheck = _dBase.Staffs.Count();
+            var inviteCheck = _dBase.ModuleEvents.Count();
 
-            if (recycledIdCount == 0 && staffCheck == 0)
+            if (recycledIdCount == 0 && inviteCheck == 0)
             {
                 return 1;
             }
-            
-            if (recycledIdCount == 0 && staffCheck != 0)
+
+            if (recycledIdCount == 0 && inviteCheck != 0)
             {
-                var largestId = _dBase.Staffs.OrderByDescending(x => x.StaffId).First().StaffId;
+                var largestId = _dBase.ModuleEvents.OrderByDescending(x => x.EventModule).First().EventModule;
 
                 if (largestId != maxIdValue)
                 {
@@ -840,7 +857,48 @@ namespace ConorFoxProject
             if (recycledIdCount != 0)
             {
                 var recoveredId = _dBase.RecycledIds.OrderByDescending(x => x.IdRecovered)
-                    .First(x => x.TableName == "Staff");
+                    .First(x => x.TableName == "Module Invite");
+                _dBase.RecycledIds.Remove(recoveredId);
+                _dBase.SaveChanges();
+
+                return recoveredId.IdRecovered;
+            }
+            return 0;
+        } 
+        
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        private int StaffInvitesIdGeneration()
+        {
+            var recycledIdCount = _dBase.RecycledIds.Count(x => x.TableName == "Staff Invite");
+
+            int maxIdValue = 2000000;
+
+            var inviteCheck = _dBase.StaffEvents.Count();
+
+            if (recycledIdCount == 0 && inviteCheck == 0)
+            {
+                return 1;
+            }
+
+            if (recycledIdCount == 0 && inviteCheck != 0)
+            {
+                var largestId = _dBase.StaffEvents.OrderByDescending(x => x.StaffEventId).First().StaffEventId;
+
+                if (largestId != maxIdValue)
+                {
+                    return largestId + 1;
+                }
+
+                return 0;
+            }
+            
+            if (recycledIdCount != 0)
+            {
+                var recoveredId = _dBase.RecycledIds.OrderByDescending(x => x.IdRecovered)
+                    .First(x => x.TableName == "Staff Invite");
                 _dBase.RecycledIds.Remove(recoveredId);
                 _dBase.SaveChanges();
 
@@ -986,14 +1044,56 @@ namespace ConorFoxProject
             {
                 return 0;
             }
+            
+            var repeatId = 0;
+            var repeat = _dBase.RepeatTypes.SingleOrDefault(x => x.RepeatTypeName == repeatType);
+            
+            if (repeatType != "0" && repeat != null)
+            {
+                repeatId = repeat.RepeatTypeId;
+            } 
+            
+            var roomId = 0;
+            var room = _dBase.Rooms.SingleOrDefault(x => x.RoomName == roomName);
+            
+            if (roomName != "0" && room != null)
+            {
+                roomId = room.RoomId;
+            } 
+            
+            var timeId = 0;
+            var time = _dBase.Times.SingleOrDefault(x => x.TimeLiteral == eventTime);
+            
+            if (eventTime != "0" && time != null)
+            {
+                timeId = time.TimeId;
+            }
+            
+            var courseId = 0;
+            var course = _dBase.Courses.SingleOrDefault(x => x.CourseName == courseName);
 
-            var repeatId = _dBase.RepeatTypes.SingleOrDefault(x => x.RepeatTypeName == repeatType).RepeatTypeId;
-            var timeId = _dBase.Times.SingleOrDefault(x => x.TimeLiteral == eventTime).TimeId;
-            var roomId = _dBase.Rooms.SingleOrDefault(x => x.RoomName == roomName).RoomId;
-            var courseId = _dBase.Courses.SingleOrDefault(x => x.CourseName == courseName).CourseId;
-            var moduleId = _dBase.Modules.SingleOrDefault(x => x.ModuleName == moduleName).ModuleId;
-            var typeId = _dBase.EventTypes.SingleOrDefault(x => x.TypeName == eventType).TypeId;
+            if (courseName != "0" && course != null)
+            {
+                courseId = course.CourseId;
+            }
+            
+            var moduleId = 0;
+            var module = _dBase.Modules.SingleOrDefault(x => x.ModuleName == moduleName);
+            
+            if (moduleName != "0" && module != null)
+            {
+                moduleId = module.ModuleId;
+            }
 
+            var typeId = 0;
+            var type = _dBase.EventTypes.SingleOrDefault(x => x.TypeName == eventType);;
+            
+            if (eventType != "0" && type != null)
+            {
+                typeId = type.TypeId;
+            } 
+
+          
             var newEvent = new Event()
             {
                 EventId = generatedEventId,
@@ -1047,14 +1147,53 @@ namespace ConorFoxProject
                 return false;
             }
 
-            var repeatId = _dBase.RepeatTypes.SingleOrDefault(x => x.RepeatTypeName == repeatType).RepeatTypeId;
-            var timeId = _dBase.Times.SingleOrDefault(x => x.TimeLiteral == eventTime).TimeId;
-            var typeId = _dBase.EventTypes.SingleOrDefault(x => x.TypeName == eventType).TypeId;
-            var roomId = _dBase.Rooms.SingleOrDefault(x => x.RoomName == roomName).RoomId;
-            var courseId = _dBase.Courses.SingleOrDefault(x => x.CourseName == courseName).CourseId;
-            var moduleId = _dBase.Modules.SingleOrDefault(x => x.ModuleName == moduleName).ModuleId;
+            var repeatId = 0;
+            var repeat = _dBase.RepeatTypes.SingleOrDefault(x => x.RepeatTypeName == repeatType);
 
+            if (repeatType != "0" && repeat != null)
+            {
+                repeatId = repeat.RepeatTypeId;
+            }
 
+            var roomId = 0;
+            var room = _dBase.Rooms.SingleOrDefault(x => x.RoomName == roomName);
+
+            if (roomName != "0" && room != null)
+            {
+                roomId = room.RoomId;
+            }
+
+            var timeId = 0;
+            var time = _dBase.Times.SingleOrDefault(x => x.TimeLiteral == eventTime);
+
+            if (eventTime != "0" && time != null)
+            {
+                timeId = time.TimeId;
+            }
+
+            var courseId = 0;
+            var course = _dBase.Courses.SingleOrDefault(x => x.CourseName == courseName);
+
+            if (courseName != "0" && course != null)
+            {
+                courseId = course.CourseId;
+            }
+
+            var moduleId = 0;
+            var module = _dBase.Modules.SingleOrDefault(x => x.ModuleName == moduleName);
+
+            if (moduleName != "0" && module != null)
+            {
+                moduleId = module.ModuleId;
+            }
+
+            var typeId = 0;
+            var type = _dBase.EventTypes.SingleOrDefault(x => x.TypeName == eventType); ;
+
+            if (eventType != "0" && type != null)
+            {
+                typeId = type.TypeId;
+            } 
 
             editedEvent.EventTitle = eventTitle;
             editedEvent.EventType = typeId;
@@ -1100,6 +1239,162 @@ namespace ConorFoxProject
             _dBase.SaveChanges();
 
             return true;
+        }
+        
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="eventId"></param>
+        /// <param name="studentId"></param>
+        /// <returns></returns>
+        public bool InviteStudent(int eventId, int studentId)
+        {
+            if (eventId != 0 && studentId != 0)
+            {
+                var inviteId = StudentInvitesIdGeneration();
+                var studentEvent = new StudentEvent()
+                {
+                    StudentEventId = inviteId,
+                    StudentId = studentId,
+                    EventId = eventId
+                };
+                _dBase.StudentEvents.Add(studentEvent);
+                _dBase.SaveChanges();
+                return true;
+            }
+            return false;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="eventId"></param>
+        /// <param name="staffId"></param>
+        /// <returns></returns>
+        public bool InviteStaff(int eventId, int staffId)
+        {
+            if (eventId != 0 && staffId != 0)
+            {
+                var inviteId = StaffInvitesIdGeneration();
+                var staffEvent = new StaffEvent()
+                {
+                    StaffEventId = inviteId,
+                    StaffId = staffId,
+                    EventId = eventId
+                };
+                _dBase.StaffEvents.Add(staffEvent);
+                _dBase.SaveChanges();
+                return true;
+            }
+            return false;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="eventId"></param>
+        /// <param name="moduleId"></param>
+        /// <param name="courseId"></param>
+        /// <returns></returns>
+        public bool InviteModule(int eventId, int moduleId, int courseId)
+        {
+            if (eventId != 0 && moduleId != 0 && courseId != 0)
+            {
+                var inviteId = ModuleInvitesIdGeneration();
+
+                var moduleEvent = new ModuleEvent()
+                {
+                    EventModule = inviteId,
+                    ModuleId = moduleId,
+                    CourseId = courseId,
+                    EventId = eventId
+                };
+                _dBase.ModuleEvents.Add(moduleEvent);
+                _dBase.SaveChanges();
+
+                return true;
+            }
+            return false;
+        }
+        
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="inviteId"></param>
+        /// <returns></returns>
+        public bool DeleteInviteStudent(int inviteId)
+        {
+            var inviteSelected = _dBase.StudentEvents.SingleOrDefault(x => x.StudentEventId == inviteId);
+            if (inviteSelected != null)
+            {
+                _dBase.StudentEvents.Remove(inviteSelected);
+             
+                var savedId = new RecycledId()
+                {
+                    IdRecovered = inviteId,
+                    TableName = "Student Invite",
+                    DateAdded = DateTime.Now
+                };
+                _dBase.RecycledIds.Add(savedId);
+                _dBase.SaveChanges();
+
+                return true;
+            }
+            return false;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="inviteId"></param>
+        /// <returns></returns>
+        public bool DeleteInviteStaff(int inviteId)
+        {
+            var inviteSelected = _dBase.StaffEvents.SingleOrDefault(x => x.StaffEventId == inviteId);
+            if (inviteSelected != null)
+            {
+                _dBase.StaffEvents.Remove(inviteSelected);
+
+                var savedId = new RecycledId()
+                {
+                    IdRecovered = inviteId,
+                    TableName = "Staff Invite",
+                    DateAdded = DateTime.Now
+                };
+                _dBase.RecycledIds.Add(savedId);
+                _dBase.SaveChanges();
+
+                return true;
+            }
+            return false;
+        
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="inviteId"></param>
+        /// <returns></returns>
+        public bool DeleteInviteModule(int inviteId)
+        {
+            var inviteSelected = _dBase.StaffEvents.SingleOrDefault(x => x.StaffEventId == inviteId);
+            if (inviteSelected != null)
+            {
+                _dBase.StaffEvents.Remove(inviteSelected);
+
+                var savedId = new RecycledId()
+                {
+                    IdRecovered = inviteId,
+                    TableName = "Module Invite",
+                    DateAdded = DateTime.Now
+                };
+                _dBase.RecycledIds.Add(savedId);
+                _dBase.SaveChanges();
+
+                return true;
+            }
+            return false;
+            
         }
 
         #endregion
@@ -1181,11 +1476,31 @@ namespace ConorFoxProject
         {
             if (!String.IsNullOrEmpty(buildingName))
             {
-                var returnName = _dBase.Buildings.SingleOrDefault(x => x.BuildingName == buildingName).BuildingId;
+                var returnName = _dBase.Buildings.SingleOrDefault(x => x.BuildingName == buildingName);
                 
                 if (returnName != null)
                 {
-                    return returnName;
+                    return returnName.BuildingId;
+                }
+            }
+            return 0;
+        }
+        
+        /// <summary>
+        /// Written: 09/12/13
+        /// 
+        /// </summary>
+        /// <param name="typeName"></param>
+        /// <returns></returns>
+        public int ReturnRoomTypeIdFromTypeName(string typeName)
+        {
+            if (!String.IsNullOrEmpty(typeName))
+            {
+                var returnName = _dBase.RoomTypes.SingleOrDefault(x => x.RoomeTypeDescription == typeName);
+                
+                if (returnName != null)
+                {
+                    return returnName.RoomTypeId;
                 }
             }
             return 0;
@@ -1201,10 +1516,10 @@ namespace ConorFoxProject
         {
             if (buildingId != 0)
             {
-                var returnRoom = _dBase.Rooms.Where(x => x.Building == buildingId).SingleOrDefault(x => x.RoomName == roomName).RoomId;
+                var returnRoom = _dBase.Rooms.Where(x => x.Building == buildingId).SingleOrDefault(x => x.RoomName == roomName);
                 if (returnRoom != null)
                 {
-                    return returnRoom;
+                    return returnRoom.RoomId;
                 }
             }
 
@@ -1291,11 +1606,11 @@ namespace ConorFoxProject
         /// <returns></returns>
         public int ReturnRoomBuilding(int roomId)
         {
-            var roomList = _dBase.Rooms.ToList();
-            if (roomList.Exists(x => x.RoomId == roomId))
+            var returnBuilding = _dBase.Rooms.SingleOrDefault(x => x.RoomId == roomId);
+
+            if (returnBuilding != null)
             {
-                var returnBuilding = roomList.SingleOrDefault(x => x.RoomId == roomId);
-                return (int)returnBuilding.Building;
+                return returnBuilding.Building;
             }
             return 0;
         }
@@ -1340,8 +1655,9 @@ namespace ConorFoxProject
         /// <param name="addressLine2"></param>
         /// <param name="postCode"></param>
         /// <param name="buildingCity"></param>
+        /// <param name="creatorId"></param>
         /// <returns></returns>
-        public int CreateNewBuilding(string buildingName, int buildingNumber, string addressLine1, string addressLine2, string postCode, string buildingCity)
+        public int CreateNewBuilding(string buildingName, int buildingNumber, string addressLine1, string addressLine2, string postCode, string buildingCity, int creatorId)
         {
             var buildingId = BuildingIdGeneration();
 
@@ -1358,7 +1674,9 @@ namespace ConorFoxProject
                 AddressLine1 = addressLine1,
                 AddressLine2 = addressLine2,
                 PostalCode = postCode,
-                City = buildingCity
+                City = buildingCity,
+                CreateDate = DateTime.Now,
+                Creator = creatorId
 
             };
 
@@ -1368,15 +1686,29 @@ namespace ConorFoxProject
             return buildingId;
         }
 
+        public bool CheckRoomExists(string roomName)
+        {
+            var roomExists = _dBase.Rooms.SingleOrDefault(x => x.RoomName == roomName);
+
+            if (roomExists == null)
+            {
+                return false;
+            }
+
+            return true;
+        }
+
         /// <summary>
         /// Written: 02/12/2013
         /// </summary>
         /// <param name="buildingId"></param>
         /// <param name="roomName"></param>
         /// <param name="roomDescription"></param>
+        /// <param name="roomCapacity"></param>
         /// <param name="roomTypeId"></param>
+        /// <param name="creatorId"></param>
         /// <returns></returns>
-        public int CreateNewRoom(int buildingId, string roomName, string roomDescription, int roomTypeId)
+        public int CreateNewRoom(int buildingId, string roomName, string roomDescription, int roomCapacity, int roomTypeId, int creatorId)
         {
             var roomId = RoomIdGeneration();
 
@@ -1389,9 +1721,12 @@ namespace ConorFoxProject
             {
                 RoomId = roomId,
                 RoomName = roomName,
+                Capacity = roomCapacity,
                 RoomDescription = roomDescription,
                 RoomType = roomTypeId,
-                Building = buildingId
+                Building = buildingId,
+                CreateDate = DateTime.Now,
+                Creator = creatorId
             };
 
             _dBase.Rooms.Add(newRoom);
@@ -1400,12 +1735,23 @@ namespace ConorFoxProject
             return roomId;
         }
 
+        public Room ReturnRoomDetail(int roomId)
+        {
+            var roomExists = _dBase.Rooms.SingleOrDefault(x => x.RoomId == roomId);
+
+            if (roomExists == null)
+            {
+                return null;
+            }
+
+            return roomExists;
+        }
         /// <summary>
         /// Written: 02/12/2013
         /// </summary>
         /// <param name="roomTypeDescription"></param>
         /// <returns></returns>
-        public int CreateNewRoomType(string roomTypeDescription)
+        public int CreateNewRoomType(string roomTypeDescription, int creatorId)
         {
             var roomTypeId = RoomTypeIdGeneration();
 
@@ -1418,7 +1764,8 @@ namespace ConorFoxProject
             {
                 RoomTypeId = roomTypeId,
                 RoomeTypeDescription = roomTypeDescription,
-                CreateDate = DateTime.Now
+                CreateDate = DateTime.Now,
+                Creator = creatorId
             };
 
             _dBase.RoomTypes.Add(newRoom);
@@ -1479,7 +1826,6 @@ namespace ConorFoxProject
             {
                 CreateDate = DateTime.Now,
                 Creator = creatorId,
-                LastEdited = DateTime.Now,
                 ModuleDescription = moduleDescription,
                 ModuleName = moduleName,
                 ModuleId = moduleId,
@@ -1494,14 +1840,41 @@ namespace ConorFoxProject
         /// <summary>
         /// 
         /// </summary>
+        /// <param name="courseId"></param>
+        /// <param name="moduleId"></param>
+        /// <returns></returns>
+        public int AddModuleToCourse(int courseId, int moduleId)
+        {
+            var courseModuleId = CourseModuleIdGeneration();
+
+            if (courseId != 0 && moduleId != 0 && moduleId != 0)
+            {
+                var courseModule = new CourseModule()
+                {
+                    CourseModuleId = courseModuleId,
+                    Course = courseId,
+                    Module = moduleId
+                };
+
+                _dBase.CourseModules.Add(courseModule);
+                _dBase.SaveChanges();
+                return courseModuleId;
+            }
+            return 0;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
         /// <param name="staffTitle"></param>
         /// <param name="staffForename"></param>
         /// <param name="staffSurname"></param>
         /// <param name="staffEmail"></param>
         /// <param name="staffPassword"></param>
         /// <param name="courseId"></param>
+        /// <param name="creatorId"></param>
         /// <returns></returns>
-        public int CreateStaff(string staffTitle, string staffForename, string staffSurname, string staffEmail, string staffPassword, int courseId)
+        public int CreateStaff(string staffTitle, string staffForename, string staffSurname, string staffEmail, string staffPassword, int courseId, int creatorId)
         {
             var staffId = StaffIdGeneration();
 
@@ -1520,7 +1893,8 @@ namespace ConorFoxProject
                 StaffEmail = staffEmail,
                 StaffForename = staffForename,
                 StaffSurname =  staffSurname,
-                StaffTitle = staffTitle
+                StaffTitle = staffTitle,
+                Creator = creatorId
             };
 
             _dBase.Staffs.Add(newStaff);
@@ -1539,8 +1913,9 @@ namespace ConorFoxProject
         /// <param name="studentPassword"></param>
         /// <param name="courseId"></param>
         /// <param name="yearStarted"></param>
+        /// <param name="creatorId"></param>
         /// <returns></returns>
-        public int CreateStudent(string studentTitle, string studentForename, string studentSurname, string studentEmail, string studentPassword,int courseId, int yearStarted)
+        public int CreateStudent(string studentTitle, string studentForename, string studentSurname, string studentEmail, string studentPassword,int courseId, int yearStarted, int creatorId)
         {
             var studentId = StudentIdGeneration();
 
@@ -1560,7 +1935,8 @@ namespace ConorFoxProject
                 StudentForename = studentForename,
                 StudentSurname = studentSurname,
                 StudentTitle = studentTitle,
-                Year = yearStarted
+                Year = yearStarted,
+                Creator = creatorId
             };
 
             _dBase.Students.Add(newStudent);
@@ -1625,12 +2001,74 @@ namespace ConorFoxProject
         #endregion
 
         #region Edit
+
+        /// <summary>
+        /// Written: 02/12/2013
+        /// </summary>
+        /// <param name="roomId"></param>
+        /// <param name="buildingId"></param>
+        /// <param name="roomName"></param>
+        /// <param name="roomDescription"></param>
+        /// <param name="roomCapacity"></param>
+        /// <param name="roomTypeId"></param>
+        /// <param name="creatorId"></param>
+        /// <returns></returns>
+        public bool EditRoom(int roomId, int buildingId, string roomName, string roomDescription, int roomCapacity, int roomTypeId, int creatorId)
+        {
+            var roomEdited = _dBase.Rooms.SingleOrDefault(x=>x.RoomId==roomId);
+
+            if (roomEdited == null)
+            {
+                return false;
+            }
+
+
+            roomEdited.RoomId = roomId;
+            roomEdited.RoomName = roomName;
+            roomEdited.Capacity = roomCapacity;
+            roomEdited.RoomDescription = roomDescription;
+            roomEdited.RoomType = roomTypeId;
+            roomEdited.Building = buildingId;
         
+            _dBase.SaveChanges();
+
+            return true;
+        }
         
         #endregion
 
         #region Delete
 
+        public bool DeleteRoom(int roomId)
+        {
+            if (roomId != 0)
+            {
+                var room = _dBase.Rooms.SingleOrDefault(x => x.RoomId == roomId);
+                var roomsEvents = _dBase.Events.Where(x => x.Room == roomId).ToList();
+
+                if (room != null)
+                {
+                    _dBase.Rooms.Remove(room);                   
+                }
+
+                if (roomsEvents.Count() != 0)
+                {
+                    foreach (var e in roomsEvents)
+                    {
+                        e.Room = 0;
+                    }
+                }
+                _dBase.SaveChanges();
+                return true;
+            }
+            return false;
+        }
+
+        //public bool DeleteStudent(int studentId)
+        //{
+
+        //}
+        
         //public bool DeleteStaff(int staffId)
         //{
 
@@ -1672,7 +2110,7 @@ namespace ConorFoxProject
 
                     return eventList;
                 }
-                else if (appliedFilter == "Event Description")
+                if (appliedFilter == "Event Description")
                 {
                     eventList.AddRange(_dBase.Events.Where(x => x.EventDescription.Contains(searchItem)).ToList());
 
@@ -1681,6 +2119,28 @@ namespace ConorFoxProject
 
             }
             return null;
+        }
+        
+        /// <summary>
+        /// Written: 10/12/13
+        /// Searches by aplpying a filer to the field searched for within the event
+        /// then applaies a similar fitler of user input to select the events
+        /// </summary>
+        /// <param name="buildingId"></param>
+        /// <param name="searchItem"></param>
+        /// <returns></returns>
+        public List<Room> SearchRoomFunction(int buildingId, string searchItem)
+        {
+            if (!String.IsNullOrEmpty(searchItem))
+            {
+                var roomList = _dBase.Rooms.Where(x => x.RoomName.Contains(searchItem) || x.RoomDescription.Contains(searchItem)).ToList().Distinct();
+
+                var returnRooms = new List<Room>();
+                returnRooms.AddRange(roomList.Where(x => x.Building == buildingId).ToList());
+               
+                return returnRooms;
+            }
+            return _dBase.Rooms.Where(x=>x.Building == buildingId).ToList();
         }
 
         #endregion

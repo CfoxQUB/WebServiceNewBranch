@@ -114,6 +114,9 @@
     <Compile Include="StudentEvent.cs">
       <DependentUpon>LocalDatabaseModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="StudentModule.cs">
+      <DependentUpon>LocalDatabaseModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="Time.cs">
       <DependentUpon>LocalDatabaseModel.tt</DependentUpon>
     </Compile>

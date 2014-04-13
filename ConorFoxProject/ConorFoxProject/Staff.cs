@@ -21,6 +21,7 @@ namespace ConorFoxProject
         public string StaffEmail { get; set; }
         public int Course { get; set; }
         public System.DateTime CreateDate { get; set; }
+        public int Creator { get; set; }
         public System.DateTime LastActivity { get; set; }
         public string Password { get; set; }
     }

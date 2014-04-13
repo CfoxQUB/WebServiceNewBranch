@@ -20,5 +20,7 @@ namespace ConorFoxProject
         public int Building { get; set; }
         public int RoomType { get; set; }
         public int Capacity { get; set; }
+        public System.DateTime CreateDate { get; set; }
+        public int Creator { get; set; }
     }
 }

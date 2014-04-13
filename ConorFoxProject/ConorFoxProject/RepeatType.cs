@@ -18,5 +18,6 @@ namespace ConorFoxProject
         public string RepeatTypeName { get; set; }
         public string RepeatDescription { get; set; }
         public System.DateTime CreateDate { get; set; }
+        public int Creator { get; set; }
     }
 }

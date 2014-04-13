@@ -17,5 +17,6 @@ namespace ConorFoxProject
         public int RoomTypeId { get; set; }
         public string RoomeTypeDescription { get; set; }
         public System.DateTime CreateDate { get; set; }
+        public int Creator { get; set; }
     }
 }
