@@ -108,10 +108,16 @@
     <Compile Include="StaffEvent.cs">
       <DependentUpon>LocalDatabaseModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="StaffInvite.cs">
+      <DependentUpon>LocalDatabaseModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="Student.cs">
       <DependentUpon>LocalDatabaseModel.tt</DependentUpon>
     </Compile>
     <Compile Include="StudentEvent.cs">
+      <DependentUpon>LocalDatabaseModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="StudentInvite.cs">
       <DependentUpon>LocalDatabaseModel.tt</DependentUpon>
     </Compile>
     <Compile Include="StudentModule.cs">

@@ -20,8 +20,10 @@
           <EntitySet Name="Setting" EntityType="TimetableDatabaseModel.Store.Setting" store:Type="Tables" Schema="dbo" />
           <EntitySet Name="Staff" EntityType="TimetableDatabaseModel.Store.Staff" store:Type="Tables" Schema="dbo" />
           <EntitySet Name="StaffEvents" EntityType="TimetableDatabaseModel.Store.StaffEvents" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="StaffInvites" EntityType="TimetableDatabaseModel.Store.StaffInvites" store:Type="Tables" Schema="dbo" />
           <EntitySet Name="Student" EntityType="TimetableDatabaseModel.Store.Student" store:Type="Tables" Schema="dbo" />
           <EntitySet Name="StudentEvents" EntityType="TimetableDatabaseModel.Store.StudentEvents" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="StudentInvites" EntityType="TimetableDatabaseModel.Store.StudentInvites" store:Type="Tables" Schema="dbo" />
           <EntitySet Name="StudentModule" EntityType="TimetableDatabaseModel.Store.StudentModule" store:Type="Tables" Schema="dbo" />
           <EntitySet Name="Time" EntityType="TimetableDatabaseModel.Store.Time" store:Type="Tables" Schema="dbo" />
           <EntitySet Name="User" EntityType="TimetableDatabaseModel.Store.User" store:Type="Tables" Schema="dbo" />
@@ -185,6 +187,15 @@
           <Property Name="StaffId" Type="int" Nullable="false" />
           <Property Name="EventId" Type="int" Nullable="false" />
         </EntityType>
+        <EntityType Name="StaffInvites">
+          <Key>
+            <PropertyRef Name="StaffInviteId" />
+          </Key>
+          <Property Name="StaffInviteId" Type="int" Nullable="false" />
+          <Property Name="StaffId" Type="int" Nullable="false" />
+          <Property Name="EventId" Type="int" Nullable="false" />
+          <Property Name="Attending" Type="bit" Nullable="false" />
+        </EntityType>
         <EntityType Name="Student">
           <Key>
             <PropertyRef Name="StudentId" />
@@ -208,6 +219,15 @@
           <Property Name="StudentEventId" Type="int" Nullable="false" />
           <Property Name="StudentId" Type="int" Nullable="false" />
           <Property Name="EventId" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="StudentInvites">
+          <Key>
+            <PropertyRef Name="StudentInviteId" />
+          </Key>
+          <Property Name="StudentInviteId" Type="int" Nullable="false" />
+          <Property Name="StudentId" Type="int" Nullable="false" />
+          <Property Name="EventId" Type="int" Nullable="false" />
+          <Property Name="Attending" Type="bit" Nullable="false" />
         </EntityType>
         <EntityType Name="StudentModule">
           <Key>
@@ -259,8 +279,10 @@
           <EntitySet Name="Settings" EntityType="TimetableDatabaseModel.Setting" />
           <EntitySet Name="Staffs" EntityType="TimetableDatabaseModel.Staff" />
           <EntitySet Name="StaffEvents" EntityType="TimetableDatabaseModel.StaffEvent" />
+          <EntitySet Name="StaffInvites" EntityType="TimetableDatabaseModel.StaffInvite" />
           <EntitySet Name="Students" EntityType="TimetableDatabaseModel.Student" />
           <EntitySet Name="StudentEvents" EntityType="TimetableDatabaseModel.StudentEvent" />
+          <EntitySet Name="StudentInvites" EntityType="TimetableDatabaseModel.StudentInvite" />
           <EntitySet Name="StudentModules" EntityType="TimetableDatabaseModel.StudentModule" />
           <EntitySet Name="Times" EntityType="TimetableDatabaseModel.Time" />
           <EntitySet Name="Users" EntityType="TimetableDatabaseModel.User" />
@@ -424,6 +446,15 @@
           <Property Name="StaffId" Type="Int32" Nullable="false" />
           <Property Name="EventId" Type="Int32" Nullable="false" />
         </EntityType>
+        <EntityType Name="StaffInvite">
+          <Key>
+            <PropertyRef Name="StaffInviteId" />
+          </Key>
+          <Property Name="StaffInviteId" Type="Int32" Nullable="false" />
+          <Property Name="StaffId" Type="Int32" Nullable="false" />
+          <Property Name="EventId" Type="Int32" Nullable="false" />
+          <Property Name="Attending" Type="Boolean" Nullable="false" />
+        </EntityType>
         <EntityType Name="Student">
           <Key>
             <PropertyRef Name="StudentId" />
@@ -447,6 +478,15 @@
           <Property Name="StudentEventId" Type="Int32" Nullable="false" />
           <Property Name="StudentId" Type="Int32" Nullable="false" />
           <Property Name="EventId" Type="Int32" Nullable="false" />
+        </EntityType>
+        <EntityType Name="StudentInvite">
+          <Key>
+            <PropertyRef Name="StudentInviteId" />
+          </Key>
+          <Property Name="StudentInviteId" Type="Int32" Nullable="false" />
+          <Property Name="StudentId" Type="Int32" Nullable="false" />
+          <Property Name="EventId" Type="Int32" Nullable="false" />
+          <Property Name="Attending" Type="Boolean" Nullable="false" />
         </EntityType>
         <EntityType Name="StudentModule">
           <Key>
@@ -657,6 +697,16 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
+          <EntitySetMapping Name="StaffInvites">
+            <EntityTypeMapping TypeName="TimetableDatabaseModel.StaffInvite">
+              <MappingFragment StoreEntitySet="StaffInvites">
+                <ScalarProperty Name="StaffInviteId" ColumnName="StaffInviteId" />
+                <ScalarProperty Name="StaffId" ColumnName="StaffId" />
+                <ScalarProperty Name="EventId" ColumnName="EventId" />
+                <ScalarProperty Name="Attending" ColumnName="Attending" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
           <EntitySetMapping Name="Students">
             <EntityTypeMapping TypeName="TimetableDatabaseModel.Student">
               <MappingFragment StoreEntitySet="Student">
@@ -680,6 +730,16 @@
                 <ScalarProperty Name="StudentEventId" ColumnName="StudentEventId" />
                 <ScalarProperty Name="StudentId" ColumnName="StudentId" />
                 <ScalarProperty Name="EventId" ColumnName="EventId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="StudentInvites">
+            <EntityTypeMapping TypeName="TimetableDatabaseModel.StudentInvite">
+              <MappingFragment StoreEntitySet="StudentInvites">
+                <ScalarProperty Name="StudentInviteId" ColumnName="StudentInviteId" />
+                <ScalarProperty Name="StudentId" ColumnName="StudentId" />
+                <ScalarProperty Name="EventId" ColumnName="EventId" />
+                <ScalarProperty Name="Attending" ColumnName="Attending" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

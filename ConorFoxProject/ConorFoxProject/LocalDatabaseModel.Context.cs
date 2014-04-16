@@ -39,8 +39,10 @@ namespace ConorFoxProject
         public DbSet<Setting> Settings { get; set; }
         public DbSet<Staff> Staffs { get; set; }
         public DbSet<StaffEvent> StaffEvents { get; set; }
+        public DbSet<StaffInvite> StaffInvites { get; set; }
         public DbSet<Student> Students { get; set; }
         public DbSet<StudentEvent> StudentEvents { get; set; }
+        public DbSet<StudentInvite> StudentInvites { get; set; }
         public DbSet<StudentModule> StudentModules { get; set; }
         public DbSet<Time> Times { get; set; }
         public DbSet<User> Users { get; set; }
