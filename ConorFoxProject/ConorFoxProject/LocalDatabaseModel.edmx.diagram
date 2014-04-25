@@ -4,7 +4,7 @@
   <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
     <!-- Diagram content (shape and connector positions) -->
     <edmx:Diagrams>
-      <Diagram DiagramId="b0cf4d1d0e3649b8a0b9b84636d46377" Name="Diagram1">
+      <Diagram DiagramId="039d5d599c064fc98f58d132fd1492dd" Name="Diagram1">
         <EntityTypeShape EntityType="TimetableDatabaseModel.Building" Width="1.5" PointX="0.75" PointY="0.75" IsExpanded="true" />
         <EntityTypeShape EntityType="TimetableDatabaseModel.Course" Width="1.5" PointX="2.75" PointY="0.75" IsExpanded="true" />
         <EntityTypeShape EntityType="TimetableDatabaseModel.CourseModule" Width="1.5" PointX="2.75" PointY="3.75" IsExpanded="true" />

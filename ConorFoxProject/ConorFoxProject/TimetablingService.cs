@@ -34,15 +34,16 @@ namespace ConorFoxProject
             int CreateEvent(string eventTitle, int userId, string eventDescription, string eventType, string repeatType, int eventDuration, DateTime startDate, string eventTime, string roomName, string courseName, string moduleName);
             
             [OperationContract]
-            bool EditEvent(int editedEventId, int userId, string eventTitle, string eventDescription, string eventType, string repeatType, int eventDuration, DateTime startDate, string eventTime, string roomName, string courseName, string moduleName);
+            bool EditEvent(int editedEventId, int userId, string eventTitle, string eventDescription, string eventType, int eventDuration, DateTime startDate, string eventTime, string roomName, string courseName, string moduleName);
             
             [OperationContract]
             bool DeleteEvent(int eventId);
 
-            #region Event Attendees
             [OperationContract]
-            bool StudentEvent(int eventId, int studentId);
+            bool ChangeEventStatus(String status, int eventId);
 
+            #region Event Attendees
+            
             [OperationContract]
             bool StaffEvent(int eventId, int staffId);
 
@@ -93,9 +94,24 @@ namespace ConorFoxProject
 
             [OperationContract]
             List<Event> ReturnEvents();
+
+            [OperationContract]
+            Event ReturnEventDetails(int eventId);
+
+            [OperationContract]
+            List<Event> ReturnEventsWithModules();
+            
+            [OperationContract]
+            List<Event> ReturnEventsWithRooms();
+            
+            [OperationContract]
+            List<Event> ReturnEventsWithRoomsNoModules();
             
             [OperationContract]
             List<EventType> ReturnEventTypes();
+            
+            [OperationContract]
+            Staff ReturnEventStaff(int eventId);
             
             [OperationContract]
             List<RoomType> ReturnRoomTypes();
@@ -105,6 +121,15 @@ namespace ConorFoxProject
             
             [OperationContract]
             List<Course> ReturnCourses();
+            
+            [OperationContract]
+            List<Module> ReturnModules();
+            
+            [OperationContract]
+            List<Student> ReturnModuleStudents(int moduleId);
+            
+            [OperationContract]
+            List<Staff> ReturnCourseStaff(int courseId);
             
             [OperationContract]
             List<Module> ReturnCourseModules(int courseId);
@@ -117,6 +142,9 @@ namespace ConorFoxProject
             
             [OperationContract]
             int ReturnCourseIdFromCourseName(string courseName);
+
+            [OperationContract]
+            int ReturnModuleIdFromModuleName(string moduleName);
             
             [OperationContract]
             int ReturnRoomId(int buildingId, string roomName);
@@ -144,8 +172,11 @@ namespace ConorFoxProject
             
             [OperationContract]
             List<Student> ReturnStudents();
+            
+            [OperationContract]
+            List<Student> ReturnCourseStudents(int courseId);
 
-           #endregion
+            #endregion
 
             #region Resource Creation
 
@@ -175,6 +206,9 @@ namespace ConorFoxProject
 
             [OperationContract]
             Course ReturnCourseDetail(int courseId);
+            
+            [OperationContract]
+            int ReturnModuleStudentsNumbers(int moduleId);
 
             [OperationContract]
             bool CheckModuleExists(string moduleName);
@@ -186,11 +220,29 @@ namespace ConorFoxProject
             Module ReturnModuleDetail(int moduleId);
 
             [OperationContract]
+            bool CheckStaffExists(string staffName);
+
+            [OperationContract]
             int CreateStaff(string staffTitle, string staffForename, string staffSurname, string staffEmail, string staffPassword, int courseId, int creatorId);
-            
+
+            [OperationContract]
+            bool Check_Staff_Email_Exists(string email);
+
+            [OperationContract]
+            Staff ReturnStaffDetail(int staffId);
+
+            [OperationContract]
+            bool Check_Student_Email_Exists(string email);
+
+            [OperationContract]
+            bool CheckStudentExists(string studentName);
+
             [OperationContract]
             int CreateStudent(string studenttitle, string studentForeame, string studentSurname, string studentEmail,string studentPassword,int courseId, int yearStarted, int creatorId);
-            
+
+            [OperationContract]
+            Student ReturnStudentDetail(int studentId);
+
             [OperationContract]
             int CreateNewRoomType(string roomTypeDescription, int creatorId);
 
@@ -246,6 +298,72 @@ namespace ConorFoxProject
 
             #endregion
 
+            #region Invites and Attendees
+
+            #region Adding Invites and Attendants
+
+            [OperationContract]
+            bool AddModulesToCourse(List<Module> modules, int courseId);
+            
+            [OperationContract]
+            bool AddModulesToEvent(List<CourseModule> modules, int eventId);
+            
+            [OperationContract]
+            bool AddStaffAttendentsToEvent(List<Staff> staff, int eventId);
+            
+            [OperationContract]
+            bool AddStudentsToModule(List<StudentModule> students, int moduleId);
+            
+            [OperationContract]
+            bool AddStaffInvitesToEvent(List<Staff> staff, int eventId);
+
+            [OperationContract]
+            bool AddStudentInvitesToEvent(List<Student> students, int eventId);
+            #endregion
+
+            #region Remove Invites and Attendants
+
+            [OperationContract]
+            bool RemoveModulesFromCourse(List<CourseModule> coursemodules);
+            
+            [OperationContract]
+            bool RemoveModulesFromEvent(List<ModuleEvent> moduleEvents);
+            
+            [OperationContract]
+            bool RemoveStaffAttendentsFromEvent(List<StaffEvent> staff);
+            
+            [OperationContract]
+            bool RemoveStaffInvitesFromEvent(List<StaffInvite> staff);
+            
+            [OperationContract]
+            bool RemoveStudentInvitesFromEvent(List<StudentInvite> students);
+            
+            #endregion
+
+
+
+
+
+            #region Return Lists
+            [OperationContract]
+            List<CourseModule> ReturnCoursesModules(int courseId);
+
+            [OperationContract]
+            List<StudentEvent> ReturnEventsStudentsAttendees(int eventId);
+
+            [OperationContract]
+            List<StaffEvent> ReturnEventsStaffAttendees(int eventId);
+
+            [OperationContract]
+            List<StudentInvite> ReturnEventsStudentInvites(int eventId);
+
+            [OperationContract]
+            List<StaffInvite> ReturnEventsStaffInvites(int eventId);
+            #endregion
+
+
+            #endregion
+
             #region Search Function
             [OperationContract]
             List<Event> SearchFunction(string appliedFilter, string searchItem);
@@ -258,6 +376,27 @@ namespace ConorFoxProject
 
             [OperationContract]
             List<Course> SearchCourseFunction(string searchItem);
+            
+            [OperationContract]
+            List<Staff> SearchStaffFunction(string searchItem);
+            
+            [OperationContract]
+            List<Student> SearchStudentFunction(string searchItem); 
+            
+            [OperationContract]
+            List<Student> SearchCourseStudentsFunction(string searchItem, int courseId); 
+            
+            [OperationContract]
+            List<Module> SearchCourseModulesFunction(string searchItem, int courseId); 
+            
+            [OperationContract]
+            List<Module> SearchModulesFunction(string searchItem);
+            
+            [OperationContract]
+            List<Event> SearchEventsWithModulesFunction(string searchItem);
+            
+            [OperationContract]
+            List<Event> SearchEventsWithRoomsOnlyFunction(string searchItem);
 
             #endregion
 
@@ -270,7 +409,7 @@ namespace ConorFoxProject
         private const int MaxId = 2000000;
         private readonly CultureInfo _currentculture = CultureInfo.CurrentCulture;
 
-        #region Encryption
+        #region Encryption and Decryption
         /// <summary>
         /// Encrypts login details before submission
         /// created using example in http://msdn.microsoft.com/en-us/library/system.security.cryptography.md5(v=vs.110).aspx
@@ -293,6 +432,7 @@ namespace ConorFoxProject
                 return sBuilder.ToString();
             }
         }
+        
         #endregion
 
         #region Registration
@@ -593,7 +733,7 @@ namespace ConorFoxProject
             }
             return 0;
         }
-
+        
         /// <summary>
         /// Written: 18/11/2013
         /// Generates a new Id from the Ids that are stored in the Recycled 
@@ -815,25 +955,25 @@ namespace ConorFoxProject
         /// <summary>
         /// Written: 18/11/2013
         /// Generates a new Id from the Ids that are stored in the Recycled 
-        /// Ids in the Student table or the current highest valued Id in 
+        /// Ids in the Student Module table or the current highest valued Id in 
         /// the Student table. 
         /// </summary>
         /// <returns></returns>
-        private int StudentEventsIdGeneration()
+        private int StudentModulesIdGeneration()
         {
-            var recycledIdCount = _dBase.RecycledIds.Count(x => x.TableName == "Student Event");
+            var recycledIdCount = _dBase.RecycledIds.Count(x => x.TableName == "Student Module");
             const int maxIdValue = MaxId;
 
-            var eventsCheck = _dBase.StudentEvents.Count();
+            var existsCheck = _dBase.StudentModules.Count();
 
-            if (recycledIdCount == 0 && eventsCheck == 0)
+            if (recycledIdCount == 0 && existsCheck == 0)
             {
                 return 1;
             }
 
-            if (recycledIdCount == 0 && eventsCheck != 0)
+            if (recycledIdCount == 0 && existsCheck != 0)
             {
-                var largestId = _dBase.StudentEvents.OrderByDescending(x => x.StudentEventId).First().StudentEventId;
+                var largestId = _dBase.StudentModules.OrderByDescending(x => x.StudentModuleId).First().StudentModuleId;
 
                 if (largestId < maxIdValue)
                 {
@@ -846,7 +986,7 @@ namespace ConorFoxProject
             if (recycledIdCount != 0)
             {
                 var recoveredId =
-                    _dBase.RecycledIds.OrderByDescending(x => x.IdRecovered).First(x => x.TableName == "Student Event");
+                    _dBase.RecycledIds.OrderByDescending(x => x.IdRecovered).First(x => x.TableName == "Student Module");
                     _dBase.RecycledIds.Remove(recoveredId);
                     _dBase.SaveChanges();
 
@@ -1145,8 +1285,7 @@ namespace ConorFoxProject
             {
                 typeId = type.TypeId;
             } 
-
-          
+            
             var newEvent = new Event
             {
                 EventId = generatedEventId,
@@ -1181,7 +1320,6 @@ namespace ConorFoxProject
         /// <param name="eventTitle"></param>
         /// <param name="eventDescription"></param>
         /// <param name="eventType"></param>
-        /// <param name="repeatType"></param>
         /// <param name="eventDuration"></param>
         /// <param name="startDate"></param>
         /// <param name="eventTime"></param>
@@ -1190,7 +1328,7 @@ namespace ConorFoxProject
         /// <param name="moduleName"></param>
         /// <returns></returns>
         public bool EditEvent(int editedEventId, int userId, string eventTitle, string eventDescription,
-            string eventType, string repeatType, int eventDuration, DateTime startDate, string eventTime,
+            string eventType, int eventDuration, DateTime startDate, string eventTime,
             string roomName, string courseName, string moduleName)
         {
             var editedEvent = _dBase.Events.SingleOrDefault(x => x.EventId == editedEventId);
@@ -1200,14 +1338,8 @@ namespace ConorFoxProject
                 return false;
             }
 
-            var repeatId = 0;
-            var repeat = _dBase.RepeatTypes.SingleOrDefault(x => x.RepeatTypeName == repeatType);
-
-            if (repeatType != "0" && repeat != null)
-            {
-                repeatId = repeat.RepeatTypeId;
-            }
-
+            var repeatId = _dBase.RepeatTypes.First().RepeatTypeId;
+            
             var roomId = 0;
             var room = _dBase.Rooms.SingleOrDefault(x => x.RoomName == roomName);
 
@@ -1268,6 +1400,30 @@ namespace ConorFoxProject
             return true;
         }
 
+
+        public bool ChangeEventStatus(String status, int eventId)
+        {
+            if (eventId != 0)
+            {
+                var eventSelected = _dBase.Events.SingleOrDefault(x => x.EventId == eventId);
+                if (eventSelected != null)
+                {
+                    if (eventSelected.Course != 0 && eventSelected.Module != 0 && eventSelected.Room != 0 && status == "Confirmed")
+                    {
+                        eventSelected.Status = status;
+                        _dBase.SaveChanges();
+                        return true;
+                    }
+
+                    eventSelected.Status = status;
+                    _dBase.SaveChanges();
+                    return true;
+                }
+                return false;
+            }
+            return false;
+        }
+
         /// <summary>
         /// Written: 18/11/2012
         /// Deletes event by querying the events table using the event Id
@@ -1300,37 +1456,27 @@ namespace ConorFoxProject
         /// 
         /// </summary>
         /// <param name="eventId"></param>
-        /// <param name="studentId"></param>
-        /// <returns></returns>
-        public bool StudentEvent(int eventId, int studentId)
-        {
-            if (eventId != 0 && studentId != 0)
-            {
-                var inviteId = StudentEventsIdGeneration();
-                var studentEvent = new StudentEvent
-                {
-                    StudentEventId = inviteId,
-                    StudentId = studentId,
-                    EventId = eventId
-                };
-
-                _dBase.StudentEvents.Add(studentEvent);
-                _dBase.SaveChanges();
-                return true;
-            }
-            return false;
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="eventId"></param>
         /// <param name="staffId"></param>
         /// <returns></returns>
         public bool StaffEvent(int eventId, int staffId)
         {
             if (eventId != 0 && staffId != 0)
             {
+                var idRecovery = _dBase.StaffEvents.SingleOrDefault(x => x.EventId == eventId);
+
+                if (idRecovery != null)
+                {
+                    var recoveredId = new RecycledId
+                    {
+                        IdRecovered = idRecovery.StaffEventId,
+                        TableName = "Staff Event",
+                        DateAdded = DateTime.Now
+                    };
+                    _dBase.RecycledIds.Add(recoveredId);
+                    _dBase.StaffEvents.Remove(idRecovery);
+                    _dBase.SaveChanges();
+                }
+
                 var inviteId = StaffEventsIdGeneration();
                 var staffEvent = new StaffEvent
                 {
@@ -1579,6 +1725,62 @@ namespace ConorFoxProject
         }
 
         /// <summary>
+        /// Writen: 02/12/13
+        /// </summary>
+        /// <returns></returns>
+        public Event ReturnEventDetails(int eventId)
+        {
+            var eventSelected = _dBase.Events.SingleOrDefault(x => x.EventId == eventId);
+            if (eventSelected != null)
+            {
+                return eventSelected;
+            }
+            return null;
+        }
+        
+        /// <summary>
+        /// Writen: 02/12/13
+        /// </summary>
+        /// <returns></returns>
+        public List<Event> ReturnEventsWithModules()
+        {
+            var eventsWithModules = _dBase.Events.Where(x => x.Module > 0).ToList();
+            if (eventsWithModules.Any())
+            {
+                return eventsWithModules;
+            }
+            return null;
+        }
+        
+        /// <summary>
+        /// Writen: 02/12/13
+        /// </summary>
+        /// <returns></returns>
+        public List<Event> ReturnEventsWithRooms()
+        {
+            var eventsWithRooms = _dBase.Events.Where(x => x.Room > 0).ToList();
+            if (eventsWithRooms.Any())
+            {
+                return eventsWithRooms;
+            }
+            return null;
+        }
+        
+        /// <summary>
+        /// Writen: 02/12/13
+        /// </summary>
+        /// <returns></returns>
+        public List<Event> ReturnEventsWithRoomsNoModules()
+        {
+            var eventsWithRoomsNoModules = _dBase.Events.Where(x => x.Room > 0 && x.Module == 0 && x.Course == 0).ToList();
+            if (eventsWithRoomsNoModules.Any())
+            {
+                return eventsWithRoomsNoModules;
+            }
+            return null;
+        }
+
+        /// <summary>
         /// Written: 21/11/2013
         /// </summary>
         /// <returns></returns>
@@ -1591,6 +1793,26 @@ namespace ConorFoxProject
             return null;
         }
       
+        /// <summary>
+        /// Written: 21/11/2013
+        /// </summary>
+        /// <returns></returns>
+        public Staff ReturnEventStaff(int eventId)
+        {
+            var staffEvent = _dBase.StaffEvents.SingleOrDefault(x => x.EventId == eventId);
+            if (staffEvent != null)
+            {
+                var staffMember = _dBase.Staffs.SingleOrDefault(x => x.StaffId == staffEvent.StaffId);
+
+                if (staffMember != null)
+                {
+                    return staffMember;
+                }
+                return null;
+            }
+            return null;
+        }
+        
         /// <summary>
         /// Written: 21/11/2013
         /// </summary>
@@ -1613,6 +1835,62 @@ namespace ConorFoxProject
             if (_dBase.Courses.Count() != 0)
             {
                 return _dBase.Courses.ToList();
+            }
+            return null;
+        }
+        
+        /// <summary>
+        /// Written: 21/11/2013
+        /// </summary>
+        /// <returns></returns>
+        public List<Module> ReturnModules()
+        {
+            if (_dBase.Modules.Count() != 0)
+            {
+                return _dBase.Modules.ToList();
+            }
+            return null;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public List<Student> ReturnModuleStudents(int moduleId)
+        {
+            if (moduleId != 0)
+            {
+                var moduleStudents = _dBase.StudentModules.Where(x => x.ModuleId == moduleId);
+                var returnStudents = new List<Student>(); 
+                
+                foreach (var s in moduleStudents)
+                {
+                    returnStudents.Add(_dBase.Students.SingleOrDefault(x => x.StudentId == s.StudentId));
+                }
+
+                return returnStudents;
+            }
+            return null;
+        }
+        
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public List<Staff> ReturnCourseStaff(int courseId)
+        {
+            if (courseId != 0)
+            {
+                var courseStaff = _dBase.Staffs.Where(x => x.Course == courseId);
+                var returnStaff = new List<Staff>();
+
+                foreach (var s in courseStaff)
+                {
+                    var returnedStaff = _dBase.Staffs.SingleOrDefault(x => x.Course == s.Course);
+                    returnStaff.Add(returnedStaff);
+                }
+
+                return returnStaff;
             }
             return null;
         }
@@ -1709,6 +1987,26 @@ namespace ConorFoxProject
 
             return 0;
         }
+        
+        /// <summary>
+        /// Written: 09/12/13
+        /// Returns Id of the Course Selected by searching by the name of the course
+        /// </summary>
+        /// <param name="moduleName"></param>
+        /// <returns></returns>
+        public int ReturnModuleIdFromModuleName(string moduleName)
+        {
+            if (!String.IsNullOrEmpty(moduleName))
+            {
+                var returnModule = _dBase.Modules.SingleOrDefault(x => x.ModuleName == moduleName);
+                if (returnModule != null)
+                {
+                    return returnModule.ModuleId;
+                }
+            }
+
+            return 0;
+        }
 
         /// <summary>
         /// Written: 11/12/13
@@ -1749,8 +2047,9 @@ namespace ConorFoxProject
                 return _dBase.Events.Where(x => x.Room == roomName).ToList();
             }
             return null;
-        }/// <summary>
-        
+        }
+
+        /// <summary>
         /// 
         /// </summary>
         /// <param name="buildingId"></param>
@@ -1852,7 +2151,86 @@ namespace ConorFoxProject
             }
             return null;
         }
+
+        public List<Student> ReturnCourseStudents(int courseId)
+        {
+            if(courseId != 0)
+            {
+                return _dBase.Students.Where(x=>x.Course ==  courseId).ToList();
+            }
+            return null;
+        }
+
+        public List<CourseModule> ReturnCoursesModules(int courseId)
+        {
+            if (courseId != 0)
+            {
+                var courseModules = _dBase.CourseModules.Where(x => x.Course == courseId).ToList();
+                if (courseModules.Count() != 0)
+                {
+                    return courseModules;
+                }
+                return null;
+            }
+            return null;
+        }
+
+        public List<StudentEvent> ReturnEventsStudentsAttendees(int eventId)
+        {
+            if (eventId != 0)
+            {
+                var studentEvents = _dBase.StudentEvents.Where(x => x.EventId == eventId).ToList();
+                if (studentEvents.Count() != 0)
+                {
+                    return studentEvents;
+                }
+                return null;
+            }
+            return null; 
+        }
+
+        public List<StaffEvent> ReturnEventsStaffAttendees(int eventId)
+        {
+            if (eventId != 0)
+            {
+                var staffEvents = _dBase.StaffEvents.Where(x => x.EventId == eventId).ToList();
+                if (staffEvents.Count() != 0)
+                {
+                    return staffEvents;
+                }
+                return null;
+            }
+            return null;
+        }
         
+        public List<StudentInvite> ReturnEventsStudentInvites(int eventId)
+        {
+            if (eventId != 0)
+            {
+                var studentInvites = _dBase.StudentInvites.Where(x => x.EventId == eventId).ToList();
+                if (studentInvites.Count() != 0)
+                {
+                    return studentInvites;
+                }
+                return null;
+            }
+            return null;
+        }
+        
+        public List<StaffInvite> ReturnEventsStaffInvites(int eventId)
+        {
+            if (eventId != 0)
+            {
+                var staffInvites = _dBase.StaffInvites.Where(x => x.EventId == eventId).ToList();
+                if (staffInvites.Count() != 0)
+                {
+                    return staffInvites;
+                }
+                return null;
+            }
+            return null;
+        }
+
         #endregion
 
         #region Resource Creation and Maintanence 
@@ -2094,6 +2472,17 @@ namespace ConorFoxProject
             return courseExists;
         }
 
+        public int ReturnModuleStudentsNumbers(int moduleId)
+        {
+            if (moduleId != 0)
+            {
+                var moduleStudents = _dBase.StudentModules.Where(x => x.ModuleId == moduleId).ToList();
+
+                return moduleStudents.Count();
+            }
+            return 0;
+        }
+
         /// <summary>
         /// 
         /// </summary>
@@ -2188,6 +2577,39 @@ namespace ConorFoxProject
         /// <summary>
         /// 
         /// </summary>
+        /// <param name="email"></param>
+        /// <returns></returns>
+        public bool Check_Staff_Email_Exists(string email)
+        {
+            var emailCheck = _dBase.Staffs.SingleOrDefault(x => x.StaffEmail == email);
+            if (emailCheck == null)
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="staffEmail"></param>
+        /// <returns></returns>
+        public bool CheckStaffExists(string staffEmail)
+        {
+            var staffExists = _dBase.Staffs.SingleOrDefault(x => x.StaffEmail == staffEmail);
+
+            if (staffExists == null)
+            {
+                return false;
+            }
+
+            return true;
+        }
+        
+        /// <summary>
+        /// 
+        /// </summary>
         /// <param name="staffTitle"></param>
         /// <param name="staffForename"></param>
         /// <param name="staffSurname"></param>
@@ -2223,6 +2645,56 @@ namespace ConorFoxProject
             _dBase.SaveChanges();
 
             return staffId;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="staffId"></param>
+        /// <returns></returns>
+        public Staff ReturnStaffDetail(int staffId)
+        {
+            var staffExists = _dBase.Staffs.SingleOrDefault(x => x.StaffId == staffId);
+
+            if (staffExists == null)
+            {
+                return null;
+            }
+
+            return staffExists;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="email"></param>
+        /// <returns></returns>
+        public bool Check_Student_Email_Exists(string email)
+        {
+            var emailCheck = _dBase.Students.SingleOrDefault(x => x.StudentEmail == email);
+            if (emailCheck == null)
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="studentEmail"></param>
+        /// <returns></returns>
+        public bool CheckStudentExists(string studentEmail)
+        {
+            var staffExists = _dBase.Students.SingleOrDefault(x => x.StudentEmail == studentEmail);
+
+            if (staffExists == null)
+            {
+                return false;
+            }
+
+            return true;
         }
 
         /// <summary>
@@ -2266,7 +2738,24 @@ namespace ConorFoxProject
 
             return studentId;
         }
-            
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="studentId"></param>
+        /// <returns></returns>
+        public Student ReturnStudentDetail(int studentId)
+        {
+            var staffExists = _dBase.Students.SingleOrDefault(x => x.StudentId == studentId);
+
+            if (staffExists == null)
+            {
+                return null;
+            }
+
+            return staffExists;
+        }
+
         /// <summary>
         /// Written: 02/12/2013
         /// </summary>
@@ -2798,7 +3287,327 @@ namespace ConorFoxProject
         #endregion
 
         #endregion
+        
+        #region Invites and Attendees
 
+
+        public bool AddModulesToCourse(List<Module> modules, int courseId)
+        {
+            if (modules.Count != 0 && courseId != 0)
+            {
+                var allocatedCourseModules = _dBase.CourseModules.Where(x => x.Course == courseId);
+
+                foreach (var cm in allocatedCourseModules)
+                {
+                    _dBase.CourseModules.Remove(cm);
+                }
+
+                foreach (var m in modules)
+                {
+                    var courseModuleId = CourseModuleIdGeneration();
+
+                    var courseModule = new CourseModule
+                    {
+                        Course = courseId,
+                        Module = m.ModuleId,
+                        CourseModuleId = courseModuleId
+                    };
+                    _dBase.CourseModules.Add(courseModule);
+                    _dBase.SaveChanges();
+                }
+                return true;
+            }
+            return false;
+        }
+
+        public bool AddModulesToEvent(List<CourseModule> modules, int eventId)
+        {
+            if (modules.Count != 0 && eventId != 0)
+            {
+                foreach (var m in modules)
+                {
+                    var eventModuleId = ModuleEventsIdGeneration() ;
+
+                    var eventModule = new ModuleEvent
+                    {
+                        EventId = eventId,
+                        ModuleId = m.Module,
+                        EventModule = eventModuleId,
+                        CourseId = m.Course
+                    };
+                    _dBase.ModuleEvents.Add(eventModule);
+                    _dBase.SaveChanges();
+                }
+                return true;
+            }
+            return false;
+        }
+
+        public bool AddStaffAttendentsToEvent(List<Staff> staff, int eventId)
+        {
+            if (staff.Count != 0 && eventId != 0)
+            {
+                foreach (var s in staff)
+                {
+                    var staffEventId = StaffEventsIdGeneration();
+
+                    var eventModule = new StaffEvent
+                    {
+                        EventId = eventId,
+                        StaffId = s.StaffId,
+                        StaffEventId = staffEventId
+                    };
+                    _dBase.StaffEvents.Add(eventModule);
+                    _dBase.SaveChanges();
+                }
+                return true;
+            }
+            return false;
+        }
+
+        public bool AddStudentsToModule(List<StudentModule> students, int moduleId)
+        {
+            if (students.Any())
+            {
+                var allAttendees = _dBase.StudentModules.Where(x => x.ModuleId == moduleId).ToList();
+
+                foreach (var sm in allAttendees)
+                {
+                    _dBase.StudentModules.Remove(sm);
+                }
+
+                foreach (var s in students)
+                {
+                    var studentsEventId = StudentModulesIdGeneration();
+                    if (studentsEventId != 0)
+                    {
+                        s.StudentModuleId = studentsEventId;
+                        _dBase.StudentModules.Add(s);
+                        _dBase.SaveChanges();
+                    }
+                }
+                return true;
+            }
+            else
+            {
+                var allAttendees = _dBase.StudentModules.Where(x => x.ModuleId == moduleId).ToList();
+
+                foreach (var sm in allAttendees)
+                {
+                    _dBase.StudentModules.Remove(sm);
+                }
+                _dBase.SaveChanges();
+            }
+            return true;
+        }
+
+        public bool AddStaffInvitesToEvent(List<Staff> staff, int eventId)
+        {
+            if (eventId != 0)
+            {
+                var allInvites = _dBase.StaffInvites.Where(x => x.EventId == eventId).ToList();
+
+                if (allInvites.Count > 0)
+                {
+                    foreach (var i in allInvites)
+                    {
+                        var recycledId = new RecycledId
+                        {
+                            IdRecovered = i.StaffInviteId,
+                            DateAdded = DateTime.Now.AddSeconds(1),
+                            TableName = "Staff Invite"
+                        };
+                        _dBase.StaffInvites.Remove(i);
+                        _dBase.RecycledIds.Add(recycledId);
+                        _dBase.SaveChanges();
+
+                    }
+                }
+                
+                foreach (var s in staff)
+                {
+                    var staffInviteId = StaffInvitesIdGeneration();
+
+                    var staffInvite = new StaffInvite
+                    {
+                        EventId = eventId,
+                        StaffId = s.StaffId,
+                        StaffInviteId = staffInviteId,
+                        Attending = false
+                    };
+                    _dBase.StaffInvites.Add(staffInvite);
+                    _dBase.SaveChanges();
+                 }
+                
+                return true;
+            }
+            return false;
+        }
+
+        public bool AddStudentInvitesToEvent(List<Student> students, int eventId)
+        {
+            if (eventId != 0)
+            {
+                var allInvites = _dBase.StudentInvites.Where(x => x.EventId == eventId).ToList();
+
+                if (allInvites.Count > 0)
+                {
+                    foreach (var i in allInvites)
+                    {
+                        var recycledId = new RecycledId
+                        {
+                            IdRecovered = i.StudentInviteId,
+                            DateAdded = DateTime.Now.AddSeconds(1),
+                            TableName = "Student Invite"
+                        };
+                        _dBase.StudentInvites.Remove(i);
+                        _dBase.RecycledIds.Add(recycledId);
+                        _dBase.SaveChanges();
+
+                    }
+                }
+                
+                foreach (var s in students)
+                {
+                    var studentInviteId = StudentInvitesIdGeneration();
+
+                    var studentInvite = new StudentInvite
+                    {
+                        EventId = eventId,
+                        StudentId = s.StudentId,
+                        StudentInviteId = studentInviteId,
+                        Attending = false
+                    };
+                    _dBase.StudentInvites.Add(studentInvite);
+                    _dBase.SaveChanges();
+                 }
+                
+                return true;
+            }
+            return false;
+        }
+
+        #endregion
+
+        #region Remove Invites and Attendants
+
+        public bool RemoveModulesFromCourse(List<CourseModule> coursemodules)
+        {
+            if (coursemodules.Count != 0)
+            {
+                foreach (var cm in coursemodules)
+                {
+                    var recoveredId = new RecycledId
+                    {
+                        DateAdded = DateTime.Now,
+                        IdRecovered = cm.CourseModuleId,
+                        TableName = "Course Module"
+                    };
+
+                    var deletedItem = _dBase.CourseModules.SingleOrDefault(x => x.CourseModuleId == cm.CourseModuleId);
+                    _dBase.CourseModules.Remove(deletedItem);
+                    _dBase.RecycledIds.Add(recoveredId);
+                    _dBase.SaveChanges();
+                }
+                return true;
+            }
+            return false;
+        }
+        
+        public bool RemoveModulesFromEvent(List<ModuleEvent> moduleEvents)
+        {
+            if (moduleEvents.Count != 0)
+            {
+                foreach (var me in moduleEvents)
+                {
+                    var recoveredId = new RecycledId
+                    {
+                        DateAdded = DateTime.Now,
+                        IdRecovered = me.EventModule,
+                        TableName = "Event Module"
+                    };
+
+                    var deletedItem = _dBase.ModuleEvents.SingleOrDefault(x => x.EventModule == me.EventModule);
+                    _dBase.ModuleEvents.Remove(deletedItem);
+                    _dBase.RecycledIds.Add(recoveredId);
+                    _dBase.SaveChanges();
+                }
+                return true;
+            }
+            return false;
+        }
+
+        public bool RemoveStaffAttendentsFromEvent(List<StaffEvent> staff)
+        {
+            if (staff.Count != 0)
+            {
+                foreach (var me in staff)
+                {
+                    var recoveredId = new RecycledId
+                    {
+                        DateAdded = DateTime.Now,
+                        IdRecovered = me.StaffEventId,
+                        TableName = "Event Staff"
+                    };
+
+                    var deletedItem = _dBase.StaffEvents.SingleOrDefault(x => x.StaffEventId == me.StaffEventId);
+                    _dBase.StaffEvents.Remove(deletedItem);
+                    _dBase.RecycledIds.Add(recoveredId);
+                    _dBase.SaveChanges();
+                }
+                return true;
+            }
+            return false;
+        }
+
+        public bool RemoveStaffInvitesFromEvent(List<StaffInvite> staff)
+        {
+            if (staff.Count != 0)
+            {
+                foreach (var me in staff)
+                {
+                    var recoveredId = new RecycledId
+                    {
+                        DateAdded = DateTime.Now,
+                        IdRecovered = me.StaffInviteId,
+                        TableName = "Staff Invite"
+                    };
+
+                    var deletedItem = _dBase.StaffInvites.SingleOrDefault(x => x.StaffInviteId == me.StaffInviteId);
+                    _dBase.StaffInvites.Remove(deletedItem);
+                    _dBase.RecycledIds.Add(recoveredId);
+                    _dBase.SaveChanges();
+                }
+                return true;
+            }
+            return false;  
+        }
+
+        public bool RemoveStudentInvitesFromEvent(List<StudentInvite> students)
+        {
+            if (students.Count != 0)
+            {
+                foreach (var s in students)
+                {
+                    var recoveredId = new RecycledId
+                    {
+                        DateAdded = DateTime.Now,
+                        IdRecovered = s.StudentInviteId,
+                        TableName = "Student Invite"
+                    };
+
+                    var deletedItem = _dBase.StudentInvites.SingleOrDefault(x => x.StudentInviteId == s.StudentInviteId);
+                    _dBase.StudentInvites.Remove(deletedItem);
+                    _dBase.RecycledIds.Add(recoveredId);
+                    _dBase.SaveChanges();
+                }
+                return true;
+            }
+            return false;  
+        }
+        
+        #endregion
+        
         #region Search Functions
 
         /// <summary>
@@ -2915,6 +3724,192 @@ namespace ConorFoxProject
                 
             }
             return _dBase.Buildings.ToList();
+        }
+        
+        ///<summary>
+        /// Written: 10/12/13
+        /// Searches by aplpying a filer to the field searched for within the event
+        /// then applaies a similar fitler of user input to select the events
+        /// </summary>
+        /// <param name="searchItem"></param>
+        /// <returns></returns>
+        public List<Staff> SearchStaffFunction(string searchItem)
+        {
+            if (!String.IsNullOrEmpty(searchItem))
+            {
+                var staffList = _dBase.Staffs.Where(x => x.StaffForename.Contains(searchItem) || x.StaffSurname.Contains(searchItem)|| x.StaffEmail.Contains(searchItem));
+
+                var returnStaff = new List<Staff>();
+                returnStaff.AddRange(staffList.ToList());
+
+                if (returnStaff.Any())
+                {
+                    return returnStaff;
+                }
+               
+                return null;
+                
+            }
+            return _dBase.Staffs.ToList();
+        }
+        
+        ///<summary>
+        /// Written: 10/12/13
+        /// Searches by aplpying a filer to the field searched for within the event
+        /// then applaies a similar fitler of user input to select the events
+        /// </summary>
+        /// <param name="searchItem"></param>
+        /// <returns></returns>
+        public List<Student> SearchStudentFunction(string searchItem)
+        {
+            if (!String.IsNullOrEmpty(searchItem))
+            {
+                var studentList = _dBase.Students.Where(x => x.StudentForename.Contains(searchItem) || x.StudentSurname.Contains(searchItem)|| x.StudentEmail.Contains(searchItem));
+
+                var returnStaff = new List<Student>();
+                returnStaff.AddRange(studentList.ToList());
+
+                if (returnStaff.Any())
+                {
+                    return returnStaff;
+                }
+               
+                return null;
+            }
+            return _dBase.Students.ToList();
+        }
+        
+        ///<summary>
+        /// Written: 10/12/13
+        /// Searches by aplpying a filer to the field searched for within the event
+        /// then applaies a similar fitler of user input to select the events
+        /// </summary>
+        /// <param name="searchItem"></param>
+        /// <param name="courseId"></param>
+        /// <returns></returns>
+        public List<Student> SearchCourseStudentsFunction(string searchItem, int courseId)
+        {
+            if (!String.IsNullOrEmpty(searchItem))
+            {
+                var studentList = _dBase.Students.Where(x => x.StudentForename.Contains(searchItem) || x.StudentSurname.Contains(searchItem)|| x.StudentEmail.Contains(searchItem) && x.Course == courseId);
+
+                var returnStaff = new List<Student>();
+                returnStaff.AddRange(studentList.ToList());
+
+                if (returnStaff.Any())
+                {
+                    return returnStaff;
+                }
+               
+                return null;
+            }
+            return _dBase.Students.Where(x=>x.Course == courseId).ToList();
+        }
+        
+        public List<Module> SearchCourseModulesFunction(string searchItem, int courseId)
+        {
+            var moduleList = _dBase.CourseModules.Where(x => x.Course == courseId).ToList();
+
+            var returnModules = new List<Module>();
+
+            if (!String.IsNullOrEmpty(searchItem))
+            {
+
+                foreach (var m in moduleList)
+                {
+                    returnModules.Add(_dBase.Modules.SingleOrDefault(x => x.ModuleId == m.CourseModuleId && (x.ModuleName.Contains(searchItem) || x.ModuleDescription.Contains(searchItem))));
+                }
+                
+                if (returnModules.Any())
+                {
+                    return returnModules;
+                }
+               
+                return null;
+            }
+
+            foreach (var m in moduleList)
+                {
+                    returnModules.Add(_dBase.Modules.SingleOrDefault(x => x.ModuleId == m.CourseModuleId));
+                }
+            return returnModules;
+        }
+        
+        ///<summary>
+        /// Written: 10/12/13
+        /// Searches by aplpying a filer to the field searched for within the event
+        /// then applaies a similar fitler of user input to select the events
+        /// </summary>
+        /// <param name="searchItem"></param>
+        /// <returns></returns>
+        public List<Module> SearchModulesFunction(string searchItem)
+        {
+            if (!String.IsNullOrEmpty(searchItem))
+            {
+                var moduleList = _dBase.Modules.Where(x => x.ModuleName.Contains(searchItem) || x.ModuleDescription.Contains(searchItem));
+
+                var returnModules = new List<Module>();
+                returnModules.AddRange(moduleList.ToList());
+
+                if (returnModules.Any())
+                {
+                    return returnModules;
+                }
+               
+                return null;
+            }
+            return _dBase.Modules.ToList();
+        }
+        
+        ///<summary>
+        /// Written: 10/12/13
+        /// Searches by aplpying a filer to the field searched for within the event
+        /// then applaies a similar fitler of user input to select the events
+        /// </summary>
+        /// <param name="searchItem"></param>
+        /// <returns></returns>
+        public List<Event> SearchEventsWithModulesFunction(string searchItem)
+        {
+            if (!String.IsNullOrEmpty(searchItem))
+            {
+                var eventList = _dBase.Events.Where(x => x.Module != 0 && (x.EventTitle.ToLower().Contains(searchItem.ToLower()) || x.EventDescription.ToLower().Contains(searchItem))).ToList();
+
+                if (eventList.Any())
+                {
+                    return eventList;
+                }
+               
+                return null;
+            }
+            return _dBase.Events.Where(x => x.Module != 0).ToList();
+        }
+        
+        ///<summary>
+        /// Written: 10/12/13
+        /// Searches by aplpying a filer to the field searched for within the event
+        /// then applaies a similar fitler of user input to select the events
+        /// </summary>
+        /// <param name="searchItem"></param>
+        /// <returns></returns>
+        public List<Event> SearchEventsWithRoomsOnlyFunction(string searchItem)
+        {
+            if (!String.IsNullOrEmpty(searchItem))
+            {
+                var eventList = _dBase.Events.Where(x => x.Room > 0 && x.Module == 0 && x.Course == 0).ToList();
+                
+                if (eventList.Any())
+                {
+                    var returnedEvents = eventList.Where(x => x.EventTitle.ToLower().Contains(searchItem.ToLower()) || x.EventDescription.ToLower().Contains(searchItem.ToLower())).ToList();
+                    if (returnedEvents.Any())
+                    {
+                        return returnedEvents;
+                    }
+                    return null;
+                }
+               
+                return null;
+            }
+            return _dBase.Events.Where(x => x.Room > 0 && x.Module == 0 && x.Course == 0).ToList();
         }
 
         #endregion

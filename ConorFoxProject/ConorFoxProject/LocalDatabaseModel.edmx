@@ -115,7 +115,7 @@
         </EntityType>
         <EntityType Name="RecycledIds">
           <Key>
-            <PropertyRef Name="IdRecovered" />
+            <PropertyRef Name="DateAdded" />
           </Key>
           <Property Name="TableName" Type="nvarchar" Nullable="false" MaxLength="50" />
           <Property Name="IdRecovered" Type="int" Nullable="false" />
@@ -177,7 +177,7 @@
           <Property Name="CreateDate" Type="datetime" Nullable="false" />
           <Property Name="Creator" Type="int" Nullable="false" />
           <Property Name="LastActivity" Type="datetime" Nullable="false" />
-          <Property Name="Password" Type="nvarchar" Nullable="false" MaxLength="20" />
+          <Property Name="Password" Type="nvarchar" Nullable="false" MaxLength="150" />
         </EntityType>
         <EntityType Name="StaffEvents">
           <Key>
@@ -210,7 +210,7 @@
           <Property Name="CreateDate" Type="datetime" Nullable="false" />
           <Property Name="Creator" Type="int" Nullable="false" />
           <Property Name="LastActivity" Type="datetime" Nullable="false" />
-          <Property Name="Password" Type="nvarchar" Nullable="false" MaxLength="50" />
+          <Property Name="Password" Type="nvarchar" Nullable="false" MaxLength="150" />
         </EntityType>
         <EntityType Name="StudentEvents">
           <Key>
@@ -374,7 +374,7 @@
         </EntityType>
         <EntityType Name="RecycledId">
           <Key>
-            <PropertyRef Name="IdRecovered" />
+            <PropertyRef Name="DateAdded" />
           </Key>
           <Property Name="TableName" Type="String" Nullable="false" MaxLength="50" Unicode="true" FixedLength="false" />
           <Property Name="IdRecovered" Type="Int32" Nullable="false" />
@@ -436,7 +436,7 @@
           <Property Name="CreateDate" Type="DateTime" Nullable="false" Precision="3" />
           <Property Name="Creator" Type="Int32" Nullable="false" />
           <Property Name="LastActivity" Type="DateTime" Nullable="false" Precision="3" />
-          <Property Name="Password" Type="String" Nullable="false" MaxLength="20" Unicode="true" FixedLength="false" />
+          <Property Name="Password" Type="String" Nullable="false" MaxLength="150" Unicode="true" FixedLength="false" />
         </EntityType>
         <EntityType Name="StaffEvent">
           <Key>
@@ -469,7 +469,7 @@
           <Property Name="CreateDate" Type="DateTime" Nullable="false" Precision="3" />
           <Property Name="Creator" Type="Int32" Nullable="false" />
           <Property Name="LastActivity" Type="DateTime" Nullable="false" Precision="3" />
-          <Property Name="Password" Type="String" Nullable="false" MaxLength="50" Unicode="true" FixedLength="false" />
+          <Property Name="Password" Type="String" Nullable="false" MaxLength="150" Unicode="true" FixedLength="false" />
         </EntityType>
         <EntityType Name="StudentEvent">
           <Key>
