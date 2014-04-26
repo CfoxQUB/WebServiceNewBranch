@@ -40,7 +40,7 @@ namespace ConorFoxProject
             bool DeleteEvent(int eventId);
 
             [OperationContract]
-            bool ChangeEventStatus(String status, int eventId);
+            String ChangeEventStatus(String status, int eventId);
 
             #region Event Attendees
             
@@ -84,6 +84,9 @@ namespace ConorFoxProject
 
             [OperationContract]
             TimetableEventsListObject ReturnWeeksEventsWithFilters(DateTime dateRequested, int roomId, int moduleId);
+
+            [OperationContract]
+            TimetableEventsListObject ReturnWeeksEventsForCourses(DateTime dateRequested, int courseId);
             
             [OperationContract]
             TimetableDisplayListObject ReturnTimetableToolListObject();
@@ -92,12 +95,42 @@ namespace ConorFoxProject
 
             #region Listed Types
 
+            #region Basic Types
+
             [OperationContract]
             List<Event> ReturnEvents();
 
             [OperationContract]
-            Event ReturnEventDetails(int eventId);
+            List<EventType> ReturnEventTypes();
 
+            [OperationContract]
+            List<RoomType> ReturnRoomTypes();
+
+            [OperationContract]
+            List<Building> ReturnBuildings();
+
+            [OperationContract]
+            List<Course> ReturnCourses();
+
+            [OperationContract]
+            List<Module> ReturnModules();
+
+            [OperationContract]
+            List<Time> ReturnTimes();
+
+            [OperationContract]
+            List<RepeatType> ReturnRepeatTypes();
+
+            [OperationContract]
+            List<Staff> ReturnStaff();
+
+            [OperationContract]
+            List<Student> ReturnStudents();
+
+            #endregion
+
+
+            #region Return Event Associated Information
             [OperationContract]
             List<Event> ReturnEventsWithModules();
             
@@ -106,152 +139,152 @@ namespace ConorFoxProject
             
             [OperationContract]
             List<Event> ReturnEventsWithRoomsNoModules();
-            
-            [OperationContract]
-            List<EventType> ReturnEventTypes();
-            
+
             [OperationContract]
             Staff ReturnEventStaff(int eventId);
+            #endregion
+
+            #region Return Building Associated Information
             
             [OperationContract]
-            List<RoomType> ReturnRoomTypes();
-            
+            int ReturnBuildingIdFromBuildingName(string buildingName);
+
             [OperationContract]
-            List<Building> ReturnBuildings();
-            
+            List<Room> ReturnBuildingRooms(int buildingId);
+
             [OperationContract]
-            List<Course> ReturnCourses();
-            
+            List<Event> ReturnBuildingEvents(int buildingId);
+
+            #endregion
+
+            #region Return Room Associated Information
+
             [OperationContract]
-            List<Module> ReturnModules();
-            
+            int ReturnRoomTypeIdFromTypeName(string typeName);
+
             [OperationContract]
-            List<Student> ReturnModuleStudents(int moduleId);
+            int ReturnRoomId(int buildingId, string roomName);
+
+            [OperationContract]
+            int ReturnRoomBuilding(int roomId);
+
+            [OperationContract]
+            List<Event> ReturnRoomEvents(int roomName);
+
+            #endregion
+
+            #region Return Course Associated Information
+
+            [OperationContract]
+            int ReturnCourseIdFromCourseName(string courseName);
             
             [OperationContract]
             List<Staff> ReturnCourseStaff(int courseId);
             
             [OperationContract]
             List<Module> ReturnCourseModules(int courseId);
-            
-            [OperationContract]
-            int ReturnBuildingIdFromBuildingName(string buildingName);
-            
-            [OperationContract]
-            int ReturnRoomTypeIdFromTypeName(string typeName);
-            
-            [OperationContract]
-            int ReturnCourseIdFromCourseName(string courseName);
 
-            [OperationContract]
-            int ReturnModuleIdFromModuleName(string moduleName);
-            
-            [OperationContract]
-            int ReturnRoomId(int buildingId, string roomName);
-            
-            [OperationContract]
-            List<Room> ReturnBuildingRooms(int buildingId);
-            
-            [OperationContract]
-            int ReturnRoomBuilding(int roomId);
-            
-            [OperationContract]
-            List<Event> ReturnRoomEvents(int roomName);
-            
-            [OperationContract]
-            List<Event> ReturnBuildingEvents(int buildingId);
-            
-            [OperationContract]
-            List<Time> ReturnTimes();
-            
-            [OperationContract]
-            List<RepeatType> ReturnRepeatTypes();
-            
-            [OperationContract]
-            List<Staff> ReturnStaff();
-            
-            [OperationContract]
-            List<Student> ReturnStudents();
-            
             [OperationContract]
             List<Student> ReturnCourseStudents(int courseId);
 
             #endregion
 
+            #region Return Module Associated Information
+            [OperationContract]
+            List<Student> ReturnModuleStudents(int moduleId);
+
+            [OperationContract]
+            int ReturnModuleIdFromModuleName(string moduleName);
+            
+            [OperationContract]
+            int ReturnModuleStudentsNumbers(int moduleId);
+            #endregion
+
+            #endregion
+
             #region Resource Creation
+
+            #region Checks for Existing records
 
             [OperationContract]
             bool CheckBuildingExists(string buildingName);
 
             [OperationContract]
-            int CreateNewBuilding(string buildingName, int buildingNumber, string addressLine1, string addressLine2, string postCode, string buildingCity, int creatorId);
-
-            [OperationContract]
-            Building ReturnBuildingDetail(int buildingId);
-
-            [OperationContract]
             bool CheckRoomExists(string roomName);
-
-            [OperationContract]
-            int CreateNewRoom(int buildingId, string roomName, string roomDescription, int roomCapacity, int roomTypeId, int creatorId);
-
-            [OperationContract]
-            Room ReturnRoomDetail(int roomId);
 
             [OperationContract]
             bool CheckCourseExists(string courseName);
 
             [OperationContract]
-            int CreateCourse(string courseName, string courseDescription, int creatorId, int duration);
-
-            [OperationContract]
-            Course ReturnCourseDetail(int courseId);
-            
-            [OperationContract]
-            int ReturnModuleStudentsNumbers(int moduleId);
-
-            [OperationContract]
             bool CheckModuleExists(string moduleName);
-
-            [OperationContract]
-            int CreateModule(string moduleName, string moduleDescription, int creatorId, int staffId);
-
-            [OperationContract]
-            Module ReturnModuleDetail(int moduleId);
 
             [OperationContract]
             bool CheckStaffExists(string staffName);
 
             [OperationContract]
-            int CreateStaff(string staffTitle, string staffForename, string staffSurname, string staffEmail, string staffPassword, int courseId, int creatorId);
-
-            [OperationContract]
             bool Check_Staff_Email_Exists(string email);
-
-            [OperationContract]
-            Staff ReturnStaffDetail(int staffId);
-
-            [OperationContract]
-            bool Check_Student_Email_Exists(string email);
 
             [OperationContract]
             bool CheckStudentExists(string studentName);
 
             [OperationContract]
-            int CreateStudent(string studenttitle, string studentForeame, string studentSurname, string studentEmail,string studentPassword,int courseId, int yearStarted, int creatorId);
+            bool Check_Student_Email_Exists(string email);
+
+            #endregion
+            
+            #region Creation of Records
+            [OperationContract]
+            int CreateNewBuilding(string buildingName, int buildingNumber, string addressLine1, string addressLine2, string postCode, string buildingCity, int creatorId);
+            
+            [OperationContract]
+            int CreateNewRoom(int buildingId, string roomName, string roomDescription, int roomCapacity, int roomTypeId, int creatorId);
+
+            [OperationContract]
+            int CreateCourse(string courseName, string courseDescription, int creatorId, int duration);
+
+            [OperationContract]
+            int CreateModule(string moduleName, string moduleDescription, int creatorId, int staffId);
+
+            [OperationContract]
+            int CreateStaff(string staffTitle, string staffForename, string staffSurname, string staffEmail, string staffPassword, int courseId, int creatorId);
+
+            [OperationContract]
+            int CreateStudent(string studenttitle, string studentForeame, string studentSurname, string studentEmail, string studentPassword, int courseId, int yearStarted, int creatorId);
+
+            //Not Used - area for further development
+            [OperationContract]
+            int CreateNewRoomType(string roomTypeDescription, int creatorId);
+            //Not Used - area for further development
+            [OperationContract]
+            int CreateNewRepeat(string repeatTypeName, string repeatTypeDescription);
+            //Not Used - area for further development
+            [OperationContract]
+            int CreateSetting(string settingName, string settingDescription);
+            #endregion
+
+            #region Returning Record Details
+            [OperationContract]
+            Event ReturnEventDetails(int eventId);
+            
+            [OperationContract]
+            Building ReturnBuildingDetail(int buildingId);
+
+            [OperationContract]
+            Room ReturnRoomDetail(int roomId);
+
+            [OperationContract]
+            Course ReturnCourseDetail(int courseId);
+
+            [OperationContract]
+            Module ReturnModuleDetail(int moduleId);
+
+            [OperationContract]
+            Staff ReturnStaffDetail(int staffId);
 
             [OperationContract]
             Student ReturnStudentDetail(int studentId);
-
-            [OperationContract]
-            int CreateNewRoomType(string roomTypeDescription, int creatorId);
-
-            [OperationContract]
-            int CreateNewRepeat(string repeatTypeName, string repeatTypeDescription);
-
-            [OperationContract]
-            int CreateSetting(string settingName, string settingDescription);
-
+            #endregion
+            
             #endregion
 
             #region Resource Management
@@ -1276,6 +1309,8 @@ namespace ConorFoxProject
             if (moduleName != "0" && module != null)
             {
                 moduleId = module.ModuleId;
+
+                ModuleEvent(generatedEventId, moduleId, courseId);
             }
 
             var typeId = 0;
@@ -1332,11 +1367,86 @@ namespace ConorFoxProject
             string roomName, string courseName, string moduleName)
         {
             var editedEvent = _dBase.Events.SingleOrDefault(x => x.EventId == editedEventId);
-
+            
             if (editedEvent == null)
             {
                 return false;
             }
+
+            #region Removal of Previous Invites and Attendees
+
+            var staffAtendees = _dBase.StaffEvents.Where(x => x.EventId == editedEventId).ToList();
+
+            if (staffAtendees.Any())
+            {
+                foreach (var sa in staffAtendees)
+                {
+                    var recycledId = new RecycledId
+                    {
+                        DateAdded = DateTime.Now,
+                        IdRecovered = sa.StaffEventId,
+                        TableName = "Staff Event"
+                    };
+                    _dBase.StaffEvents.Remove(sa);
+                    _dBase.RecycledIds.Add(recycledId);
+                    _dBase.SaveChanges();
+                }
+            }
+
+            var moduleAttendees = _dBase.ModuleEvents.Where(x => x.EventId == editedEventId).ToList();
+
+            if (moduleAttendees.Any())
+            {
+                foreach (var m in moduleAttendees)
+                {
+                    var recycledId = new RecycledId
+                    {
+                        DateAdded = DateTime.Now,
+                        IdRecovered = m.EventModule,
+                        TableName = "Module Event"
+                    };
+                    _dBase.ModuleEvents.Remove(m);
+                    _dBase.RecycledIds.Add(recycledId);
+                    _dBase.SaveChanges();
+                }
+            }
+            var staffInvites = _dBase.StaffInvites.Where(x => x.EventId == editedEventId).ToList();
+
+            if (staffInvites.Any())
+            {
+                foreach (var si in staffInvites)
+                {
+                    var recycledId = new RecycledId
+                    {
+                        DateAdded = DateTime.Now,
+                        IdRecovered = si.StaffInviteId,
+                        TableName = "Staff Invite"
+                    };
+                    _dBase.StaffInvites.Remove(si);
+                    _dBase.RecycledIds.Add(recycledId);
+                    _dBase.SaveChanges();
+                }
+            }
+
+            var studentInvites = _dBase.StudentInvites.Where(x => x.EventId == editedEventId).ToList();
+
+            if (studentInvites.Any())
+            {
+                foreach (var st in studentInvites)
+                {
+                    var recycledId = new RecycledId
+                    {
+                        DateAdded = DateTime.Now,
+                        IdRecovered = st.StudentInviteId,
+                        TableName = "Student Invite"
+                    };
+                    _dBase.StudentInvites.Remove(st);
+                    _dBase.RecycledIds.Add(recycledId);
+                    _dBase.SaveChanges();
+                }
+            }
+
+            #endregion
 
             var repeatId = _dBase.RepeatTypes.First().RepeatTypeId;
             
@@ -1370,6 +1480,9 @@ namespace ConorFoxProject
             if (moduleName != "0" && module != null)
             {
                 moduleId = module.ModuleId;
+
+                ModuleEvent(editedEventId, moduleId, courseId);
+                
             }
 
             var typeId = 0;
@@ -1401,7 +1514,7 @@ namespace ConorFoxProject
         }
 
 
-        public bool ChangeEventStatus(String status, int eventId)
+        public String ChangeEventStatus(String status, int eventId)
         {
             if (eventId != 0)
             {
@@ -1410,22 +1523,74 @@ namespace ConorFoxProject
                 {
                     if (eventSelected.Course != 0 && eventSelected.Module != 0 && eventSelected.Room != 0 && status == "Confirmed")
                     {
-                        eventSelected.Status = status;
-                        _dBase.SaveChanges();
-                        return true;
+                        var eventsAlreadyRoom =_dBase.Events.Where(x =>x.Time == eventSelected.Time &&
+                            x.Room == eventSelected.Room && x.StartDate == eventSelected.StartDate && 
+                            x.Status == "Confirmed" && x.EventId != eventSelected.EventId).ToList();
+                        
+                        var eventsAlreadyCourse =_dBase.Events.Where(x =>x.Time == eventSelected.Time &&
+                                     x.Course == eventSelected.Course && x.StartDate == eventSelected.StartDate 
+                                     && x.Status == "Confirmed" && x.EventId != eventSelected.EventId).ToList();
+                        
+                        var eventsAlreadyModule =_dBase.Events.Where(x =>x.Time == eventSelected.Time &&
+                                     x.Module == eventSelected.Module && x.StartDate == eventSelected.StartDate 
+                                     && x.Status == "Confirmed" && x.EventId != eventSelected.EventId).ToList();
+
+                        if (eventsAlreadyCourse.Any())
+                        {
+                           return "course";
+                        } 
+                        
+                        if (eventsAlreadyRoom.Any())
+                        {
+                           return "room";
+                        }
+                        
+                        if (eventsAlreadyRoom.Any())
+                        {
+                            return "module";
+                        }
+
+                        if (!eventsAlreadyModule.Any() && !eventsAlreadyRoom.Any())
+                        {
+                            eventSelected.Status = status;
+                            _dBase.SaveChanges();
+                            return "success";
+                        }
+                        
+                        return "both";
                     }
 
-                    eventSelected.Status = status;
-                    _dBase.SaveChanges();
-                    return true;
+                    if (eventSelected.Course == 0 && eventSelected.Module == 0 && eventSelected.Room != 0 &&
+                        status == "Confirmed")
+                    {
+                        var eventsAlreadyRoom = _dBase.Events.Where(x => x.Time == eventSelected.Time &&
+                            x.Room == eventSelected.Room && x.StartDate == eventSelected.StartDate &&
+                            x.Status == "Confirmed" && x.EventId != eventSelected.EventId).ToList();
+
+                        if (eventsAlreadyRoom.Any())
+                        {
+                            return "room";
+                        }
+                        
+                        eventSelected.Status = status;
+                        _dBase.SaveChanges();
+                        return "success";
+                    }
+
+                    if (status != "Confirmed")
+                    {
+                        eventSelected.Status = status;
+                        _dBase.SaveChanges();
+                        return "success";
+                    }
+                    return "module";
                 }
-                return false;
+                return "failed";
             }
-            return false;
+            return "failed";
         }
 
         /// <summary>
-        /// Written: 18/11/2012
         /// Deletes event by querying the events table using the event Id
         /// </summary>
         /// <param name="eventId"></param>
@@ -1434,20 +1599,99 @@ namespace ConorFoxProject
         {
             var deletedEvent = _dBase.Events.SingleOrDefault(x => x.EventId == eventId);
 
-            var newSavedId = new RecycledId
+            if (deletedEvent != null)
             {
-                TableName = "Event",
-                IdRecovered = eventId,
-                DateAdded = DateTime.Now
-            };
+                #region Removal of Previous Invites and Attendees
 
-            _dBase.RecycledIds.Add(newSavedId);
+                var staffAtendees = _dBase.StaffEvents.Where(x => x.EventId == eventId).ToList();
 
-            _dBase.Events.Remove(deletedEvent);
+                if (staffAtendees.Count > 0)
+                {
+                    foreach (var sa in staffAtendees)
+                    {
+                        var recycledId = new RecycledId
+                        {
+                            DateAdded = DateTime.Now,
+                            IdRecovered = sa.StaffEventId,
+                            TableName = "Staff Event"
+                        };
+                        _dBase.StaffEvents.Remove(sa);
+                        _dBase.RecycledIds.Add(recycledId);
+                        _dBase.SaveChanges();
+                    }
+                }
 
-            _dBase.SaveChanges();
+                var moduleAttendees = _dBase.ModuleEvents.Where(x => x.EventId == eventId).ToList();
 
-            return true;
+                if (moduleAttendees.Count > 0)
+                {
+                    foreach (var m in moduleAttendees)
+                    {
+                        var recycledId = new RecycledId
+                        {
+                            DateAdded = DateTime.Now,
+                            IdRecovered = m.EventModule,
+                            TableName = "Module Event"
+                        };
+                        _dBase.ModuleEvents.Remove(m);
+                        _dBase.RecycledIds.Add(recycledId);
+                        _dBase.SaveChanges();
+                    }
+                }
+                var staffInvites = _dBase.StaffInvites.Where(x => x.EventId == eventId).ToList();
+
+                if (staffInvites.Count > 0)
+                {
+                    foreach (var si in staffInvites)
+                    {
+                        var recycledId = new RecycledId
+                        {
+                            DateAdded = DateTime.Now,
+                            IdRecovered = si.StaffInviteId,
+                            TableName = "Staff Invite"
+                        };
+                        _dBase.StaffInvites.Remove(si);
+                        _dBase.RecycledIds.Add(recycledId);
+                        _dBase.SaveChanges();
+                    }
+                }
+
+                var studentInvites = _dBase.StudentInvites.Where(x => x.EventId == eventId).ToList();
+
+                if (studentInvites.Count > 0)
+                {
+                    foreach (var st in studentInvites)
+                    {
+                        var recycledId = new RecycledId
+                        {
+                            DateAdded = DateTime.Now,
+                            IdRecovered = st.StudentInviteId,
+                            TableName = "Student Invite"
+                        };
+                        _dBase.StudentInvites.Remove(st);
+                        _dBase.RecycledIds.Add(recycledId);
+                        _dBase.SaveChanges();
+                    }
+                }
+
+                #endregion
+
+                var newSavedId = new RecycledId
+                {
+                    TableName = "Event",
+                    IdRecovered = eventId,
+                    DateAdded = DateTime.Now
+                };
+
+                _dBase.RecycledIds.Add(newSavedId);
+
+                _dBase.Events.Remove(deletedEvent);
+
+                _dBase.SaveChanges();
+
+                return true;
+            }
+            return false;
         }
 
         #region Event Attendees
@@ -4025,46 +4269,158 @@ namespace ConorFoxProject
 
                 confirmedEvents.AddRange(eventsList.Where(x=>x.Status=="Confirmed").ToList());
                 
-                foreach (var t in timeslot)
-                    {
-                        var eventSelected = new Event();
+                
                         foreach (Event e in confirmedEvents)
                         {
-                            var tempDay = Convert.ToDateTime(e.StartDate).DayOfWeek.ToString();
 
-                            var timeEventObject = new TimetableEventObject
+                            foreach (var t in timeslot)
                             {
-                                Event = eventSelected,
-                                Time = t
-                            };
+                                if (e.Time == t.TimeId)
+                                {
+                                    var tempDay = Convert.ToDateTime(e.StartDate).DayOfWeek.ToString();
 
-                            switch (tempDay)
-                            {
-                                case "Monday":
-                                    timetableResult.MondayList.Add(timeEventObject);
-                                    break;
-                                case "Tuesday":
-                                    timetableResult.TuesdayList.Add(timeEventObject);
-                                    break;
-                                case "Wednesday":
-                                    timetableResult.WednesdayList.Add(timeEventObject);
-                                    break;
-                                case "Thursday":
-                                    timetableResult.ThursdayList.Add(timeEventObject);
-                                    break;
-                                case "Friday":
-                                    timetableResult.FridayList.Add(timeEventObject);
-                                    break;
-                                case "Saturday":
-                                    timetableResult.SaturdayList.Add(timeEventObject);
-                                    break;
-                                case "Sunday":
-                                    timetableResult.SundayList.Add(timeEventObject);
-                                    break;
+                                    var timeEventObject = new TimetableEventObject
+                                    {
+                                        Event = e,
+                                        Time = t
+                                    };
+
+                                    switch (tempDay)
+                                    {
+                                        case "Monday":
+                                            timetableResult.MondayList.Add(timeEventObject);
+                                            break;
+                                        case "Tuesday":
+                                            timetableResult.TuesdayList.Add(timeEventObject);
+                                            break;
+                                        case "Wednesday":
+                                            timetableResult.WednesdayList.Add(timeEventObject);
+                                            break;
+                                        case "Thursday":
+                                            timetableResult.ThursdayList.Add(timeEventObject);
+                                            break;
+                                        case "Friday":
+                                            timetableResult.FridayList.Add(timeEventObject);
+                                            break;
+                                        case "Saturday":
+                                            timetableResult.SaturdayList.Add(timeEventObject);
+                                            break;
+                                        case "Sunday":
+                                            timetableResult.SundayList.Add(timeEventObject);
+                                            break;
+                                    }
+                                }
                             }
                         }
-                    
+                return timetableResult;
+            }
+            return null;
+
+        }
+        
+        
+        public TimetableEventsListObject ReturnWeeksEventsForCourses(DateTime dateRequested, int courseId)
+        {
+            if (courseId != 0 )
+            {
+                var dayRequested = dateRequested.DayOfWeek.ToString();
+                var date = dateRequested.Day;
+                var monthrequested = _currentculture.Calendar.GetMonth(dateRequested);
+                var yearRequested = _currentculture.Calendar.GetYear(dateRequested);
+
+                var newDate = new DateTime(yearRequested, monthrequested, date);
+
+                var startDate = new DateTime();
+
+                switch (dayRequested)
+                {
+                    case "Monday":
+                        startDate = newDate.AddDays(0);
+                        break;
+                    case "Tuesday":
+                        startDate = newDate.AddDays(-1);
+                        break;
+                    case "Wednesday":
+                        startDate = newDate.AddDays(-2);
+                        break;
+                    case "Thursday":
+                        startDate = newDate.AddDays(-3);
+                        break;
+                    case "Friday":
+                        startDate = newDate.AddDays(-4);
+                        break;
+                    case "Saturday":
+                        startDate = newDate.AddDays(-5);
+                        break;
+                    case "Sunday":
+                        startDate = newDate.AddDays(-6);
+                        break;
                 }
+
+                DateTime weekEnd = startDate.AddDays(7);
+
+                var eventsList =
+                    _dBase.Events.Where(x => x.StartDate >= startDate && x.StartDate < weekEnd && x.Course == courseId).ToList();
+
+                var timetableResult = new TimetableEventsListObject
+                {
+                    MondayList = new List<TimetableEventObject>(),
+                    TuesdayList = new List<TimetableEventObject>(),
+                    WednesdayList = new List<TimetableEventObject>(),
+                    ThursdayList = new List<TimetableEventObject>(),
+                    FridayList = new List<TimetableEventObject>(),
+                    SaturdayList = new List<TimetableEventObject>(),
+                    SundayList = new List<TimetableEventObject>()
+                };
+
+                
+                var timeslot = _dBase.Times.ToList().OrderBy(x => x.TimeId);
+                var confirmedEvents = new List<Event>();
+
+                confirmedEvents.AddRange(eventsList.Where(x=>x.Status=="Confirmed").ToList());
+                
+                        foreach (Event e in confirmedEvents)
+                        {
+
+                            foreach (var t in timeslot)
+                            {
+                                if (e.Time == t.TimeId)
+                                {
+                                    var tempDay = Convert.ToDateTime(e.StartDate).DayOfWeek.ToString();
+
+                                    var timeEventObject = new TimetableEventObject
+                                    {
+                                        Event = e,
+                                        Time = t
+                                    };
+
+                                    switch (tempDay)
+                                    {
+                                        case "Monday":
+                                            timetableResult.MondayList.Add(timeEventObject);
+                                            break;
+                                        case "Tuesday":
+                                            timetableResult.TuesdayList.Add(timeEventObject);
+                                            break;
+                                        case "Wednesday":
+                                            timetableResult.WednesdayList.Add(timeEventObject);
+                                            break;
+                                        case "Thursday":
+                                            timetableResult.ThursdayList.Add(timeEventObject);
+                                            break;
+                                        case "Friday":
+                                            timetableResult.FridayList.Add(timeEventObject);
+                                            break;
+                                        case "Saturday":
+                                            timetableResult.SaturdayList.Add(timeEventObject);
+                                            break;
+                                        case "Sunday":
+                                            timetableResult.SundayList.Add(timeEventObject);
+                                            break;
+                                    }
+                                }
+                            }
+                        }
                 return timetableResult;
             }
             return null;
