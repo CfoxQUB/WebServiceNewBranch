@@ -51,12 +51,6 @@ namespace ConorFoxProject
             bool ModuleEvent(int eventId, int moduleId, int courseId);
             
             [OperationContract]
-            bool DeleteStudentEvent(int inviteId);
-
-            [OperationContract]
-            bool DeleteStaffEvent(int inviteId);
-
-            [OperationContract]
             bool DeleteModuleEvent(int inviteId);
             #endregion
 
@@ -83,7 +77,7 @@ namespace ConorFoxProject
             List<Event> ReturnWeeksEvents(DateTime weekBeginning, int roomId);
 
             [OperationContract]
-            TimetableEventsListObject ReturnWeeksEventsWithFilters(DateTime dateRequested, int roomId, int moduleId);
+            TimetableEventsListObject ReturnWeeksEventsWithFilters(DateTime dateRequested, int roomId);
 
             [OperationContract]
             TimetableEventsListObject ReturnWeeksEventsForCourses(DateTime dateRequested, int courseId);
@@ -190,14 +184,16 @@ namespace ConorFoxProject
             #endregion
 
             #region Return Module Associated Information
-            [OperationContract]
-            List<Student> ReturnModuleStudents(int moduleId);
 
             [OperationContract]
             int ReturnModuleIdFromModuleName(string moduleName);
             
             [OperationContract]
             int ReturnModuleStudentsNumbers(int moduleId);
+            
+            [OperationContract]
+            List<Student> ReturnModuleStudents(int moduleId);
+
             #endregion
 
             #endregion
@@ -354,35 +350,12 @@ namespace ConorFoxProject
             bool AddStudentInvitesToEvent(List<Student> students, int eventId);
             #endregion
 
-            #region Remove Invites and Attendants
-
-            [OperationContract]
-            bool RemoveModulesFromCourse(List<CourseModule> coursemodules);
             
-            [OperationContract]
-            bool RemoveModulesFromEvent(List<ModuleEvent> moduleEvents);
-            
-            [OperationContract]
-            bool RemoveStaffAttendentsFromEvent(List<StaffEvent> staff);
-            
-            [OperationContract]
-            bool RemoveStaffInvitesFromEvent(List<StaffInvite> staff);
-            
-            [OperationContract]
-            bool RemoveStudentInvitesFromEvent(List<StudentInvite> students);
-            
-            #endregion
-
-
-
 
 
             #region Return Lists
             [OperationContract]
             List<CourseModule> ReturnCoursesModules(int courseId);
-
-            [OperationContract]
-            List<StudentEvent> ReturnEventsStudentsAttendees(int eventId);
 
             [OperationContract]
             List<StaffEvent> ReturnEventsStaffAttendees(int eventId);
@@ -442,7 +415,9 @@ namespace ConorFoxProject
         private const int MaxId = 2000000;
         private readonly CultureInfo _currentculture = CultureInfo.CurrentCulture;
 
-        #region Encryption and Decryption
+        #region Client User Functions
+
+        #region Encryption
         /// <summary>
         /// Encrypts login details before submission
         /// created using example in http://msdn.microsoft.com/en-us/library/system.security.cryptography.md5(v=vs.110).aspx
@@ -453,15 +428,16 @@ namespace ConorFoxProject
         {
             using (MD5 md5Hash = MD5.Create())
             {
+                //String passed in hashed into array of bytes
                 byte[] data = md5Hash.ComputeHash(Encoding.ASCII.GetBytes(unencryptedString));
-
+                
+                //Array of bytes concatenated into a string
                 var sBuilder = new StringBuilder();
-
                 foreach (var b in data)
                 {
                     sBuilder.Append(b.ToString("x2"));
                 }
-
+                //return hased string
                 return sBuilder.ToString();
             }
         }
@@ -471,32 +447,16 @@ namespace ConorFoxProject
         #region Registration
 
         /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="email"></param>
-        /// <returns></returns>
-        public bool Check_Email_Not_Exist(string email)
-        {
-            var emailList = _dBase.Users.Select(x => x.UserEmail).ToList();
-            if (emailList.Contains(email))
-            {
-                return false;
-            }
-
-            return true;
-        }
-
-        /// <summary>
-        /// Written: 05/11/2013
         /// Client Application passes across User object to be added to the database.
         /// </summary>
         /// <param name="newUser"></param>
         /// <returns></returns>
         public bool Register_User(User newUser)
         {
+            //New User Id generated
             var genId = UserIdGeneration();
             if (newUser != null && genId != 0)
-            {
+            {   // new user information added to a new user object
                 var generateUser = new User
                 {
                     UserId = genId,
@@ -509,20 +469,39 @@ namespace ConorFoxProject
                     UserTitle = newUser.UserTitle,
                     UserType = 1
                 };
-
+                //User added to the database
                 _dBase.Users.Add(generateUser);
                 _dBase.SaveChanges();
                 return true;
             }
+            //Either Id generate 0 or user passed in is null
             return false;
         }
 
+        /// <summary>
+        ///  Check Made to ensure email address does not already
+        /// exist in another registered users information
+        /// </summary>
+        /// <param name="email"></param>
+        /// <returns></returns>
+        public bool Check_Email_Not_Exist(string email)
+        {
+            //List of registered emails returned
+            var emailList = _dBase.Users.Select(x => x.UserEmail).ToList();
+            //If email already exists false returned
+            if (emailList.Contains(email))
+            {
+                return false;
+            }
+            //If user email does not exist true returned
+            return true;
+        }
+        
         #endregion
 
         #region Login
 
         /// <summary>
-        /// Written: 05/11/2013
         /// Client passes across username and password fields, method below 
         /// checks the information and affirms or denies login request
         /// </summary>
@@ -531,25 +510,29 @@ namespace ConorFoxProject
         /// <returns></returns>
         public int Login(string userEmail, string userPassword)
         {
+            //Checks made to ensure emai; and password arent empty strings or null values
             if (!String.IsNullOrEmpty(userEmail) && !String.IsNullOrEmpty(userPassword))
             {
+                //Check to see if user exists
                 var temp = _dBase.Users.SingleOrDefault(x => x.UserEmail == userEmail);
 
                 if (temp != null && temp.Password == userPassword)
                 {
+                    //Returns Id if user exists and password matches
                     return temp.UserId;
                 }
             }
+            //Login failed 0 returned
             return 0;
         }
 
         #endregion
-
+        
+        #endregion
+        
         #region Id Generation
 
         /// <summary>
-        /// Written: 18/11/2013
-        /// Refactored: 25/03/2014
         /// Generates a new Id from the Ids that are stored in the Recycled 
         /// Ids table for the building table or the current highest valued 
         /// Id in the Building table.
@@ -557,20 +540,22 @@ namespace ConorFoxProject
         /// <returns></returns>
         private int BuildingIdGeneration()
         {
+            //Check for values in the recycled Ids table for type Builing
             var recycledIdCount = _dBase.RecycledIds.Count(x => x.TableName == "Building");
+            //Setting Max Id
             const int maxIdValue = MaxId;
-                
+            //returning count of current buildings in List    
             var buildingCheck = _dBase.Buildings.Count();
-
+            //First default value is 1
             if (recycledIdCount == 0 && buildingCheck == 0)
             {
                 return 1;
             }
-            
+            //If there are  no recycled Ids and buildings exist new id generated from Database values
             if (recycledIdCount == 0 && buildingCheck > 0)
             {
                 var largestId = _dBase.Buildings.OrderByDescending(x => x.BuildingId).First().BuildingId;
-
+                //Largest Id found +1 
                 if (largestId < maxIdValue)
                 {
                     return largestId + 1;
@@ -579,6 +564,7 @@ namespace ConorFoxProject
                 return 0;
             }
             
+            //If Ids exist that are to be recycled Lowest value selected
             if (recycledIdCount > 0)
             {
                 var recoveredId = _dBase.RecycledIds.OrderByDescending(x => x.IdRecovered).First(x => x.TableName == "Building");
@@ -587,103 +573,119 @@ namespace ConorFoxProject
 
                 return recoveredId.IdRecovered;
             }
-
+            //no further Ids can be generated 0 returned
             return 0;
 
         }
 
         /// <summary>
-        /// Written: 18/11/2013
         /// Generates a new Id from the Ids that are stored in the Recycled 
         /// Ids table for the Course table or the current highest valued Id 
         /// in the Course table.
         /// </summary>
         /// <returns></returns>
         private int CourseIdGeneration()
-        {
+        {   //check for recyled course Ids
             var recycledIdCount = _dBase.RecycledIds.Count(x => x.TableName == "Course");
-
+            //Max id set
             const int maxIdValue = MaxId;
-            
+            //Check for courses currently in database
             var courseCheck = _dBase.Courses.Count();
 
+            //If first entry 1 returned
             if (recycledIdCount == 0 && courseCheck == 0)
             {
                 return 1;
             }
             
+            //If courses exist and no recycled Ids Highest id selected +1
             if (recycledIdCount == 0 && courseCheck != 0)
             {
+                //Largest value returned
                 var largestId = _dBase.Courses.OrderByDescending(x => x.CourseId).First().CourseId;
 
+                //as long as id generated below the highest Id value +1 to id returned
                 if (largestId < maxIdValue)
                 {
                     return largestId + 1;
                 }
-
+                //No furthe ids can be generate 0 returned
                 return 0;
             }
-            
+            //Recycled Ids selected and returned
             if (recycledIdCount != 0)
             {
+                //recycled Id selected
                 var recoveredId =
                     _dBase.RecycledIds.OrderByDescending(x => x.IdRecovered).First(x => x.TableName == "Course");
+                
+                //recycled Id removed
                 _dBase.RecycledIds.Remove(recoveredId);
                 _dBase.SaveChanges();
 
+                //recycled id returned
                 return recoveredId.IdRecovered;
             }
+            // No recycled Ids returned 0 returned
             return 0;
 
         }
 
         /// <summary>
-        /// Written: 18/11/2013
         /// Generates a new Id from the Ids that are stored in the Recycled 
         /// Ids table in the Event table or the current highest valued Id in 
         /// the Event table.
         /// </summary>
         /// <returns></returns>
         private int EventIdGeneration()
-        {
+        {   //Check for recycled event Ids
             var recycledIdCount = _dBase.RecycledIds.Count(x => x.TableName == "Event");
-            
+            //Max Id set
             const int maxIdValue = MaxId;
-            
+            //Return number of events that currently exist
             var eventCheck = _dBase.Events.Count();
 
+            //If first event entry 1 returned
             if (recycledIdCount == 0 && eventCheck == 0)
             {
                 return 1;
             }
             
+            //if no recycled ids and events exist highest value selected and +1 returned
             if (recycledIdCount == 0 && eventCheck != 0)
             {
+                //highest id returned
                 var largestId = _dBase.Events.OrderByDescending(x => x.EventId).First().EventId;
 
+                //as long as max id not met id +1 returned
                 if (largestId < maxIdValue)
                 {
                     return largestId + 1;
                 }
-
+                //no further ids can be generated
                 return 0;
             }
             
+            //Recycled Ids exist
             if (recycledIdCount != 0)
             {
+                //Recycled Id selected
                 var recoveredId = _dBase.RecycledIds.OrderByDescending(x => x.IdRecovered)
                     .First(x => x.TableName == "Event");
+                
+                //recycled Id removed
                 _dBase.RecycledIds.Remove(recoveredId);
                 _dBase.SaveChanges();
 
+                //recycled Id returned
                 return recoveredId.IdRecovered;
 
             }
+            //No ids available 0 returned
             return 0;
         }
 
         /// <summary>
-        /// Written: 18/11/2013
         /// Generates a new Id from the Ids that are stored in the Recycled 
         /// Ids table in the module table or the current highest valued Id 
         /// in the Module table. 
@@ -691,87 +693,104 @@ namespace ConorFoxProject
         /// <returns></returns>
         private int ModuleIdGeneration()
         {
+            //check for recycled Ids
             var recycledIdCount = _dBase.RecycledIds.Count(x => x.TableName == "Module");
-           
+            //max id value set
             const int maxIdValue = MaxId;
-
+            //count of modules already in database
             var moduleCheck = _dBase.Modules.Count();
 
+            //first database value 1
             if (recycledIdCount == 0 && moduleCheck == 0)
             {
                 return 1;
             }
             
+            //no recycled Ids avaiabel id generated from db content
             if (recycledIdCount == 0 && moduleCheck != 0)
             {
+                //largets id selected
                 var largestId = _dBase.Modules.OrderByDescending(x => x.ModuleId).First().ModuleId;
 
+                //as long as max id not met selected id +1 returned
                 if (largestId < maxIdValue)
                 {
                     return largestId + 1;
                 }
-
+                //if no recyeled Ids and max id met 0 returned
                 return 0;
             }
-            
+            //if recycled ids available highests selected
             if (recycledIdCount != 0)
             {
+                //recycled Id selcted
                 var recoveredId =
                     _dBase.RecycledIds.OrderByDescending(x => x.IdRecovered).First(x => x.TableName == "Module");
+                //recycled Id removed
                 _dBase.RecycledIds.Remove(recoveredId);
                 _dBase.SaveChanges();
-
+                //Id recovered returned
                 return recoveredId.IdRecovered;
             }
+            //no further ids available 0 returned
             return 0;
         }
         
         /// <summary>
-        /// 
+        /// Course Module Id generation based on the contecnt of the databse
+        /// and the recycled Ids which are marked by Course Module
         /// </summary>
         /// <returns></returns>
         private int CourseModuleIdGeneration()
         {
+            //recycled Ids checked
             var recycledIdCount = _dBase.RecycledIds.Count(x => x.TableName == "Course Module");
-            
+            //max id set
            const int maxIdValue = MaxId;
-
+            //current database content counted
             var courseModuleCheck = _dBase.CourseModules.Count();
 
+            //first database value id always 1
             if (recycledIdCount == 0 && courseModuleCheck == 0)
             {
                 return 1;
             }
 
+            //If no recycled ids available databse values used to generate id
             if (recycledIdCount == 0 && courseModuleCheck != 0)
             {
+                //largest Id selected
                 var largestId = _dBase.CourseModules.OrderByDescending(x => x.CourseModuleId).First().CourseModuleId;
-
+                //as long as max id not met id returned is +1
                 if (largestId < maxIdValue)
                 {
                     return largestId + 1;
                 }
-
+                //no id can be genereate 0 returned
                 return 0;
             }
-            
+            //if reycled ids exist recycled ids used
             if (recycledIdCount != 0)
             {
+                //Id recovered
                 var recoveredId =
                 _dBase.RecycledIds.OrderByDescending(x => x.IdRecovered).First(x => x.TableName == "Course Module");
+                //Id removed
                 _dBase.RecycledIds.Remove(recoveredId);
                 _dBase.SaveChanges();
-
+                //Id returned
                 return recoveredId.IdRecovered;
             }
+            //no more ids available 0 returned
             return 0;
+
         }
         
         /// <summary>
-        /// Written: 18/11/2013
         /// Generates a new Id from the Ids that are stored in the Recycled 
         /// Ids table for the Repeat types table or the current highest valued 
         /// Id in the Repeat type table.
+        /// Currently not used due to set repeat types not used (future developent)
         /// </summary>
         /// <returns></returns>
         private int RepeatTypesIdGeneration()
@@ -813,7 +832,6 @@ namespace ConorFoxProject
         }
 
         /// <summary>
-        /// Written: 18/11/2013
         /// Generates a new Id from the Ids that are stored in the Recycled 
         /// Ids in the Room table table or the current highest valued Id in 
         /// the Room table.
@@ -856,7 +874,6 @@ namespace ConorFoxProject
         }
         
         /// <summary>
-        /// Written: 18/11/2013
         /// Generates a new Id from the Ids that are stored in the Recycled 
         /// Ids in the Room type table or the current highest valued Id in 
         /// the Room types table.
@@ -899,7 +916,6 @@ namespace ConorFoxProject
         }
 
         /// <summary>
-        /// Written: 18/11/2013
         /// Generates a new Id from the Ids that are stored in the Recycled 
         /// Ids in the Staff table or the current highest valued Id in the 
         /// Staff table. 
@@ -943,7 +959,6 @@ namespace ConorFoxProject
         }
 
         /// <summary>
-        /// Written: 18/11/2013
         /// Generates a new Id from the Ids that are stored in the Recycled 
         /// Ids in the Student table or the current highest valued Id in 
         /// the Student table. 
@@ -986,7 +1001,6 @@ namespace ConorFoxProject
         }
         
         /// <summary>
-        /// Written: 18/11/2013
         /// Generates a new Id from the Ids that are stored in the Recycled 
         /// Ids in the Student Module table or the current highest valued Id in 
         /// the Student table. 
@@ -1264,40 +1278,43 @@ namespace ConorFoxProject
             string repeatType, int eventDuration, DateTime startDate, string eventTime, string roomName,
             string courseName, string moduleName)
         {
+            //Id generated
             var generatedEventId = EventIdGeneration();
 
+            //If id value continue if not return 0
             if (generatedEventId == 0)
             {
                 return 0;
             }
-            
+            //repeat Id set to default if repeats not implemented
             var repeatId = 0;
+
+            //repeat type retunred repeat id set withni the event object
             var repeat = _dBase.RepeatTypes.SingleOrDefault(x => x.RepeatTypeName == repeatType);
-            
             if (repeatType != "0" && repeat != null)
             {
                 repeatId = repeat.RepeatTypeId;
             } 
             
             var roomId = 0;
+            //default room is 0 unless a room has been passed in from the client
             var room = _dBase.Rooms.SingleOrDefault(x => x.RoomName == roomName);
-            
             if (roomName != "0" && room != null)
             {
                 roomId = room.RoomId;
             } 
             
             var timeId = 0;
+            //time is by default 0 if time is not passed in (not possible in cleint however)
             var time = _dBase.Times.SingleOrDefault(x => x.TimeLiteral == eventTime);
-            
             if (eventTime != "0" && time != null)
             {
                 timeId = time.TimeId;
             }
             
             var courseId = 0;
+            //course by default set to 0 unless passed in by client
             var course = _dBase.Courses.SingleOrDefault(x => x.CourseName == courseName);
-
             if (courseName != "0" && course != null)
             {
                 courseId = course.CourseId;
@@ -1305,22 +1322,22 @@ namespace ConorFoxProject
             
             var moduleId = 0;
             var module = _dBase.Modules.SingleOrDefault(x => x.ModuleName == moduleName);
-            
+            //module by default set to 0 unless passed in by client
             if (moduleName != "0" && module != null)
             {
                 moduleId = module.ModuleId;
-
+                //Module Event generated by ModuleEvent method
                 ModuleEvent(generatedEventId, moduleId, courseId);
             }
 
             var typeId = 0;
+            //event type is by default 0 if time is not passed in (not possible in cleint however)
             var type = _dBase.EventTypes.SingleOrDefault(x => x.TypeName == eventType);
-            
             if (eventType != "0" && type != null)
             {
                 typeId = type.TypeId;
             } 
-            
+            //event object created too be adde to the databse
             var newEvent = new Event
             {
                 EventId = generatedEventId,
@@ -1340,15 +1357,16 @@ namespace ConorFoxProject
                 Module = moduleId,
                 Course = courseId
             };
-
+            //event added to the databse
             _dBase.Events.Add(newEvent);
             _dBase.SaveChanges();
-
+            //id of generate event returned
             return generatedEventId;
         }
 
         /// <summary>
-        /// Written: 18/11/2012
+        /// Edited event detials passed in from teh client and event selected
+        /// from databse and changes applied
         /// </summary>
         /// <param name="editedEventId"></param>
         /// <param name="userId"></param>
@@ -1366,21 +1384,22 @@ namespace ConorFoxProject
             string eventType, int eventDuration, DateTime startDate, string eventTime,
             string roomName, string courseName, string moduleName)
         {
+            //edited event seleted from databse
             var editedEvent = _dBase.Events.SingleOrDefault(x => x.EventId == editedEventId);
-            
+            //as long as edited event exists changes will be made otherwise changes saved failed
             if (editedEvent == null)
             {
                 return false;
             }
 
             #region Removal of Previous Invites and Attendees
-
+            //staff attendees selected to be deleted
             var staffAtendees = _dBase.StaffEvents.Where(x => x.EventId == editedEventId).ToList();
-
             if (staffAtendees.Any())
             {
+                //each staff attendee reomved and Ids recycled
                 foreach (var sa in staffAtendees)
-                {
+                {//recycled id created
                     var recycledId = new RecycledId
                     {
                         DateAdded = DateTime.Now,
@@ -1392,13 +1411,13 @@ namespace ConorFoxProject
                     _dBase.SaveChanges();
                 }
             }
-
+            //module attendees selected for deletion
             var moduleAttendees = _dBase.ModuleEvents.Where(x => x.EventId == editedEventId).ToList();
-
             if (moduleAttendees.Any())
             {
+                //each module deleted individually
                 foreach (var m in moduleAttendees)
-                {
+                {//id of module event is recycled
                     var recycledId = new RecycledId
                     {
                         DateAdded = DateTime.Now,
@@ -1410,12 +1429,12 @@ namespace ConorFoxProject
                     _dBase.SaveChanges();
                 }
             }
+            //staff invitations returned for deletion
             var staffInvites = _dBase.StaffInvites.Where(x => x.EventId == editedEventId).ToList();
-
             if (staffInvites.Any())
-            {
+            { //staff Ids deleted individuallys
                 foreach (var si in staffInvites)
-                {
+                {//ids of each staff invited are returned and recycled 
                     var recycledId = new RecycledId
                     {
                         DateAdded = DateTime.Now,
@@ -1427,13 +1446,12 @@ namespace ConorFoxProject
                     _dBase.SaveChanges();
                 }
             }
-
+            //student invites retunred for deletion
             var studentInvites = _dBase.StudentInvites.Where(x => x.EventId == editedEventId).ToList();
-
             if (studentInvites.Any())
-            {
+            { //each invite is deleted individually
                 foreach (var st in studentInvites)
-                {
+                {// ids are recycled
                     var recycledId = new RecycledId
                     {
                         DateAdded = DateTime.Now,
@@ -1448,51 +1466,52 @@ namespace ConorFoxProject
 
             #endregion
 
+            //repeat Id set to first value as default as repeats not implemented
             var repeatId = _dBase.RepeatTypes.First().RepeatTypeId;
             
             var roomId = 0;
+            //room selceted and saved to event
             var room = _dBase.Rooms.SingleOrDefault(x => x.RoomName == roomName);
-
             if (roomName != "0" && room != null)
             {
                 roomId = room.RoomId;
             }
 
             var timeId = 0;
+            //time of event changed according to the information passed in from client
             var time = _dBase.Times.SingleOrDefault(x => x.TimeLiteral == eventTime);
-
             if (eventTime != "0" && time != null)
             {
                 timeId = time.TimeId;
             }
 
             var courseId = 0;
+            //course informatino changes accoding to the clinets information passed in
             var course = _dBase.Courses.SingleOrDefault(x => x.CourseName == courseName);
-
             if (courseName != "0" && course != null)
             {
                 courseId = course.CourseId;
             }
 
             var moduleId = 0;
+            //module Id passed in from the client added ot the event
             var module = _dBase.Modules.SingleOrDefault(x => x.ModuleName == moduleName);
-
             if (moduleName != "0" && module != null)
             {
                 moduleId = module.ModuleId;
-
+                //new moduke event created
                 ModuleEvent(editedEventId, moduleId, courseId);
-                
             }
 
             var typeId = 0;
+            //event type set according to type id
             var type = _dBase.EventTypes.SingleOrDefault(x => x.TypeName == eventType); 
-
             if (eventType != "0" && type != null)
             {
                 typeId = type.TypeId;
             } 
 
+            //details of event passed in from client added to event
             editedEvent.EventTitle = eventTitle;
             editedEvent.EventType = typeId;
             editedEvent.LastUserEdited = userId;
@@ -1507,49 +1526,63 @@ namespace ConorFoxProject
             editedEvent.Room = roomId;
             editedEvent.Module = moduleId;
             editedEvent.Course = courseId;
-
+            //change of event saved
             _dBase.SaveChanges();
-
+            //edit changes successfull
             return true;
         }
 
-
+        /// <summary>
+        /// Events status for confirmation of event
+        /// Status used by timetabling engine to create timetable with existing events
+        /// Confirmed events can only be, both module and room, room only with 
+        /// no duplicate of event in room and time or module events at same time
+        /// </summary>
+        /// <param name="status"></param>
+        /// <param name="eventId"></param>
+        /// <returns></returns>
         public String ChangeEventStatus(String status, int eventId)
         {
             if (eventId != 0)
             {
+                //retunr details of event selected
                 var eventSelected = _dBase.Events.SingleOrDefault(x => x.EventId == eventId);
                 if (eventSelected != null)
                 {
+                    //If module and room set and status is confirmed
                     if (eventSelected.Course != 0 && eventSelected.Module != 0 && eventSelected.Room != 0 && status == "Confirmed")
                     {
+                        //check if room is already in use by a confirmed event
                         var eventsAlreadyRoom =_dBase.Events.Where(x =>x.Time == eventSelected.Time &&
                             x.Room == eventSelected.Room && x.StartDate == eventSelected.StartDate && 
                             x.Status == "Confirmed" && x.EventId != eventSelected.EventId).ToList();
-                        
+                        //check if event for course already confirmed
                         var eventsAlreadyCourse =_dBase.Events.Where(x =>x.Time == eventSelected.Time &&
                                      x.Course == eventSelected.Course && x.StartDate == eventSelected.StartDate 
                                      && x.Status == "Confirmed" && x.EventId != eventSelected.EventId).ToList();
-                        
+                        //check for module event if they already exist
                         var eventsAlreadyModule =_dBase.Events.Where(x =>x.Time == eventSelected.Time &&
                                      x.Module == eventSelected.Module && x.StartDate == eventSelected.StartDate 
                                      && x.Status == "Confirmed" && x.EventId != eventSelected.EventId).ToList();
-
+                        
+                        
+                        //return error of type course
                         if (eventsAlreadyCourse.Any())
                         {
                            return "course";
                         } 
-                        
+                        //return error of type room
                         if (eventsAlreadyRoom.Any())
                         {
                            return "room";
                         }
-                        
-                        if (eventsAlreadyRoom.Any())
+                        //if module event already exists module error returned
+                        if (eventsAlreadyModule.Any())
                         {
                             return "module";
                         }
 
+                        //if event valid confirmed
                         if (!eventsAlreadyModule.Any() && !eventsAlreadyRoom.Any())
                         {
                             eventSelected.Status = status;
@@ -1560,30 +1593,34 @@ namespace ConorFoxProject
                         return "both";
                     }
 
+                    //if room is only selected to be confirmed
                     if (eventSelected.Course == 0 && eventSelected.Module == 0 && eventSelected.Room != 0 &&
                         status == "Confirmed")
                     {
+                        //check for events in room that may already exist
                         var eventsAlreadyRoom = _dBase.Events.Where(x => x.Time == eventSelected.Time &&
                             x.Room == eventSelected.Room && x.StartDate == eventSelected.StartDate &&
                             x.Status == "Confirmed" && x.EventId != eventSelected.EventId).ToList();
 
+                        //if there are events in this room at the time specified room error returned
                         if (eventsAlreadyRoom.Any())
                         {
                             return "room";
                         }
-                        
+                        //otherwise event confirmed
                         eventSelected.Status = status;
                         _dBase.SaveChanges();
                         return "success";
                     }
 
+                    //if status is anything but confirmed status changed
                     if (status != "Confirmed")
                     {
                         eventSelected.Status = status;
                         _dBase.SaveChanges();
                         return "success";
                     }
-                    return "module";
+                    return "failed";
                 }
                 return "failed";
             }
@@ -1597,8 +1634,9 @@ namespace ConorFoxProject
         /// <returns></returns>
         public bool DeleteEvent(int eventId)
         {
+            //delete event selected from database
             var deletedEvent = _dBase.Events.SingleOrDefault(x => x.EventId == eventId);
-
+            //as long as event exists
             if (deletedEvent != null)
             {
                 #region Removal of Previous Invites and Attendees
@@ -1676,6 +1714,7 @@ namespace ConorFoxProject
 
                 #endregion
 
+                //event id recycled
                 var newSavedId = new RecycledId
                 {
                     TableName = "Event",
@@ -1683,33 +1722,38 @@ namespace ConorFoxProject
                     DateAdded = DateTime.Now
                 };
 
+                //Id recycled
                 _dBase.RecycledIds.Add(newSavedId);
-
+                //event deleted
                 _dBase.Events.Remove(deletedEvent);
-
                 _dBase.SaveChanges();
 
                 return true;
             }
+            //delete failed
             return false;
         }
 
         #region Event Attendees
 
         /// <summary>
-        /// 
+        /// Staff added to events in general, no staff has to be adde to an event
+        /// to be confirmed
         /// </summary>
         /// <param name="eventId"></param>
         /// <param name="staffId"></param>
         /// <returns></returns>
         public bool StaffEvent(int eventId, int staffId)
         {
+            //as long as valid ids passed in attendee added
             if (eventId != 0 && staffId != 0)
             {
+                //current staff allocation removed
                 var idRecovery = _dBase.StaffEvents.SingleOrDefault(x => x.EventId == eventId);
-
+                //Ids of current staff allocation recycled
                 if (idRecovery != null)
                 {
+                    //recycled Id maintained
                     var recoveredId = new RecycledId
                     {
                         IdRecovered = idRecovery.StaffEventId,
@@ -1721,6 +1765,7 @@ namespace ConorFoxProject
                     _dBase.SaveChanges();
                 }
 
+                //new staff attendee created
                 var inviteId = StaffEventsIdGeneration();
                 var staffEvent = new StaffEvent
                 {
@@ -1736,18 +1781,19 @@ namespace ConorFoxProject
         }
 
         /// <summary>
-        /// 
+        /// Creation of module attendees for event
         /// </summary>
         /// <param name="eventId"></param>
         /// <param name="moduleId"></param>
         /// <param name="courseId"></param>
         /// <returns></returns>
         public bool ModuleEvent(int eventId, int moduleId, int courseId)
-        {
+        {//check ids that have been passed in are valid
             if (eventId != 0 && moduleId != 0 && courseId != 0)
             {
+                //Id generated
                 var inviteId = ModuleEventsIdGeneration();
-
+                // new module event object created
                 var moduleEvent = new ModuleEvent
                 {
                     EventModule = inviteId,
@@ -1760,74 +1806,25 @@ namespace ConorFoxProject
 
                 return true;
             }
+            //Ids passed in invalid i.e contain 0s
             return false;
         }
         
         /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="inviteId"></param>
-        /// <returns></returns>
-        public bool DeleteStudentEvent(int inviteId)
-        {
-            var inviteSelected = _dBase.StudentEvents.SingleOrDefault(x => x.StudentEventId == inviteId);
-            if (inviteSelected != null)
-            {
-                _dBase.StudentEvents.Remove(inviteSelected);
-             
-                var savedId = new RecycledId
-                {
-                    IdRecovered = inviteId,
-                    TableName = "Student Event",
-                    DateAdded = DateTime.Now
-                };
-                _dBase.RecycledIds.Add(savedId);
-                _dBase.SaveChanges();
-
-                return true;
-            }
-            return false;
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="inviteId"></param>
-        /// <returns></returns>
-        public bool DeleteStaffEvent(int inviteId)
-        {
-            var inviteSelected = _dBase.StaffEvents.SingleOrDefault(x => x.StaffEventId == inviteId);
-            if (inviteSelected != null)
-            {
-                _dBase.StaffEvents.Remove(inviteSelected);
-
-                var savedId = new RecycledId
-                {
-                    IdRecovered = inviteId,
-                    TableName = "Staff Event",
-                    DateAdded = DateTime.Now
-                };
-                _dBase.RecycledIds.Add(savedId);
-                _dBase.SaveChanges();
-
-                return true;
-            }
-            return false;
-        
-        }
-
-        /// <summary>
-        /// 
+        /// Deletion of module Event allocation
+        /// Used to help allocated students to events
         /// </summary>
         /// <param name="inviteId"></param>
         /// <returns></returns>
         public bool DeleteModuleEvent(int inviteId)
         {
-            var inviteSelected = _dBase.StaffEvents.SingleOrDefault(x => x.StaffEventId == inviteId);
+            //selected module event from database
+            var inviteSelected = _dBase.ModuleEvents.SingleOrDefault(x => x.EventModule == inviteId);
             if (inviteSelected != null)
             {
-                _dBase.StaffEvents.Remove(inviteSelected);
-
+                //module event removed
+                _dBase.ModuleEvents.Remove(inviteSelected);
+                //recycled Id 
                 var savedId = new RecycledId
                 {
                     IdRecovered = inviteId,
@@ -1847,7 +1844,9 @@ namespace ConorFoxProject
 
         #region Event Invites
         /// <summary>
-        /// 
+        /// Invitation of student to events that have been assigned on a 
+        /// room and not a module, as evemt with modules invitations handled 
+        /// by module event records
         /// </summary>
         /// <param name="eventId"></param>
         /// <param name="studentId"></param>
@@ -1855,7 +1854,7 @@ namespace ConorFoxProject
         public bool StudentInvite(int eventId, int studentId)
         {
             if (eventId != 0 && studentId != 0)
-            {
+            {   //Id generated
                 var inviteId = StudentInvitesIdGeneration();
                 var studentEvent = new StudentInvite
                 {
@@ -1864,6 +1863,7 @@ namespace ConorFoxProject
                     EventId = eventId,
                     Attending = true
                 };
+                //student Invite added
                 _dBase.StudentInvites.Add(studentEvent);
                 _dBase.SaveChanges();
                 return true;
@@ -1872,7 +1872,8 @@ namespace ConorFoxProject
         }
 
         /// <summary>
-        /// 
+        /// Staff invite created for staff member attendance to events that
+        /// have been assigned a room only
         /// </summary>
         /// <param name="eventId"></param>
         /// <param name="staffId"></param>
@@ -1881,7 +1882,9 @@ namespace ConorFoxProject
         {
             if (eventId != 0 && staffId != 0)
             {
+                //id generated
                 var inviteId = StaffInvitesIdGeneration();
+                //staff invite created
                 var staffEvent = new StaffInvite
                 {
                     StaffInviteId = inviteId,
@@ -1889,6 +1892,7 @@ namespace ConorFoxProject
                     EventId = eventId,
                     Attending = true
                 };
+                //staff invite added to database
                 _dBase.StaffInvites.Add(staffEvent);
                 _dBase.SaveChanges();
                 return true;
@@ -1897,23 +1901,28 @@ namespace ConorFoxProject
         }
         
         /// <summary>
-        /// 
+        /// Deletion of a student invite
         /// </summary>
         /// <param name="inviteId"></param>
         /// <returns></returns>
         public bool DeleteStudentInvite(int inviteId)
         {
+            //selected invite selected from database
             var inviteSelected = _dBase.StudentEvents.SingleOrDefault(x => x.StudentEventId == inviteId);
+            // as longa as invite exists it is removed
             if (inviteSelected != null)
             {
+                //record removed from database
                 _dBase.StudentEvents.Remove(inviteSelected);
              
+                //Id recycled
                 var savedId = new RecycledId
                 {
                     IdRecovered = inviteId,
                     TableName = "Student Event",
                     DateAdded = DateTime.Now
                 };
+                //Id saved
                 _dBase.RecycledIds.Add(savedId);
                 _dBase.SaveChanges();
 
@@ -1923,23 +1932,27 @@ namespace ConorFoxProject
         }
 
         /// <summary>
-        /// 
+        /// Removal of staff invite to event
         /// </summary>
         /// <param name="inviteId"></param>
         /// <returns></returns>
         public bool DeleteStaffInvite(int inviteId)
-        {
+        {   //Invite to be deleted selected from database
             var inviteSelected = _dBase.StaffEvents.SingleOrDefault(x => x.StaffEventId == inviteId);
+            //as long as invite exists it will be removed
             if (inviteSelected != null)
             {
+                //Invite removed
                 _dBase.StaffEvents.Remove(inviteSelected);
 
+                //Id recycled
                 var savedId = new RecycledId
                 {
                     IdRecovered = inviteId,
                     TableName = "Staff Event",
                     DateAdded = DateTime.Now
                 };
+                //Id added to recycled ids
                 _dBase.RecycledIds.Add(savedId);
                 _dBase.SaveChanges();
 
@@ -1956,34 +1969,38 @@ namespace ConorFoxProject
         #region Listed Types
 
         /// <summary>
-        /// Writen: 02/12/13
+        /// Returns all events in the database
         /// </summary>
         /// <returns></returns>
         public List<Event> ReturnEvents()
-        {
-            if (_dBase.Events.Count() != 0)
+        {//as long as any  events exist they are returned
+            if (_dBase.Events.Any())
             {
+                //events list returned
                 return _dBase.Events.ToList();
             }
             return null;
         }
 
         /// <summary>
-        /// Writen: 02/12/13
+        /// Details of individual event returned
+        /// selcetd from databse by its unique Id
         /// </summary>
         /// <returns></returns>
         public Event ReturnEventDetails(int eventId)
         {
+            //event selected from databse
             var eventSelected = _dBase.Events.SingleOrDefault(x => x.EventId == eventId);
             if (eventSelected != null)
-            {
+            {//as longa s event exists the details are returned
                 return eventSelected;
             }
             return null;
         }
         
         /// <summary>
-        /// Writen: 02/12/13
+        /// Returns events that have modules attached to
+        /// them
         /// </summary>
         /// <returns></returns>
         public List<Event> ReturnEventsWithModules()
@@ -1997,7 +2014,7 @@ namespace ConorFoxProject
         }
         
         /// <summary>
-        /// Writen: 02/12/13
+        /// Return Events with rooms attached to them
         /// </summary>
         /// <returns></returns>
         public List<Event> ReturnEventsWithRooms()
@@ -2011,11 +2028,12 @@ namespace ConorFoxProject
         }
         
         /// <summary>
-        /// Writen: 02/12/13
+        ///Returns rooms with roms and no modules
         /// </summary>
         /// <returns></returns>
         public List<Event> ReturnEventsWithRoomsNoModules()
         {
+            //listed events created to be returned to teh client
             var eventsWithRoomsNoModules = _dBase.Events.Where(x => x.Room > 0 && x.Module == 0 && x.Course == 0).ToList();
             if (eventsWithRoomsNoModules.Any())
             {
@@ -2025,7 +2043,7 @@ namespace ConorFoxProject
         }
 
         /// <summary>
-        /// Written: 21/11/2013
+        /// Event types listed and returned to client
         /// </summary>
         /// <returns></returns>
         public List<EventType> ReturnEventTypes()
@@ -2038,14 +2056,16 @@ namespace ConorFoxProject
         }
       
         /// <summary>
-        /// Written: 21/11/2013
+        /// Staff that are associated with event returned
         /// </summary>
         /// <returns></returns>
         public Staff ReturnEventStaff(int eventId)
         {
+            //returns all Event staff records used to return event staff from
             var staffEvent = _dBase.StaffEvents.SingleOrDefault(x => x.EventId == eventId);
             if (staffEvent != null)
             {
+                //staff members returned
                 var staffMember = _dBase.Staffs.SingleOrDefault(x => x.StaffId == staffEvent.StaffId);
 
                 if (staffMember != null)
@@ -2058,7 +2078,7 @@ namespace ConorFoxProject
         }
         
         /// <summary>
-        /// Written: 21/11/2013
+        /// room types return to client
         /// </summary>
         /// <returns></returns>
         public List<RoomType> ReturnRoomTypes()
@@ -2071,7 +2091,7 @@ namespace ConorFoxProject
         }
 
         /// <summary>
-        /// Written: 21/11/2013
+        /// All available courses returned
         /// </summary>
         /// <returns></returns>
         public List<Course> ReturnCourses()
@@ -2084,7 +2104,7 @@ namespace ConorFoxProject
         }
         
         /// <summary>
-        /// Written: 21/11/2013
+        /// all available modules returned
         /// </summary>
         /// <returns></returns>
         public List<Module> ReturnModules()
@@ -2096,51 +2116,29 @@ namespace ConorFoxProject
             return null;
         }
 
+       
         /// <summary>
-        /// 
-        /// </summary>
-        /// <returns></returns>
-        public List<Student> ReturnModuleStudents(int moduleId)
-        {
-            if (moduleId != 0)
-            {
-                var moduleStudents = _dBase.StudentModules.Where(x => x.ModuleId == moduleId);
-                var returnStudents = new List<Student>(); 
-                
-                foreach (var s in moduleStudents)
-                {
-                    returnStudents.Add(_dBase.Students.SingleOrDefault(x => x.StudentId == s.StudentId));
-                }
-
-                return returnStudents;
-            }
-            return null;
-        }
-        
-        /// <summary>
-        /// 
+        /// Returns list of staff members taht are associated with course
+        /// by which is selected by the course Id passed in
         /// </summary>
         /// <returns></returns>
         public List<Staff> ReturnCourseStaff(int courseId)
         {
             if (courseId != 0)
             {
-                var courseStaff = _dBase.Staffs.Where(x => x.Course == courseId);
-                var returnStaff = new List<Staff>();
-
-                foreach (var s in courseStaff)
+                //Staff associated with course selected
+                var courseStaff = _dBase.Staffs.Where(x => x.Course == courseId).ToList();
+                if (courseStaff.Any())
                 {
-                    var returnedStaff = _dBase.Staffs.SingleOrDefault(x => x.Course == s.Course);
-                    returnStaff.Add(returnedStaff);
+                    return courseStaff;
                 }
-
-                return returnStaff;
+                return null;
             }
             return null;
         }
 
         /// <summary>
-        /// Written: 21/11/2013
+        /// Returns complete list of buildings that are available in the database
         /// </summary>
         /// <returns></returns>
         public List<Building> ReturnBuildings()
@@ -2153,7 +2151,6 @@ namespace ConorFoxProject
         }
 
         /// <summary>
-        /// Written: 09/12/13
         /// Returns Id of the building Selected by searching by the name of the building
         /// </summary>
         /// <param name="buildingName"></param>
@@ -2173,8 +2170,7 @@ namespace ConorFoxProject
         }
         
         /// <summary>
-        /// Written: 09/12/13
-        /// 
+        /// Returns repeat Id from teh repeat name that is passed in from method or client
         /// </summary>
         /// <param name="typeName"></param>
         /// <returns></returns>
@@ -2193,7 +2189,7 @@ namespace ConorFoxProject
         }
 
         /// <summary>
-        /// 
+        /// Returns room Id from room name and associated building Id
         /// </summary>
         /// <param name="buildingId"></param>
         /// <param name="roomName"></param>
@@ -2208,12 +2204,10 @@ namespace ConorFoxProject
                     return returnRoom.RoomId;
                 }
             }
-
             return 0;
         }
 
         /// <summary>
-        /// Written: 09/12/13
         /// Returns Id of the Course Selected by searching by the name of the course
         /// </summary>
         /// <param name="courseName"></param>
@@ -2228,12 +2222,10 @@ namespace ConorFoxProject
                     return returnCourse.CourseId;
                 }
             }
-
             return 0;
         }
         
         /// <summary>
-        /// Written: 09/12/13
         /// Returns Id of the Course Selected by searching by the name of the course
         /// </summary>
         /// <param name="moduleName"></param>
@@ -2253,7 +2245,6 @@ namespace ConorFoxProject
         }
 
         /// <summary>
-        /// Written: 11/12/13
         /// Returns Modules according to the Course Id associated with them
         /// </summary>
         /// <param name="courseId"></param>
@@ -2280,7 +2271,8 @@ namespace ConorFoxProject
         }
 
         /// <summary>
-        /// 
+        /// Return allevents that are associated with a particular
+        /// room indicated by its id
         /// </summary>
         /// <param name="roomName"></param>
         /// <returns></returns>
@@ -2294,7 +2286,8 @@ namespace ConorFoxProject
         }
 
         /// <summary>
-        /// 
+        /// Returns all events that are associated with the building
+        /// selected by its id passed in
         /// </summary>
         /// <param name="buildingId"></param>
         /// <returns></returns>
@@ -2317,7 +2310,7 @@ namespace ConorFoxProject
         }
 
         /// <summary>
-        /// Written: 21/11/2013
+        /// Returns all the rooms associated with a building
         /// </summary>
         /// <returns></returns>
         public List<Room> ReturnBuildingRooms(int buildingId)
@@ -2330,13 +2323,13 @@ namespace ConorFoxProject
         }
 
         /// <summary>
-        /// Written: 21/11/2013
+        /// Returns the id of the building that is associated 
+        /// with a particular room
         /// </summary>
         /// <returns></returns>
         public int ReturnRoomBuilding(int roomId)
         {
             var returnBuilding = _dBase.Rooms.SingleOrDefault(x => x.RoomId == roomId);
-
             if (returnBuilding != null)
             {
                 return returnBuilding.Building;
@@ -2345,7 +2338,7 @@ namespace ConorFoxProject
         }
 
         /// <summary>
-        /// Written: 21/11/2013
+        /// Return full list of times associated with the system
         /// </summary>
         /// <returns></returns>
         public List<Time> ReturnTimes()
@@ -2358,7 +2351,7 @@ namespace ConorFoxProject
         }
 
         /// <summary>
-        /// Written: 21/11/2013
+        /// returns full list of repeat types
         /// </summary>
         /// <returns></returns>
          public List<RepeatType> ReturnRepeatTypes()
@@ -2371,7 +2364,7 @@ namespace ConorFoxProject
         }
         
         /// <summary>
-        /// Written: 21/11/2013
+        /// returns all staff that exists in the database
         /// </summary>
         /// <returns></returns>
         public List<Staff> ReturnStaff()
@@ -2384,7 +2377,7 @@ namespace ConorFoxProject
         }
         
         /// <summary>
-        /// Written: 21/11/2013
+        /// Return all students that exist in the database
         /// </summary>
         /// <returns></returns>
         public List<Student> ReturnStudents()
@@ -2396,6 +2389,11 @@ namespace ConorFoxProject
             return null;
         }
 
+        /// <summary>
+        /// Return all the students that are associated with a particular course
+        /// </summary>
+        /// <param name="courseId"></param>
+        /// <returns></returns>
         public List<Student> ReturnCourseStudents(int courseId)
         {
             if(courseId != 0)
@@ -2405,6 +2403,11 @@ namespace ConorFoxProject
             return null;
         }
 
+        /// <summary>
+        /// returns all the modules that are associated with a particular course
+        /// </summary>
+        /// <param name="courseId"></param>
+        /// <returns></returns>
         public List<CourseModule> ReturnCoursesModules(int courseId)
         {
             if (courseId != 0)
@@ -2419,20 +2422,11 @@ namespace ConorFoxProject
             return null;
         }
 
-        public List<StudentEvent> ReturnEventsStudentsAttendees(int eventId)
-        {
-            if (eventId != 0)
-            {
-                var studentEvents = _dBase.StudentEvents.Where(x => x.EventId == eventId).ToList();
-                if (studentEvents.Count() != 0)
-                {
-                    return studentEvents;
-                }
-                return null;
-            }
-            return null; 
-        }
-
+        /// <summary>
+        /// Returns Staff that are attending events
+        /// </summary>
+        /// <param name="eventId"></param>
+        /// <returns></returns>
         public List<StaffEvent> ReturnEventsStaffAttendees(int eventId)
         {
             if (eventId != 0)
@@ -2447,6 +2441,11 @@ namespace ConorFoxProject
             return null;
         }
         
+        /// <summary>
+        /// returns the information of students invites
+        ///  </summary>
+        /// <param name="eventId"></param>
+        /// <returns></returns>
         public List<StudentInvite> ReturnEventsStudentInvites(int eventId)
         {
             if (eventId != 0)
@@ -2461,6 +2460,11 @@ namespace ConorFoxProject
             return null;
         }
         
+        /// <summary>
+        /// Returns staff invitations for events that have been created
+        /// </summary>
+        /// <param name="eventId"></param>
+        /// <returns></returns>
         public List<StaffInvite> ReturnEventsStaffInvites(int eventId)
         {
             if (eventId != 0)
@@ -2481,6 +2485,11 @@ namespace ConorFoxProject
 
         #region Create
 
+        /// <summary>
+        /// Check to ensure building with same name does not exist
+        /// </summary>
+        /// <param name="buildingName"></param>
+        /// <returns></returns>
         public bool CheckBuildingExists(string buildingName)
         {
             var buildingExists = _dBase.Buildings.SingleOrDefault(x => x.BuildingName == buildingName);
@@ -2494,7 +2503,8 @@ namespace ConorFoxProject
         }   
  
         /// <summary>
-        /// Written: 02/12/2013
+        /// Creation of new building in database
+        /// from details passed in from the client
         /// </summary>
         /// <param name="buildingName"></param>
         /// <param name="buildingNumber"></param>
@@ -2512,7 +2522,7 @@ namespace ConorFoxProject
             {
                 return 0;
             }
-
+            //New building object created to be added to database
             var newBuilding = new Building
             {
                 BuildingId = buildingId,
@@ -2526,7 +2536,7 @@ namespace ConorFoxProject
                 Creator = creatorId
 
             };
-
+            //Building added to database
             _dBase.Buildings.Add(newBuilding);
             _dBase.SaveChanges();
 
@@ -2534,12 +2544,13 @@ namespace ConorFoxProject
         }
 
         /// <summary>
-        /// 
+        /// Details of building selcetd by id returned
         /// </summary>
         /// <param name="buildingId"></param>
         /// <returns></returns>
         public Building ReturnBuildingDetail(int buildingId)
         {
+            //Building selected
             var buildingExists = _dBase.Buildings.SingleOrDefault(x => x.BuildingId == buildingId);
 
             if (buildingExists == null)
@@ -2551,16 +2562,19 @@ namespace ConorFoxProject
         }
 
         /// <summary>
-        /// 
+        /// Check to see if room with the same name
+        /// exists already in the database
         /// </summary>
         /// <param name="roomName"></param>
         /// <returns></returns>
         public bool CheckRoomExists(string roomName)
         {
+            //Room name  checked against database values
             var roomExists = _dBase.Rooms.SingleOrDefault(x => x.RoomName == roomName);
 
             if (roomExists == null)
             {
+                //room does not exist
                 return false;
             }
 
@@ -2568,7 +2582,8 @@ namespace ConorFoxProject
         }
 
         /// <summary>
-        /// Written: 02/12/2013
+        /// New room object added to database
+        /// by data taht has been passed in from client
         /// </summary>
         /// <param name="buildingId"></param>
         /// <param name="roomName"></param>
@@ -2579,13 +2594,14 @@ namespace ConorFoxProject
         /// <returns></returns>
         public int CreateNewRoom(int buildingId, string roomName, string roomDescription, int roomCapacity, int roomTypeId, int creatorId)
         {
+            //room id generated
             var roomId = RoomIdGeneration();
 
             if (roomId == 0)
             {
                 return 0;
             }
-
+            //new room object created to be added to database
             var newRoom = new Room
             {
                 RoomId = roomId,
@@ -2597,45 +2613,48 @@ namespace ConorFoxProject
                 CreateDate = DateTime.Now,
                 Creator = creatorId
             };
-
+            //room object added to database
             _dBase.Rooms.Add(newRoom);
             _dBase.SaveChanges();
-
+            //room id returned
             return roomId;
         }
 
         /// <summary>
-        /// 
+        /// Returns details of the room that exists in the database
         /// </summary>
         /// <param name="roomId"></param>
         /// <returns></returns>
         public Room ReturnRoomDetail(int roomId)
         {
+            //room selected
             var roomExists = _dBase.Rooms.SingleOrDefault(x => x.RoomId == roomId);
 
             if (roomExists == null)
             {
+                //room does not exist
                 return null;
             }
-
+            //room details returned
             return roomExists;
         }
 
         /// <summary>
-        /// Written: 02/12/2013
+        /// New room type creation
         /// </summary>
         /// <param name="roomTypeDescription"></param>
         /// <param name="creatorId"></param>
         /// <returns></returns>
         public int CreateNewRoomType(string roomTypeDescription, int creatorId)
         {
+            //room type id generation
             var roomTypeId = RoomTypeIdGeneration();
 
             if (roomTypeId == 0)
             {
                 return 0;
             }
-
+            //new room type object created
             var newRoom = new RoomType
             {
                 RoomTypeId = roomTypeId,
@@ -2643,32 +2662,35 @@ namespace ConorFoxProject
                 CreateDate = DateTime.Now,
                 Creator = creatorId
             };
-
+            //Room type added to database
             _dBase.RoomTypes.Add(newRoom);
             _dBase.SaveChanges();
-
+            //id returned
             return roomTypeId;
         }
 
         /// <summary>
-        /// 
+        /// Check made to ensure no course with teh same name
+        /// exist within the current database
         /// </summary>
         /// <param name="courseName"></param>
         /// <returns></returns>
         public bool CheckCourseExists(string courseName)
         {
+            //room selected according to room name
             var courseExists = _dBase.Courses.SingleOrDefault(x => x.CourseName == courseName);
-
+            //room does not exist
             if (courseExists == null)
-            {
+            {  
                 return false;
             }
-
+            //room does exist
             return true;
         }
         
         /// <summary>
-        /// 
+        /// New course cretaion from teh details passed from the
+        /// cleint
         /// </summary>
         /// <param name="courseName"></param>
         /// <param name="courseDescription"></param>
@@ -2677,13 +2699,14 @@ namespace ConorFoxProject
         /// <returns></returns>
         public int CreateCourse(string courseName, string courseDescription, int creatorId, int duration)
         {
+            //course Id generated
              var courseId = CourseIdGeneration();
-
+            //course generation failed due to no ids availabel
             if (courseId == 0)
             {
                 return 0;
             }
-
+            //new course object created to be added to the database
             var createdCourse = new Course
             {
                 CourseId = courseId,
@@ -2693,59 +2716,101 @@ namespace ConorFoxProject
                 Creator = creatorId,
                 Duration = duration
             };
+            //course added to the database
             _dBase.Courses.Add(createdCourse);
             _dBase.SaveChanges();
-
+            //course Id returned
             return courseId;
         }
 
         /// <summary>
-        /// 
+        /// course details returned according to course selected by id
         /// </summary>
         /// <param name="courseId"></param>
         /// <returns></returns>
         public Course ReturnCourseDetail(int courseId)
-        {
+        {   //course selected by id
             var courseExists = _dBase.Courses.SingleOrDefault(x => x.CourseId == courseId);
-
+            //course does not exist
             if (courseExists == null)
             {
                 return null;
             }
-
+            //full course object returned
             return courseExists;
         }
 
+        /// <summary>
+        /// Returns the number of students that are associated with teh module 
+        /// selected by the modules Id
+        /// </summary>
+        /// <param name="moduleId"></param>
+        /// <returns></returns>
         public int ReturnModuleStudentsNumbers(int moduleId)
         {
+            //as long a module id is not 0
             if (moduleId != 0)
             {
+                //selection of students associated with module
                 var moduleStudents = _dBase.StudentModules.Where(x => x.ModuleId == moduleId).ToList();
-
+                //Counts module student records selected and passed back number
                 return moduleStudents.Count();
             }
+            //no students due to invalid module id passed in
             return 0;
+        }
+        
+        
+        /// <summary>
+        /// Returns the number of students that are associated with teh module 
+        /// selected by the modules Id
+        /// </summary>
+        /// <param name="moduleId"></param>
+        /// <returns></returns>
+        public List<Student> ReturnModuleStudents(int moduleId)
+        {
+            //as long a module id is not 0
+            if (moduleId != 0)
+            {
+                //selection of students associated with module
+                var moduleStudents = _dBase.StudentModules.Where(x => x.ModuleId == moduleId).ToList();
+                
+                //Students List returend
+                var returnedStudents = new List<Student>();
+                foreach (var ms in moduleStudents)
+                {
+                   returnedStudents.Add(_dBase.Students.SingleOrDefault(x => x.StudentId == ms.StudentId));
+                }
+                
+                //Counts module student records selected and passed back number
+                return returnedStudents;
+            }
+            //no students due to invalid module id passed in
+            return null;
         }
 
         /// <summary>
-        /// 
+        /// check to ensure module does not exists according
+        /// to module name within the database
         /// </summary>
         /// <param name="moduleName"></param>
         /// <returns></returns>
         public bool CheckModuleExists(string moduleName)
         {
+            //Module selected by name
             var courseExists = _dBase.Modules.SingleOrDefault(x => x.ModuleName == moduleName);
-
+            //module does not exist in database
             if (courseExists == null)
             {
                 return false;
             }
-
+            //module does exist in database
             return true;
         }
 
         /// <summary>
-        /// 
+        /// Creatuion of new module according to information passed
+        /// from client
         /// </summary>
         /// <param name="moduleName"></param>
         /// <param name="moduleDescription"></param>
@@ -2754,12 +2819,14 @@ namespace ConorFoxProject
         /// <returns></returns>
         public int CreateModule(string moduleName, string moduleDescription, int creatorId, int staffId)
         {
+            //module id gerneated
             var moduleId = ModuleIdGeneration();
-
+            //module creatin failed due to id inavailability
             if (moduleId == 0)
             {
                 return 0;
             }
+            //new module object created
             var newModule = new Module
             {
                 CreateDate = DateTime.Now,
@@ -2769,90 +2836,100 @@ namespace ConorFoxProject
                 ModuleId = moduleId,
                 Staff = staffId
             };
+            //module added to database
             _dBase.Modules.Add(newModule);
             _dBase.SaveChanges();
-
+            //id returned of created module
             return moduleId;
         }
 
         /// <summary>
-        /// 
+        /// Module detail retunred by selction of module by the 
+        /// modules unique id
         /// </summary>
         /// <param name="moduleId"></param>
         /// <returns></returns>
         public Module ReturnModuleDetail(int moduleId)
         {
+            //Module selected according to the id
             var moduleExists = _dBase.Modules.SingleOrDefault(x => x.ModuleId == moduleId);
-
+            //no module with this id exists
             if (moduleExists == null)
             {
                 return null;
             }
-
+            //module object returned to client
             return moduleExists;
         }
 
         /// <summary>
-        /// 
+        /// New course module allocation
         /// </summary>
         /// <param name="courseId"></param>
         /// <param name="moduleId"></param>
         /// <returns></returns>
         public int AddModuleToCourse(int courseId, int moduleId)
-        {
+        {//course module id generated
             var courseModuleId = CourseModuleIdGeneration();
-
+            //as long as id passed in for generation valid object created and added to database
             if (courseId != 0 && moduleId != 0 && moduleId != 0)
             {
+                //new course module object created
                 var courseModule = new CourseModule
                 {
                     CourseModuleId = courseModuleId,
                     Course = courseId,
                     Module = moduleId
                 };
-
+                //course module added to database
                 _dBase.CourseModules.Add(courseModule);
                 _dBase.SaveChanges();
+                //course module id returned
                 return courseModuleId;
             }
+            //course module allocation failed 0 returned
             return 0;
         }
 
         /// <summary>
-        /// 
+        /// Check staff exixsts according to teh email address
+        /// generated by staff in the client
         /// </summary>
         /// <param name="email"></param>
         /// <returns></returns>
         public bool Check_Staff_Email_Exists(string email)
         {
+            //check to see if any record exists with eth email addres passed in
             var emailCheck = _dBase.Staffs.SingleOrDefault(x => x.StaffEmail == email);
+            //no staff exists with this email
             if (emailCheck == null)
             {
                 return false;
             }
-
+            //staff memebr exists
             return true;
         }
 
         /// <summary>
-        /// 
+        /// Check to see if there is a sftaff memebr that exists with same email
         /// </summary>
         /// <param name="staffEmail"></param>
         /// <returns></returns>
         public bool CheckStaffExists(string staffEmail)
         {
+            //check to see if any record exists with the email address passed in
             var staffExists = _dBase.Staffs.SingleOrDefault(x => x.StaffEmail == staffEmail);
-
+            //staff memebr does not exist
             if (staffExists == null)
             {
                 return false;
             }
-
+            //staff memeber exists
             return true;
         }
         
         /// <summary>
-        /// 
+        /// Creation of new staff memeber
         /// </summary>
         /// <param name="staffTitle"></param>
         /// <param name="staffForename"></param>
@@ -2864,13 +2941,15 @@ namespace ConorFoxProject
         /// <returns></returns>
         public int CreateStaff(string staffTitle, string staffForename, string staffSurname, string staffEmail, string staffPassword, int courseId, int creatorId)
         {
+            //staff id generated
             var staffId = StaffIdGeneration();
 
+            //staff generation failed due to id generation failures
             if (staffId == 0)
             {
                 return 0;
             }
-
+            //new staff object created
             var newStaff = new Staff
             {
                 StaffId = staffId,
@@ -2884,65 +2963,72 @@ namespace ConorFoxProject
                 StaffTitle = staffTitle,
                 Creator = creatorId
             };
-
+            //Staff memebr addded to the database
             _dBase.Staffs.Add(newStaff);
             _dBase.SaveChanges();
-
+            //staff id returned
             return staffId;
         }
 
         /// <summary>
-        /// 
+        /// Staff details returned by selection by Id
         /// </summary>
         /// <param name="staffId"></param>
         /// <returns></returns>
         public Staff ReturnStaffDetail(int staffId)
         {
+            //staff memebr selelted by Id
             var staffExists = _dBase.Staffs.SingleOrDefault(x => x.StaffId == staffId);
-
+            //Staff memebr does not exist
             if (staffExists == null)
             {
                 return null;
             }
-
+            //return staff member object
             return staffExists;
         }
 
         /// <summary>
-        /// 
+        /// check to see if student email address is allocated to another
+        /// student record that exists in the database
         /// </summary>
         /// <param name="email"></param>
         /// <returns></returns>
         public bool Check_Student_Email_Exists(string email)
         {
+            //student with email address allocated selected
             var emailCheck = _dBase.Students.SingleOrDefault(x => x.StudentEmail == email);
+            //email not registered to a student
             if (emailCheck == null)
             {
                 return false;
             }
-
+            //email already in use by another student
             return true;
         }
 
         /// <summary>
-        /// 
+        /// check to see if student email address is allocated to another
+        /// student record that exists in the database
         /// </summary>
         /// <param name="studentEmail"></param>
         /// <returns></returns>
         public bool CheckStudentExists(string studentEmail)
         {
-            var staffExists = _dBase.Students.SingleOrDefault(x => x.StudentEmail == studentEmail);
-
-            if (staffExists == null)
+            //student with email address allocated selected
+            var studentExists = _dBase.Students.SingleOrDefault(x => x.StudentEmail == studentEmail);
+            //email not registered to a student
+            if (studentExists == null)
             {
                 return false;
             }
-
+            //email already in use by another student
             return true;
         }
 
         /// <summary>
-        /// 
+        /// New student creation according to information passed in
+        /// from the client
         /// </summary>
         /// <param name="studentTitle"></param>
         /// <param name="studentForename"></param>
@@ -2955,13 +3041,14 @@ namespace ConorFoxProject
         /// <returns></returns>
         public int CreateStudent(string studentTitle, string studentForename, string studentSurname, string studentEmail, string studentPassword,int courseId, int yearStarted, int creatorId)
         {
+            //student Id generated
             var studentId = StudentIdGeneration();
-
+            //Student creation failed due to student id generation failed
             if (studentId == 0)
             {
                 return 0;
             }
-
+            //new stuent object created in order to be added to the database
             var newStudent = new Student
             {
                 StudentId = studentId,
@@ -2976,45 +3063,46 @@ namespace ConorFoxProject
                 Year = yearStarted,
                 Creator = creatorId
             };
-
+            //new student added to the database
             _dBase.Students.Add(newStudent);
             _dBase.SaveChanges();
-
+            //student id returned
             return studentId;
         }
 
         /// <summary>
-        /// 
+        /// Student details returned by selection of student by ID
         /// </summary>
         /// <param name="studentId"></param>
         /// <returns></returns>
         public Student ReturnStudentDetail(int studentId)
-        {
-            var staffExists = _dBase.Students.SingleOrDefault(x => x.StudentId == studentId);
-
-            if (staffExists == null)
+        {   //Students selected by Id
+            var studentExists = _dBase.Students.SingleOrDefault(x => x.StudentId == studentId);
+            //student does not exist
+            if (studentExists == null)
             {
                 return null;
             }
-
-            return staffExists;
+            //student returned
+            return studentExists;
         }
 
         /// <summary>
-        /// Written: 02/12/2013
+        ///New repeat type created
         /// </summary>
         /// <param name="repeatTypeName"></param>
         /// <param name="repeatTypeDescription"></param>
         /// <returns></returns>
         public int CreateNewRepeat(string repeatTypeName, string repeatTypeDescription)
         {
+            //New repeat type id generated
             var repeatTypeId = RepeatTypesIdGeneration();
-
+            //id generation failed 0 returned
             if (repeatTypeId == 0)
             {
                 return 0;
             }
-
+            //new repeat type object created
             var newRepeatType = new RepeatType
             {
                 RepeatTypeId = repeatTypeId,
@@ -3022,24 +3110,28 @@ namespace ConorFoxProject
                 RepeatDescription = repeatTypeDescription,
                 CreateDate = DateTime.Now
             };
-
+            //repeat type added to database
             _dBase.RepeatTypes.Add(newRepeatType);
             _dBase.SaveChanges();
-
+            //id returned
             return repeatTypeId;
         }
 
         /// <summary>
-        /// Written: 02/12/2013
+        /// Creation of a new setting
+        /// NOT USED FUTURE DEVELOPEMENT
         /// </summary>
         /// <param name="settingName"></param>
         /// <param name="settingDescription"></param>
         /// <returns></returns>
         public int CreateSetting(string settingName, string settingDescription)
         {
+            //NEW SETTING created Id generation not used
+            var id = _dBase.Settings.Count();
+            id += 1;
             var newSetting = new Setting
             {
-                SettingsId = 2,
+                SettingsId = id,
                 SettingName = settingName,
                 SettingDescription = settingDescription,
                 CreateDate = DateTime.Now,
@@ -3047,11 +3139,11 @@ namespace ConorFoxProject
                 Active = "Always"
 
             };
-
+            //settinga added
             _dBase.Settings.Add(newSetting);
             _dBase.SaveChanges();
 
-            return 2;
+            return id;
         }
         #endregion
 
@@ -3190,11 +3282,16 @@ namespace ConorFoxProject
         #endregion
 
         #region Delete
-
+        /// <summary>
+        /// Deletion of rooom according to id passed in for cleint
+        /// </summary>
+        /// <param name="roomId"></param>
+        /// <returns></returns>
         public bool DeleteRoom(int roomId)
         {
             if (roomId != 0)
             {
+                //Id recycled
                 var recoveredId = new RecycledId
                 {
                     DateAdded = DateTime.Now,
@@ -3204,78 +3301,90 @@ namespace ConorFoxProject
 
                 var room = _dBase.Rooms.SingleOrDefault(x => x.RoomId == roomId);
                 var roomsEvents = _dBase.Events.Where(x => x.Room == roomId).ToList();
-
+                //All rooms that have the id passed in removed
                 if (room != null)
                 {
                     _dBase.Rooms.Remove(room);
                     _dBase.RecycledIds.Add(recoveredId);
                 }
-
+                //all events that use this room are modified for both room and status
                 if (roomsEvents.Count() != 0)
                 {
                     foreach (var e in roomsEvents)
                     {
                         e.Room = 0;
+                        e.Status = "Denied";
                     }
                 }
-
+                //database changes saved
                 _dBase.SaveChanges();
                 return true;
             }
             return false;
         }
-        
+
+        /// <summary>
+        /// Building deleted according to the Id passed in
+        /// Also cleanu of rooms associations and events managaed
+        /// </summary>
+        /// <param name="buildingId"></param>
+        /// <returns></returns>
         public bool DeleteBuilding(int buildingId)
         {
             if (buildingId != 0)
-            {
+            {//building id recycled
                 var recoveredId = new RecycledId
                 {
                     DateAdded = DateTime.Now,
                     IdRecovered = buildingId,
                     TableName = "Building"
                 };
-
+                //Building and room objects selected
                 var building = _dBase.Buildings.SingleOrDefault(x => x.BuildingId == buildingId);
                 var buildingRooms = _dBase.Rooms.Where(x => x.Building == buildingId).ToList();
 
                 if (building != null)
-                {
+                {//building removed and id recycled
                     _dBase.Buildings.Remove(building);
                     _dBase.RecycledIds.Add(recoveredId);
                 }
 
-
+                //Rooms that were reviously associcated with building are updated
                 if (buildingRooms.Count() != 0)
                 {
+                    //Rooms taht are associated with building removed
                     foreach (var r in buildingRooms)
                     {
                         _dBase.Rooms.Remove(r);
-
+                        //room ids recycled
                         var recoveredRoomId = new RecycledId
                         {
                             DateAdded = DateTime.Now,
                             IdRecovered = r.RoomId,
                             TableName = "Room"
                         };
-
                         _dBase.RecycledIds.Add(recoveredRoomId);
-
+                        //evenst of associated rooms updated
                         var roomEvents = _dBase.Events.Where(x => x.Room == r.RoomId).ToList();
-
                         foreach (var e in roomEvents)
                         {
                            e.Room = 0;
+                           e.Status = "Denied";
                         }
                     }
                 }
-
+                //changes saved
                 _dBase.SaveChanges();
                 return true;
             }
             return false;
         }
 
+        /// <summary>
+        /// Deletion of course seleted by Id
+        /// </summary>
+        /// <param name="courseId"></param>
+        /// <returns></returns>
         public bool DeleteCourse(int courseId)
         {
             if (courseId != 0)
@@ -3286,12 +3395,12 @@ namespace ConorFoxProject
                     IdRecovered = courseId,
                     TableName = "Course"
                 };
-
+                //course and course modules allocations slected
                 var course = _dBase.Courses.SingleOrDefault(x => x.CourseId == courseId);
                 var courseModules = _dBase.CourseModules.Where(x => x.Course == courseId).ToList();
 
                 if (course != null)
-                {
+                {//removal of course
                     _dBase.Courses.Remove(course);
                     _dBase.RecycledIds.Add(recoveredId);
                 }
@@ -3299,10 +3408,11 @@ namespace ConorFoxProject
 
                 if (courseModules.Count() != 0)
                 {
+                    //removal of course moudule associations
                     foreach (var m in courseModules)
                     {
                         _dBase.CourseModules.Remove(m);
-
+                        //course module id recycled
                         var recoveredRoomId = new RecycledId
                         {
                             DateAdded = DateTime.Now,
@@ -3311,12 +3421,13 @@ namespace ConorFoxProject
                         };
 
                         _dBase.RecycledIds.Add(recoveredRoomId);
-
+                        //module events updated to reflect removal of modules
                         var moduleEvents = _dBase.Events.Where(x => x.Module == m.Module).ToList();
 
                         foreach (var e in moduleEvents)
                         {
                             e.Module = 0;
+                            e.Status = "Denied";
                         }
                     }
                 }
@@ -3327,31 +3438,39 @@ namespace ConorFoxProject
             return false;   
         }
 
+        /// <summary>
+        /// deletion of module
+        /// </summary>
+        /// <param name="moduleId"></param>
+        /// <returns></returns>
         public bool DeleteModule(int moduleId)
         {
             if (moduleId != 0)
             {
+                //moudle Id recovered
                 var recoveredId = new RecycledId
                 {
                     DateAdded = DateTime.Now,
                     IdRecovered = moduleId,
                     TableName = "Module"
                 };
-
+                //module and module events selected
                 var module = _dBase.Modules.SingleOrDefault(x => x.ModuleId == moduleId);
                 var moduleEvents = _dBase.Events.Where(x => x.Module == moduleId).ToList();
 
                 if (module != null)
                 {
+                    //modue removed
                     _dBase.Modules.Remove(module);
                     _dBase.RecycledIds.Add(recoveredId);
                 }
 
                 if (moduleEvents.Count() != 0)
-                {
+                {//module events updated to relect removal of module
                     foreach (var e in moduleEvents)
                     {
                         e.Module = 0;
+                        e.Status = "Denied";
                     }
                 }
 
@@ -3361,10 +3480,15 @@ namespace ConorFoxProject
             return false; 
         }
 
+        /// <summary>
+        /// student delete function
+        /// </summary>
+        /// <param name="studentId"></param>
+        /// <returns></returns>
         public bool DeleteStudent(int studentId)
         {
             if (studentId != 0)
-            {
+            {//studnet Id recovered
                 var recoveredId = new RecycledId
                 {
                     DateAdded = DateTime.Now,
@@ -3372,18 +3496,19 @@ namespace ConorFoxProject
                     TableName = "Student"
                 };
 
+                //fields associated with students selected for removal or updating
                 var student = _dBase.Students.SingleOrDefault(x => x.StudentId == studentId);
                 var studentModules = _dBase.StudentModules.Where(x => x.StudentId == studentId).ToList();
                 var studentEvents = _dBase.StudentEvents.Where(x => x.StudentId == studentId).ToList();
                 var studentInvites = _dBase.StudentInvites.Where(x => x.StudentId == studentId).ToList();
 
                 if (student != null)
-                {
+                {//studnet removed
                     _dBase.Students.Remove(student);
                     _dBase.RecycledIds.Add(recoveredId);
                 }
 
-
+                //Student modules removed and id recycled
                 if (studentModules.Count() != 0)
                 {
                     foreach (var m in studentModules)
@@ -3400,7 +3525,7 @@ namespace ConorFoxProject
                         _dBase.RecycledIds.Add(recoveredRoomId);                      
                     }
                 }
-                
+                //studnet Events updated 
                 if (studentEvents.Count() != 0)
                 {
                     foreach (var m in studentEvents)
@@ -3417,7 +3542,7 @@ namespace ConorFoxProject
                         _dBase.RecycledIds.Add(recoveredRoomId);                      
                     }
                 }
-
+                //studnet Invites  updated
                 if (studentInvites.Count() != 0)
                 {
                     foreach (var m in studentInvites)
@@ -3440,17 +3565,23 @@ namespace ConorFoxProject
             return false;   
         }
 
+        /// <summary>
+        /// Deletion of selected staff member
+        /// </summary>
+        /// <param name="staffId"></param>
+        /// <returns></returns>
         public bool DeleteStaff(int staffId)
         {
             if(staffId != 0)
             {
+                //Staff id recovered
             var recoveredId = new RecycledId
                 {
                     DateAdded = DateTime.Now,
                     IdRecovered = staffId,
                     TableName = "Staff"
                 };
-
+                //associated staff firelds collected for deletion or updating
                 var staff = _dBase.Staffs.SingleOrDefault(x => x.StaffId == staffId);
                 var staffModules = _dBase.Modules.Where(x => x.Staff == staffId);
                 var staffEvents = _dBase.StaffEvents.Where(x => x.StaffId == staffId).ToList();
@@ -3458,11 +3589,12 @@ namespace ConorFoxProject
 
                 if (staff != null)
                 {
+                    //staff removed and id recovered
                     _dBase.Staffs.Remove(staff);
                     _dBase.RecycledIds.Add(recoveredId);
                 }
 
-
+                //staf modules updataed
                 if (staffModules.Count() != 0)
                 {
                     foreach (var m in staffModules)
@@ -3471,12 +3603,13 @@ namespace ConorFoxProject
                     }
                 }
                 
+                //staff events updated to relect staff removal
                 if (staffEvents.Count() != 0)
                 {
                     foreach (var m in staffEvents)
                     {
                         _dBase.StaffEvents.Remove(m);
-
+                        //Id recycled
                         var recoveredRoomId = new RecycledId
                         {
                             DateAdded = DateTime.Now,
@@ -3487,7 +3620,7 @@ namespace ConorFoxProject
                         _dBase.RecycledIds.Add(recoveredRoomId);                      
                     }
                 }
-
+                //staff invitatino for events removeed
                 if (staffInvites.Count() != 0)
                 {
                     foreach (var m in staffInvites)
@@ -3499,7 +3632,7 @@ namespace ConorFoxProject
                             IdRecovered = m.StaffId,
                             TableName = "Staff Invite"
                         };
-
+                        //Id reccycled
                         _dBase.RecycledIds.Add(recoveredRoomId);                      
                     }
                 }
@@ -3509,7 +3642,13 @@ namespace ConorFoxProject
             }
             return false;   
         }
-
+       
+        /// <summary>
+        /// deletion of User
+        /// NOT IMPLEMEMNTED FUTURE DEVELOPMENT
+        /// </summary>
+        /// <param name="userdId"></param>
+        /// <returns></returns>
         public bool DeleteUser(int userdId)
         {
             var usersCount = _dBase.Users.Count();
@@ -3533,21 +3672,28 @@ namespace ConorFoxProject
         #endregion
         
         #region Invites and Attendees
-
-
+        
+        /// <summary>
+        /// addition of module to course 
+        /// </summary>
+        /// <param name="modules"></param>
+        /// <param name="courseId"></param>
+        /// <returns></returns>
         public bool AddModulesToCourse(List<Module> modules, int courseId)
         {
             if (modules.Count != 0 && courseId != 0)
-            {
+            {   // modules selceted from database to create new course module records
                 var allocatedCourseModules = _dBase.CourseModules.Where(x => x.Course == courseId);
 
+                //Removal of current course modules
                 foreach (var cm in allocatedCourseModules)
                 {
                     _dBase.CourseModules.Remove(cm);
                 }
-
+                //new course modules generated
                 foreach (var m in modules)
                 {
+                    //new course module  idcreated
                     var courseModuleId = CourseModuleIdGeneration();
 
                     var courseModule = new CourseModule
@@ -3564,14 +3710,21 @@ namespace ConorFoxProject
             return false;
         }
 
+        /// <summary>
+        /// Module added to event for attendence
+        /// </summary>
+        /// <param name="modules"></param>
+        /// <param name="eventId"></param>
+        /// <returns></returns>
         public bool AddModulesToEvent(List<CourseModule> modules, int eventId)
         {
             if (modules.Count != 0 && eventId != 0)
             {
                 foreach (var m in modules)
                 {
+                    //new event module id generted
                     var eventModuleId = ModuleEventsIdGeneration() ;
-
+                    //new event module created
                     var eventModule = new ModuleEvent
                     {
                         EventId = eventId,
@@ -3579,6 +3732,7 @@ namespace ConorFoxProject
                         EventModule = eventModuleId,
                         CourseId = m.Course
                     };
+                    //event mdouel adde to database
                     _dBase.ModuleEvents.Add(eventModule);
                     _dBase.SaveChanges();
                 }
@@ -3587,6 +3741,12 @@ namespace ConorFoxProject
             return false;
         }
 
+        /// <summary>
+        /// Add staff atteneddent to event
+        /// </summary>
+        /// <param name="staff"></param>
+        /// <param name="eventId"></param>
+        /// <returns></returns>
         public bool AddStaffAttendentsToEvent(List<Staff> staff, int eventId)
         {
             if (staff.Count != 0 && eventId != 0)
@@ -3609,17 +3769,24 @@ namespace ConorFoxProject
             return false;
         }
 
+        /// <summary>
+        /// add list of students to a module
+        /// </summary>
+        /// <param name="students"></param>
+        /// <param name="moduleId"></param>
+        /// <returns></returns>
         public bool AddStudentsToModule(List<StudentModule> students, int moduleId)
         {
             if (students.Any())
-            {
+            {   //current module attendees selected
                 var allAttendees = _dBase.StudentModules.Where(x => x.ModuleId == moduleId).ToList();
-
+                //student Modules removed
                 foreach (var sm in allAttendees)
                 {
                     _dBase.StudentModules.Remove(sm);
                 }
 
+                //new student moduels added
                 foreach (var s in students)
                 {
                     var studentsEventId = StudentModulesIdGeneration();
@@ -3634,8 +3801,8 @@ namespace ConorFoxProject
             }
             else
             {
+                //removal of all student modules
                 var allAttendees = _dBase.StudentModules.Where(x => x.ModuleId == moduleId).ToList();
-
                 foreach (var sm in allAttendees)
                 {
                     _dBase.StudentModules.Remove(sm);
@@ -3645,16 +3812,23 @@ namespace ConorFoxProject
             return true;
         }
 
+        /// <summary>
+        /// Invitations of staff to a room only event created
+        /// </summary>
+        /// <param name="staff"></param>
+        /// <param name="eventId"></param>
+        /// <returns></returns>
         public bool AddStaffInvitesToEvent(List<Staff> staff, int eventId)
         {
             if (eventId != 0)
             {
+                //selection of all current invites for the event created
                 var allInvites = _dBase.StaffInvites.Where(x => x.EventId == eventId).ToList();
 
                 if (allInvites.Count > 0)
                 {
                     foreach (var i in allInvites)
-                    {
+                    { //old invitations removed
                         var recycledId = new RecycledId
                         {
                             IdRecovered = i.StaffInviteId,
@@ -3667,11 +3841,11 @@ namespace ConorFoxProject
 
                     }
                 }
-                
+                //new invitations creatde and adde to the database
                 foreach (var s in staff)
-                {
+                {   //staff invite id generation 
                     var staffInviteId = StaffInvitesIdGeneration();
-
+                    //new staff invite created
                     var staffInvite = new StaffInvite
                     {
                         EventId = eventId,
@@ -3688,12 +3862,18 @@ namespace ConorFoxProject
             return false;
         }
 
+        /// <summary>
+        /// studnet invitations for event created
+        /// </summary>
+        /// <param name="students"></param>
+        /// <param name="eventId"></param>
+        /// <returns></returns>
         public bool AddStudentInvitesToEvent(List<Student> students, int eventId)
         {
             if (eventId != 0)
-            {
+            {   //current invites selceted
                 var allInvites = _dBase.StudentInvites.Where(x => x.EventId == eventId).ToList();
-
+                //current invites removed
                 if (allInvites.Count > 0)
                 {
                     foreach (var i in allInvites)
@@ -3710,11 +3890,12 @@ namespace ConorFoxProject
 
                     }
                 }
-                
+                //new invited created
                 foreach (var s in students)
                 {
+                    //new invite id generated
                     var studentInviteId = StudentInvitesIdGeneration();
-
+                    //new student invite object created
                     var studentInvite = new StudentInvite
                     {
                         EventId = eventId,
@@ -3722,6 +3903,7 @@ namespace ConorFoxProject
                         StudentInviteId = studentInviteId,
                         Attending = false
                     };
+                    //Invite added to databse
                     _dBase.StudentInvites.Add(studentInvite);
                     _dBase.SaveChanges();
                  }
@@ -3732,130 +3914,10 @@ namespace ConorFoxProject
         }
 
         #endregion
-
-        #region Remove Invites and Attendants
-
-        public bool RemoveModulesFromCourse(List<CourseModule> coursemodules)
-        {
-            if (coursemodules.Count != 0)
-            {
-                foreach (var cm in coursemodules)
-                {
-                    var recoveredId = new RecycledId
-                    {
-                        DateAdded = DateTime.Now,
-                        IdRecovered = cm.CourseModuleId,
-                        TableName = "Course Module"
-                    };
-
-                    var deletedItem = _dBase.CourseModules.SingleOrDefault(x => x.CourseModuleId == cm.CourseModuleId);
-                    _dBase.CourseModules.Remove(deletedItem);
-                    _dBase.RecycledIds.Add(recoveredId);
-                    _dBase.SaveChanges();
-                }
-                return true;
-            }
-            return false;
-        }
-        
-        public bool RemoveModulesFromEvent(List<ModuleEvent> moduleEvents)
-        {
-            if (moduleEvents.Count != 0)
-            {
-                foreach (var me in moduleEvents)
-                {
-                    var recoveredId = new RecycledId
-                    {
-                        DateAdded = DateTime.Now,
-                        IdRecovered = me.EventModule,
-                        TableName = "Event Module"
-                    };
-
-                    var deletedItem = _dBase.ModuleEvents.SingleOrDefault(x => x.EventModule == me.EventModule);
-                    _dBase.ModuleEvents.Remove(deletedItem);
-                    _dBase.RecycledIds.Add(recoveredId);
-                    _dBase.SaveChanges();
-                }
-                return true;
-            }
-            return false;
-        }
-
-        public bool RemoveStaffAttendentsFromEvent(List<StaffEvent> staff)
-        {
-            if (staff.Count != 0)
-            {
-                foreach (var me in staff)
-                {
-                    var recoveredId = new RecycledId
-                    {
-                        DateAdded = DateTime.Now,
-                        IdRecovered = me.StaffEventId,
-                        TableName = "Event Staff"
-                    };
-
-                    var deletedItem = _dBase.StaffEvents.SingleOrDefault(x => x.StaffEventId == me.StaffEventId);
-                    _dBase.StaffEvents.Remove(deletedItem);
-                    _dBase.RecycledIds.Add(recoveredId);
-                    _dBase.SaveChanges();
-                }
-                return true;
-            }
-            return false;
-        }
-
-        public bool RemoveStaffInvitesFromEvent(List<StaffInvite> staff)
-        {
-            if (staff.Count != 0)
-            {
-                foreach (var me in staff)
-                {
-                    var recoveredId = new RecycledId
-                    {
-                        DateAdded = DateTime.Now,
-                        IdRecovered = me.StaffInviteId,
-                        TableName = "Staff Invite"
-                    };
-
-                    var deletedItem = _dBase.StaffInvites.SingleOrDefault(x => x.StaffInviteId == me.StaffInviteId);
-                    _dBase.StaffInvites.Remove(deletedItem);
-                    _dBase.RecycledIds.Add(recoveredId);
-                    _dBase.SaveChanges();
-                }
-                return true;
-            }
-            return false;  
-        }
-
-        public bool RemoveStudentInvitesFromEvent(List<StudentInvite> students)
-        {
-            if (students.Count != 0)
-            {
-                foreach (var s in students)
-                {
-                    var recoveredId = new RecycledId
-                    {
-                        DateAdded = DateTime.Now,
-                        IdRecovered = s.StudentInviteId,
-                        TableName = "Student Invite"
-                    };
-
-                    var deletedItem = _dBase.StudentInvites.SingleOrDefault(x => x.StudentInviteId == s.StudentInviteId);
-                    _dBase.StudentInvites.Remove(deletedItem);
-                    _dBase.RecycledIds.Add(recoveredId);
-                    _dBase.SaveChanges();
-                }
-                return true;
-            }
-            return false;  
-        }
-        
-        #endregion
         
         #region Search Functions
 
         /// <summary>
-        /// Written: 10/12/13
         /// Searches by aplpying a filer to the field searched for within the event
         /// then applaies a similar fitler of user input to select the events
         /// </summary>
@@ -3891,9 +3953,8 @@ namespace ConorFoxProject
         }
         
         /// <summary>
-        /// Written: 10/12/13
-        /// Searches by aplpying a filer to the field searched for within the event
-        /// then applaies a similar fitler of user input to select the events
+        /// Searches by aplpying a filer to the field searched for within the room
+        /// then applaies a similar fitler of user input to select the room
         /// </summary>
         /// <param name="buildingId"></param>
         /// <param name="searchItem"></param>
@@ -3919,9 +3980,8 @@ namespace ConorFoxProject
         }
         
         /// <summary>
-        /// Written: 10/12/13
-        /// Searches by aplpying a filer to the field searched for within the event
-        /// then applaies a similar fitler of user input to select the events
+        /// Searches by aplpying a filer to the field searched for within the course
+        /// then applies a similar filter of user input to select the courses
         /// </summary>
         /// <param name="searchItem"></param>
         /// <returns></returns>
@@ -3944,9 +4004,8 @@ namespace ConorFoxProject
         }
         
         ///<summary>
-        /// Written: 10/12/13
-        /// Searches by aplpying a filer to the field searched for within the event
-        /// then applaies a similar fitler of user input to select the events
+        /// Searches by aplpying a filer to the field searched for within the building
+        /// then applies a similar fitler of user input to select the building
         /// </summary>
         /// <param name="searchItem"></param>
         /// <returns></returns>
@@ -3971,9 +4030,8 @@ namespace ConorFoxProject
         }
         
         ///<summary>
-        /// Written: 10/12/13
-        /// Searches by aplpying a filer to the field searched for within the event
-        /// then applaies a similar fitler of user input to select the events
+        /// Searches by aplpying a filer to the field searched for within the staff members
+        /// then applaies a similar fitler of user input to select the staff
         /// </summary>
         /// <param name="searchItem"></param>
         /// <returns></returns>
@@ -3998,9 +4056,8 @@ namespace ConorFoxProject
         }
         
         ///<summary>
-        /// Written: 10/12/13
-        /// Searches by aplpying a filer to the field searched for within the event
-        /// then applaies a similar fitler of user input to select the events
+        /// Searches by aplpying a filer to the field searched for within the students
+        /// then applaies a similar fitler of user input to select the students
         /// </summary>
         /// <param name="searchItem"></param>
         /// <returns></returns>
@@ -4024,7 +4081,6 @@ namespace ConorFoxProject
         }
         
         ///<summary>
-        /// Written: 10/12/13
         /// Searches by aplpying a filer to the field searched for within the event
         /// then applaies a similar fitler of user input to select the events
         /// </summary>
@@ -4050,6 +4106,13 @@ namespace ConorFoxProject
             return _dBase.Students.Where(x=>x.Course == courseId).ToList();
         }
         
+        /// <summary>
+        /// Search function which provides a means of searching through the course selected modules
+        /// the moduels are then returuned and populated into the client
+        /// </summary>
+        /// <param name="searchItem"></param>
+        /// <param name="courseId"></param>
+        /// <returns></returns>
         public List<Module> SearchCourseModulesFunction(string searchItem, int courseId)
         {
             var moduleList = _dBase.CourseModules.Where(x => x.Course == courseId).ToList();
@@ -4080,9 +4143,8 @@ namespace ConorFoxProject
         }
         
         ///<summary>
-        /// Written: 10/12/13
-        /// Searches by aplpying a filer to the field searched for within the event
-        /// then applaies a similar fitler of user input to select the events
+        /// Searches by aplpying a filer to the field searched for within the module
+        /// then applaies a similar fitler of user input to select the modules
         /// </summary>
         /// <param name="searchItem"></param>
         /// <returns></returns>
@@ -4106,7 +4168,6 @@ namespace ConorFoxProject
         }
         
         ///<summary>
-        /// Written: 10/12/13
         /// Searches by aplpying a filer to the field searched for within the event
         /// then applaies a similar fitler of user input to select the events
         /// </summary>
@@ -4129,8 +4190,8 @@ namespace ConorFoxProject
         }
         
         ///<summary>
-        /// Written: 10/12/13
         /// Searches by aplpying a filer to the field searched for within the event
+        /// with only a room allocated ie. no moudle hase been added
         /// then applaies a similar fitler of user input to select the events
         /// </summary>
         /// <param name="searchItem"></param>
@@ -4209,9 +4270,9 @@ namespace ConorFoxProject
 
         }
 
-        public TimetableEventsListObject ReturnWeeksEventsWithFilters(DateTime dateRequested, int roomId, int moduleId)
+        public TimetableEventsListObject ReturnWeeksEventsWithFilters(DateTime dateRequested, int roomId)
         {
-            if (roomId != 0 && moduleId != 0)
+            if (roomId != 0)
             {
                 var dayRequested = dateRequested.DayOfWeek.ToString();
                 var date = dateRequested.Day;
@@ -4250,7 +4311,7 @@ namespace ConorFoxProject
                 DateTime weekEnd = startDate.AddDays(7);
 
                 var eventsList =
-                    _dBase.Events.Where(x => x.StartDate >= startDate && x.StartDate < weekEnd && x.Room == roomId && x.Module == moduleId).ToList();
+                    _dBase.Events.Where(x => x.StartDate >= startDate && x.StartDate < weekEnd && x.Room == roomId).ToList();
 
                 var timetableResult = new TimetableEventsListObject
                 {
@@ -4316,8 +4377,7 @@ namespace ConorFoxProject
             }
             return null;
 
-        }
-        
+        } 
         
         public TimetableEventsListObject ReturnWeeksEventsForCourses(DateTime dateRequested, int courseId)
         {
